@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import automation.com.veracontroller.DeviceActivity;
 import automation.com.veracontroller.MainActivity;
 import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Room;
@@ -78,7 +79,7 @@ public class FetchBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
     protected void onPostExecute(Boolean result) {
 
         if (result) {
-            Intent intent = new Intent(activity, MainActivity.class);
+            Intent intent = new Intent(activity, DeviceActivity.class);
             intent.putExtra("ROOMS", roomsMap);
             activity.startActivity(intent);
             activity.finish();
