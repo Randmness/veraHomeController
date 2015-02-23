@@ -11,19 +11,24 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.HashMap;
+
 import automation.com.veracontroller.fragments.BinaryLightFragment;
+import automation.com.veracontroller.pojo.Room;
 
 
 public class DeviceActivity extends FragmentActivity {
     PagerAdapter adapterViewPager;
+    HashMap<Integer, Room> rooms = new HashMap<Integer, Room>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_devices);
-        ViewPager vpPager = (ViewPager) findViewById(R.id.vpPager);
+
         adapterViewPager = new DevicePagerActivity(getSupportFragmentManager());
-        vpPager.setAdapter(adapterViewPager);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager.setAdapter(adapterViewPager);
     }
 
 
@@ -66,9 +71,9 @@ public class DeviceActivity extends FragmentActivity {
         @Override
         public Fragment getItem(int position) {
             switch (position) {
-                case 0: // Fragment # 0 - This will show FirstFragment
+                case 0:
                     return BinaryLightFragment.newInstance(1, "Lights");
-                case 1: // Fragment # 0 - This will show FirstFragment different title
+                case 1:
                     return BinaryLightFragment.newInstance(2, "Scenes");
                 default:
                     return null;
@@ -78,7 +83,14 @@ public class DeviceActivity extends FragmentActivity {
         // Returns the page title for the top indicator
         @Override
         public CharSequence getPageTitle(int position) {
-            return "Page " + position;
+            switch (position) {
+                case 0:
+                    return "Lights";
+                case 1:
+                    return "Scenes";
+                default:
+                    return "Unknown";
+            }
         }
 
     }

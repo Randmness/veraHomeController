@@ -33,7 +33,7 @@ public class FetchBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPreExecute() {
         dialog = ProgressDialog.show(activity, "Fetching Data",
-                "Retrieving setup from ");
+                "Retrieving automation setup...");
     }
 
     @Override
