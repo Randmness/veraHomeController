@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import automation.com.veracontroller.utility.RestClient;
+import automation.com.veracontroller.util.RestClient;
 
 
 public class MainActivity extends ActionBarActivity {

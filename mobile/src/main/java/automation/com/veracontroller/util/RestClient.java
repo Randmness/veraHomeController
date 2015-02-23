@@ -1,4 +1,4 @@
-package automation.com.veracontroller.utility;
+package automation.com.veracontroller.util;
 
 import android.util.Log;
 
@@ -14,18 +14,21 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
 
 
 abstract public class RestClient {
     private static final String LOCATION_URL = "https://sta1.mios.com/";
     private static final String LOCATION_QUERY = "locator_json.php";
-    private static final String DATA_REQUEST = "data_request?";
-    private static String LOCAL_URL;
-    private static String REMOTE_URL;
-    private static String CREDENTIAL_PATH = "[$USER_NAME]/[$PWD]/[$SERIAL]/";
+    private static final String DATA_REQUEST_QUERY = "data_request?";
 
-    private static Boolean LEVERAGE_REMOTE = true;
+    //make configurable to swap based on property
+    private static String LOCAL_URL = "http://192.168.1.5:3480/";
+    private static String REMOTE_URL;
+    private static Boolean LEVERAGE_REMOTE = false;
+
+    private static String CREDENTIAL_PATH = "[$USER_NAME]/[$PWD]/[$SERIAL]/";
 
     public static void setLocalURL(String localUrl) {
         LOCAL_URL = localUrl;
@@ -39,6 +42,21 @@ abstract public class RestClient {
         CREDENTIAL_PATH.replace("[$USER_NAME]", userName);
         CREDENTIAL_PATH.replace("[$PWD]", pwd);
         CREDENTIAL_PATH.replace("[$SERIAL]", serial);
+    }
+
+    private static String urlPreference() {
+        if (LEVERAGE_REMOTE) {
+            return REMOTE_URL + CREDENTIAL_PATH;
+        }
+
+        return LOCAL_URL;
+    }
+
+
+    public static JSONObject fetchConfigurationDetails() throws JSONException {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", "user_data2");
+        return executeCommand(urlPreference(), DATA_REQUEST_QUERY, map);
     }
 
     public static JSONObject fetchLocationDetails() throws JSONException {
