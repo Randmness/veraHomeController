@@ -16,6 +16,7 @@ import java.util.HashMap;
 import automation.com.veracontroller.MainActivity;
 import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Room;
+import automation.com.veracontroller.pojo.support.DeviceTypeEnum;
 import automation.com.veracontroller.util.RestClient;
 
 public class FetchBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
@@ -54,7 +55,7 @@ public class FetchBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
                 JSONObject device = devices.getJSONObject(index);
                 String deviceType = device.getString("device_type");
 
-                if (deviceType != null && deviceType.equals(BinaryLight.DEVICE_TYPE)) {
+                if (deviceType != null && deviceType.equals(DeviceTypeEnum.BINARY_LIGHT)) {
                     int deviceID = device.getInt("id");
                     int roomID = device.getInt("room");
 
