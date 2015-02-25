@@ -11,4 +11,8 @@ public enum ServiceTypeEnum {
     ServiceTypeEnum(String serviceType) {
         this.serviceType = serviceType;
     }
+
+    public String toString() {
+        return serviceType;
+    }
 }

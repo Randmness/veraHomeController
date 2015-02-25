@@ -21,6 +21,10 @@ public class Room implements Serializable {
         lights.add(light);
     }
 
+    public String getRoomName() {
+        return this.roomName;
+    }
+
     public ArrayList<BinaryLight> getLights() {
         return this.lights;
     }

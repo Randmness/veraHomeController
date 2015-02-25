@@ -72,9 +72,9 @@ public class DeviceActivity extends FragmentActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return BinaryLightFragment.newInstance(1, "Lights");
+                    return new BinaryLightFragment();
                 case 1:
-                    return BinaryLightFragment.newInstance(2, "Scenes");
+                    return new BinaryLightFragment();
                 default:
                     return null;
             }
@@ -85,7 +85,7 @@ public class DeviceActivity extends FragmentActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Lights";
+                    return "Switches";
                 case 1:
                     return "Scenes";
                 default:

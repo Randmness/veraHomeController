@@ -13,4 +13,8 @@ public enum DeviceTypeEnum {
     DeviceTypeEnum(String deviceType) {
         this.deviceType = deviceType;
     }
+
+    public String toString() {
+        return deviceType;
+    }
 }

@@ -17,6 +17,8 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import automation.com.veracontroller.pojo.support.ServiceTypeEnum;
+
 
 abstract public class RestClient {
     private static final String LOCATION_URL = "https://sta1.mios.com/";
@@ -52,6 +54,27 @@ abstract public class RestClient {
         return LOCAL_URL;
     }
 
+    public static boolean executeSwitchCommand(boolean on, int deviceID) {
+        boolean success = true;
+        int target = 0;
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", "lu_action");
+        map.put("DeviceNum", deviceID);
+        map.put("serviceId", ServiceTypeEnum.SWITCH_LIGHT.toString());
+        map.put("action", "SetTarget");
+        if (on) {
+            target = 1;
+        }
+        map.put("newTargetValue", target);
+
+        try {
+            executeCommand(urlPreference(), DATA_REQUEST_QUERY, map);
+        } catch (Exception e) {
+            success = false;
+        }
+
+        return success;
+    }
 
     public static JSONObject fetchConfigurationDetails() throws JSONException {
         Map<String, Object> map = new HashMap<String, Object>();

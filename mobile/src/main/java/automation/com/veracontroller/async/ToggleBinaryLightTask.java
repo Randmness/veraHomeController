@@ -5,43 +5,44 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.content.Context;
+import android.view.View;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-
+import android.widget.ListAdapter;
 import automation.com.veracontroller.DeviceActivity;
-import automation.com.veracontroller.MainActivity;
+import automation.com.veracontroller.R;
+import automation.com.veracontroller.fragments.BinaryLightFragment;
 import automation.com.veracontroller.pojo.BinaryLight;
+import android.support.v4.app.FragmentTransaction;
 import automation.com.veracontroller.pojo.Room;
-import automation.com.veracontroller.pojo.support.DeviceTypeEnum;
 import automation.com.veracontroller.singleton.RoomData;
 import automation.com.veracontroller.util.RestClient;
 
-public class FetchBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
-    private Activity activity;
+public class ToggleBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
+    private BinaryLight light;
     private ProgressDialog dialog;
+    private Context context;
 
-    HashMap<Integer, Room> roomsMap = new HashMap<Integer, Room>();
-
-    public FetchBinaryLightTask(Activity activity) {
-        this.activity = activity;
+    public ToggleBinaryLightTask(Context context, BinaryLight light) {
+        this.light = light;
+        this.context = context;
     }
 
     @Override
     protected void onPreExecute() {
-        dialog = ProgressDialog.show(activity, "Fetching Data",
-                "Retrieving automation setup...");
+        dialog = ProgressDialog.show(context, "Fetching Data",
+                "Turning "+light.getName()+" "+ light.onOrOff(!light.isEnabled()));
     }
 
     @Override
     protected Boolean doInBackground(Void... arg0) {
         try {
+            RestClient.executeSwitchCommand(!light.isEnabled(), light.getDeviceNum());
             RoomData.resetMap(RestClient.fetchConfigurationDetails());
         } catch (Exception e) {
+            Log.e("Failure", "Failed to execute command.");
             return false;
         } finally {
             dialog.dismiss();
@@ -53,12 +54,9 @@ public class FetchBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
     protected void onPostExecute(Boolean result) {
 
         if (result) {
-            Intent intent = new Intent(activity, DeviceActivity.class);
-            intent.putExtra("ROOMS", roomsMap);
-            activity.startActivity(intent);
-            activity.finish();
+            Toast.makeText(context, "Success", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(activity, "Failed to retrieve details.", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Failure", Toast.LENGTH_LONG).show();;
         }
     }
 }
