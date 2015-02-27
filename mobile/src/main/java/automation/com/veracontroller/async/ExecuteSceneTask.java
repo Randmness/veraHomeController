@@ -6,33 +6,31 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import automation.com.veracontroller.pojo.BinaryLight;
+import automation.com.veracontroller.pojo.Scene;
 import automation.com.veracontroller.singleton.RoomData;
 import automation.com.veracontroller.util.RestClient;
 
-public class ToggleBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
-    private BinaryLight light;
+public class ExecuteSceneTask extends AsyncTask<Void, Void, Boolean> {
+    private Scene scene;
     private ProgressDialog dialog;
     private Context context;
-    private boolean futureState;
 
-    public ToggleBinaryLightTask(Context context, BinaryLight light, boolean futureState) {
-        this.light = light;
+    public ExecuteSceneTask(Context context, Scene scene) {
+        this.scene = scene;
         this.context = context;
-        this.futureState = futureState;
     }
 
     @Override
     protected void onPreExecute() {
-        dialog = ProgressDialog.show(context, "Fetching Data",
-                "Turning " + light.getName() + " " + light.onOrOff(futureState));
+        dialog = ProgressDialog.show(context, "Executing Scene",
+                scene.getSceneName());
     }
 
     @Override
     protected Boolean doInBackground(Void... arg0) {
         try {
-            RestClient.executeSwitchCommand(futureState, light.getDeviceNum());
-            RoomData.resetMap(RestClient.fetchConfigurationDetails());
+            RestClient.executeSceneCommand(scene.getSceneNum());
+            //RoomData.resetMap(RestClient.fetchConfigurationDetails());
         } catch (Exception e) {
             Log.e("Failure", "Failed to execute command.");
             return false;

@@ -4,20 +4,12 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import automation.com.veracontroller.DeviceActivity;
-import automation.com.veracontroller.MainActivity;
-import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Room;
-import automation.com.veracontroller.pojo.support.DeviceTypeEnum;
 import automation.com.veracontroller.singleton.RoomData;
 import automation.com.veracontroller.util.RestClient;
 
@@ -54,7 +46,6 @@ public class FetchBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
 
         if (result) {
             Intent intent = new Intent(activity, DeviceActivity.class);
-            intent.putExtra("ROOMS", roomsMap);
             activity.startActivity(intent);
             activity.finish();
         } else {

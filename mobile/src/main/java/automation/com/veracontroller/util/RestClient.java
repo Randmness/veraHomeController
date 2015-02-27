@@ -76,6 +76,24 @@ abstract public class RestClient {
         return success;
     }
 
+    public static boolean executeSceneCommand(int sceneID) {
+        boolean success = true;
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", "lu_action");
+        map.put("SceneNum", sceneID);
+        map.put("serviceId", ServiceTypeEnum.SCENE.toString());
+        map.put("action", "RunScene");
+
+        try {
+            executeCommand(urlPreference(), DATA_REQUEST_QUERY, map);
+        } catch (Exception e) {
+            success = false;
+        }
+
+        return success;
+    }
+
     public static JSONObject fetchConfigurationDetails() throws JSONException {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", "user_data2");

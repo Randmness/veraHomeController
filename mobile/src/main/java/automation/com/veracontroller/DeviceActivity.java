@@ -1,25 +1,64 @@
 package automation.com.veracontroller;
 
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.view.PagerAdapter;
-
-import android.os.Bundle;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Switch;
 
 import java.util.HashMap;
 
+import automation.com.veracontroller.async.ToggleBinaryLightTask;
 import automation.com.veracontroller.fragments.BinaryLightFragment;
+import automation.com.veracontroller.fragments.SceneFragment;
+import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Room;
+import automation.com.veracontroller.singleton.RoomData;
 
 
 public class DeviceActivity extends FragmentActivity {
-    PagerAdapter adapterViewPager;
+    public static PagerAdapter adapterViewPager;
     HashMap<Integer, Room> rooms = new HashMap<Integer, Room>();
+
+    public void onFragmentInteraction(Uri uri) {
+        //you can leave it empty
+
+    }
+
+    private void runThread() {
+
+        new Thread() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        adapterViewPager.notifyDataSetChanged();
+                    }
+                });
+
+            }
+        }.start();
+    }
+
+    public void onToggleClicked(View view) {
+        Switch aSwitch = ((Switch) view);
+        String deviceNum = (String) view.getTag();
+        Log.i("Light", deviceNum);
+        BinaryLight clickedLight = RoomData.getLightMap().get(deviceNum);
+        Log.i("BINARY", clickedLight.getDeviceNum()+"");
+        new ToggleBinaryLightTask(view.getContext(), clickedLight, aSwitch.isChecked()).execute();
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +113,7 @@ public class DeviceActivity extends FragmentActivity {
                 case 0:
                     return new BinaryLightFragment();
                 case 1:
-                    return new BinaryLightFragment();
+                    return new SceneFragment();
                 default:
                     return null;
             }
@@ -92,6 +131,7 @@ public class DeviceActivity extends FragmentActivity {
                     return "Unknown";
             }
         }
+
 
     }
 }
