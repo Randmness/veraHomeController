@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import automation.com.veracontroller.async.FetchBinaryLightTask;
+import automation.com.veracontroller.async.FetchLocationDetailsTask;
 
 public class SplashScreen extends Activity {
 
@@ -26,8 +27,15 @@ public class SplashScreen extends Activity {
 
             @Override
             public void run() {
-                new FetchBinaryLightTask(SplashScreen.this).execute();
+                new FetchLocationDetailsTask(SplashScreen.this).execute();
             }
         }, SPLASH_DELAY);
+/*
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                new FetchBinaryLightTask(SplashScreen.this).execute();
+            }
+        }, SPLASH_DELAY);*/
     }
 }

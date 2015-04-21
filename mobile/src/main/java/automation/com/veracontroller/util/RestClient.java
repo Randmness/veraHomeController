@@ -26,7 +26,7 @@ abstract public class RestClient {
     private static final String DATA_REQUEST_QUERY = "data_request?";
 
     //make configurable to swap based on property
-    private static String LOCAL_URL = "http://192.168.1.5:3480/";
+    private static String LOCAL_URL = "http://192.168.1.12:3480/";
     private static String REMOTE_URL;
     private static Boolean LEVERAGE_REMOTE = false;
 

@@ -50,6 +50,7 @@ public class BinaryLightFragment extends Fragment implements SwipeRefreshLayout.
         }
 
         adapter = mListView.getAdapter();
+
         return view;
     }
 

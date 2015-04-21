@@ -49,6 +49,11 @@ public class DeviceActivity extends FragmentActivity {
         }.start();
     }
 
+    /**
+     *  Binary light click.
+     *  
+     * @param view
+     */
     public void onToggleClicked(View view) {
         Switch aSwitch = ((Switch) view);
         String deviceNum = (String) view.getTag();
