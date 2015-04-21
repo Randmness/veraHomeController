@@ -21,12 +21,12 @@ import automation.com.veracontroller.pojo.support.ServiceTypeEnum;
 
 
 abstract public class RestClient {
-    private static final String LOCATION_URL = "https://sta1.mios.com/";
+    private static final String LOCATION_URL = "http://sta1.mios.com/";
     private static final String LOCATION_QUERY = "locator_json.php";
     private static final String DATA_REQUEST_QUERY = "data_request?";
 
     //make configurable to swap based on property
-    private static String LOCAL_URL = "http://192.168.1.12:3480/";
+    private static String LOCAL_URL;
     private static String REMOTE_URL;
     private static Boolean LEVERAGE_REMOTE = false;
 

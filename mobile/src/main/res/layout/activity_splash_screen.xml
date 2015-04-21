@@ -11,4 +11,11 @@
         android:textStyle="bold" android:textSize="50sp" android:gravity="center"
         android:text="@string/dummy_content" />
 
+    <ImageView
+        android:layout_width="600dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:src="@drawable/splash_screen"/>
+
 </FrameLayout>
