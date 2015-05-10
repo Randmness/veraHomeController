@@ -76,7 +76,6 @@ abstract public class RoomDataUtil {
                 scenes.add(new Scene(sceneNum, sceneName));
             }
         }
-        Log.i("SCENES", "Scenes retrieved "+scenes.size());
 
         return scenes;
     }

@@ -29,7 +29,6 @@ public class ExecuteSceneTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... arg0) {
         try {
             RestClient.executeSceneCommand(scene.getSceneNum());
-            //RoomDataUtil.resetMap(RestClient.fetchConfigurationDetails());
         } catch (Exception e) {
             Log.e("Failure", "Failed to execute command.");
             return false;

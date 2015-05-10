@@ -63,7 +63,6 @@ public class SceneFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("Item clicked", position+"");
                 Scene clickedScene = (Scene) view.getTag(R.string.objectHolder);
                 new ExecuteSceneTask(getActivity(), clickedScene).execute();
             }
