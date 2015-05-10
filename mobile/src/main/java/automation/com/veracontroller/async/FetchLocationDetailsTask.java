@@ -87,13 +87,9 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
     protected void onPostExecute(Boolean result) {
 
         if (result) {
-            //push to initial setup
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    new FetchBinaryLightTask(activity).execute();
-                }
-            }, 100);
+            Intent intent = new Intent(activity, DeviceActivity.class);
+            activity.startActivity(intent);
+            activity.finish();
         } else {
             Toast.makeText(activity, "Failed to retrieve details.", Toast.LENGTH_LONG).show();
         }

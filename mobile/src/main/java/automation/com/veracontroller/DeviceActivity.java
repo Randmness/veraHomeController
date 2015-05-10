@@ -56,10 +56,8 @@ public class DeviceActivity extends FragmentActivity {
      */
     public void onToggleClicked(View view) {
         Switch aSwitch = ((Switch) view);
-        String deviceNum = (String) view.getTag();
-        Log.i("Light", deviceNum);
-        BinaryLight clickedLight = RoomData.getLightMap().get(deviceNum);
-        Log.i("BINARY", clickedLight.getDeviceNum()+"");
+        BinaryLight clickedLight = (BinaryLight) view.getTag();
+        Log.i("Light", clickedLight.getName());
         new ToggleBinaryLightTask(view.getContext(), clickedLight, aSwitch.isChecked()).execute();
     }
 

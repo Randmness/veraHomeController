@@ -32,7 +32,9 @@ public class ToggleBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... arg0) {
         try {
             RestClient.executeSwitchCommand(futureState, light.getDeviceNum());
-            RoomData.resetMap(RestClient.fetchConfigurationDetails());
+
+            //TODO
+            //adapter.setLights(RestClient.fetchConfigurationDetails());
         } catch (Exception e) {
             Log.e("Failure", "Failed to execute command.");
             return false;

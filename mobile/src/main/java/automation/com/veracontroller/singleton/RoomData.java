@@ -19,22 +19,13 @@ import automation.com.veracontroller.pojo.support.ServiceTypeEnum;
  */
 abstract public class RoomData {
 
-    //Rooms and Lights
-    private static HashMap<Integer, Room> rooms = new HashMap<Integer, Room>();
-    private static List<String> lightIDs = new ArrayList<String>();
-    private static HashMap<String, BinaryLight> lightMap = new HashMap<String, BinaryLight>();
-
     //Scenes
     private static List<Scene> scenes = new ArrayList<Scene>();
     private static List<String> sceneNames = new ArrayList<String>();
 
-    public static void resetMap(JSONObject results) throws JSONException {
-        setupScenes(results);
+    public static List<BinaryLight> getLights(JSONObject results) throws JSONException {
 
-        rooms.clear();
-        lightIDs.clear();
-        lightMap.clear();
-
+        HashMap<Integer, Room> rooms = new HashMap<>();
         JSONArray roomList = results.getJSONArray("rooms");
         for (int index = 0; index < roomList.length(); index++) {
             JSONObject room = roomList.getJSONObject(index);
@@ -43,6 +34,7 @@ abstract public class RoomData {
             rooms.put(roomID, new Room(roomID, roomName));
         }
 
+        List<BinaryLight> lights = new ArrayList<>();
         JSONArray devices = results.getJSONArray("devices");
         for (int index = 0; index < devices.length(); index++) {
             JSONObject device = devices.getJSONObject(index);
@@ -52,9 +44,7 @@ abstract public class RoomData {
                 int roomID = device.getInt("room");
                 String name = device.getString("name");
 
-                BinaryLight light = new BinaryLight(deviceID, name, roomID);
-                lightIDs.add(Integer.toString(light.getDeviceNum()));
-                lightMap.put(Integer.toString(light.getDeviceNum()), light);
+                BinaryLight light = new BinaryLight(deviceID, name, rooms.get(roomID).getRoomName());
 
                 JSONArray states = device.getJSONArray("states");
                 for (int stateIndex = 0; stateIndex < states.length(); stateIndex++) {
@@ -67,10 +57,11 @@ abstract public class RoomData {
                     }
                 }
 
-                Room room = rooms.get(roomID);
-                room.addBinaryLight(light);
+                lights.add(light);
             }
         }
+
+        return lights;
     }
 
     private static void setupScenes(JSONObject results) throws JSONException {
@@ -88,25 +79,4 @@ abstract public class RoomData {
             }
         }
     }
-
-    public static HashMap<Integer, Room> returnRooms() {
-        return rooms;
-    }
-
-    public static List<String> getLightIDs() {
-        return lightIDs;
-    }
-
-    public static List<Scene> getScenes() {
-        return scenes;
-    }
-
-    public static List<String> getSceneNames() {
-        return sceneNames;
-    }
-
-    public static HashMap<String, BinaryLight> getLightMap() {
-        return lightMap;
-    }
-
 }

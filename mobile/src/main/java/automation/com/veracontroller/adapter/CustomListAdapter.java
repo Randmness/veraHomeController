@@ -8,42 +8,58 @@ import android.widget.ArrayAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import java.util.HashMap;
 import java.util.List;
 
 import automation.com.veracontroller.R;
 import automation.com.veracontroller.pojo.BinaryLight;
-import automation.com.veracontroller.pojo.Room;
-import automation.com.veracontroller.singleton.RoomData;
 
-public class CustomListAdapter extends ArrayAdapter<String> {
+public class CustomListAdapter extends ArrayAdapter<BinaryLight> {
     private final Context context;
-    HashMap<String, BinaryLight> map;
+    private List<BinaryLight> lights;
 
-    public CustomListAdapter(Context context, List<String> lights, HashMap<String, BinaryLight> map) {
+    public CustomListAdapter(Context context, List<BinaryLight> lights) {
         super(context, R.layout.row_button, lights);
         this.context = context;
-        this.map = map;
+        this.lights = lights;
+    }
+
+    public void setList(List<BinaryLight> lights) {
+        this.lights = lights;
+    }
+
+    public List<BinaryLight> getLights() {
+        return this.lights;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        BinaryLight light = map.get(getItem(position));
-        Room room = RoomData.returnRooms().get(light.getRoomNum());
+        BinaryLight light = lights.get(position);
+        LightHolder viewHolder;
 
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.row_button, parent, false);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.row_button, null);
 
-        TextView lightText = (TextView) rowView.findViewById(R.id.title);
-        lightText.setText(light.getName() + "\n");
-        TextView roomText = (TextView) rowView.findViewById(R.id.room);
-        roomText.setText("Room: " + room.getRoomName());
-        Switch status = (Switch) rowView.findViewById(R.id.togglebutton);
-        status.setChecked(light.isEnabled());
-        status.setTag(light.getDeviceNum());
-        status.setTag(Integer.toString(light.getDeviceNum()));
+            viewHolder = new LightHolder();
+            viewHolder.lightText = (TextView) convertView.findViewById(R.id.title);
+            viewHolder.roomText = (TextView) convertView.findViewById(R.id.room);
+            viewHolder.status = (Switch) convertView.findViewById(R.id.togglebutton);
 
-        return rowView;
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (LightHolder) convertView.getTag();
+        }
+
+        viewHolder.lightText.setText(light.getName()+"\n");
+        viewHolder.roomText.setText("Room: "+light.getRoomName());
+        viewHolder.status.setChecked(light.isEnabled());
+        viewHolder.status.setTag(light);
+
+        return convertView;
+    }
+
+    static class LightHolder {
+        TextView lightText;
+        TextView roomText;
+        Switch status;
     }
 }

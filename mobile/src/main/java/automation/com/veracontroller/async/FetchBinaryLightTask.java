@@ -4,52 +4,47 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.Toast;
 
 import java.util.HashMap;
 
 import automation.com.veracontroller.DeviceActivity;
+import automation.com.veracontroller.adapter.CustomListAdapter;
 import automation.com.veracontroller.pojo.Room;
 import automation.com.veracontroller.singleton.RoomData;
 import automation.com.veracontroller.util.RestClient;
 
 public class FetchBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
     private Activity activity;
-    private ProgressDialog dialog;
+    private CustomListAdapter adapter;
+    SwipeRefreshLayout swipe;
 
-    HashMap<Integer, Room> roomsMap = new HashMap<Integer, Room>();
-
-    public FetchBinaryLightTask(Activity activity) {
+    public FetchBinaryLightTask(Activity activity, CustomListAdapter adapter, SwipeRefreshLayout swipe) {
         this.activity = activity;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        dialog = ProgressDialog.show(activity, "Fetching Data",
-                "Retrieving automation setup...");
+        this.adapter = adapter;
+        this.swipe = swipe;
     }
 
     @Override
     protected Boolean doInBackground(Void... arg0) {
         try {
-            RoomData.resetMap(RestClient.fetchConfigurationDetails());
+            adapter.setList(RoomData.getLights(RestClient.fetchConfigurationDetails()));
         } catch (Exception e) {
             return false;
-        } finally {
-            dialog.dismiss();
         }
         return true;
     }
 
     @Override
     protected void onPostExecute(Boolean result) {
-
         if (result) {
-            Intent intent = new Intent(activity, DeviceActivity.class);
-            activity.startActivity(intent);
-            activity.finish();
+            adapter.clear();
+            adapter.addAll(adapter.getLights());
+            adapter.notifyDataSetChanged();
         } else {
             Toast.makeText(activity, "Failed to retrieve details.", Toast.LENGTH_LONG).show();
         }
+        swipe.setRefreshing(false);
     }
 }
