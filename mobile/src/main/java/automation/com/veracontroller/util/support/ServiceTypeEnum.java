@@ -1,4 +1,4 @@
-package automation.com.veracontroller.pojo.support;
+package automation.com.veracontroller.util.support;
 
 /**
  * Created by root on 2/22/15.

@@ -20,33 +20,13 @@ import automation.com.veracontroller.async.ToggleBinaryLightTask;
 import automation.com.veracontroller.fragments.BinaryLightFragment;
 import automation.com.veracontroller.fragments.SceneFragment;
 import automation.com.veracontroller.pojo.BinaryLight;
-import automation.com.veracontroller.pojo.Room;
-import automation.com.veracontroller.singleton.RoomData;
-
 
 public class DeviceActivity extends FragmentActivity {
     public static PagerAdapter adapterViewPager;
-    HashMap<Integer, Room> rooms = new HashMap<Integer, Room>();
 
     public void onFragmentInteraction(Uri uri) {
         //you can leave it empty
 
-    }
-
-    private void runThread() {
-
-        new Thread() {
-            public void run() {
-                runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        adapterViewPager.notifyDataSetChanged();
-                    }
-                });
-
-            }
-        }.start();
     }
 
     /**
@@ -56,7 +36,7 @@ public class DeviceActivity extends FragmentActivity {
      */
     public void onToggleClicked(View view) {
         Switch aSwitch = ((Switch) view);
-        BinaryLight clickedLight = (BinaryLight) view.getTag();
+        BinaryLight clickedLight = (BinaryLight) view.getTag(R.string.objectHolder);
         Log.i("Light", clickedLight.getName());
         new ToggleBinaryLightTask(view.getContext(), clickedLight, aSwitch.isChecked()).execute();
     }

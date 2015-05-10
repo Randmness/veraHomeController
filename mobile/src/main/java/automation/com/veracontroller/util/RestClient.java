@@ -17,7 +17,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import automation.com.veracontroller.pojo.support.ServiceTypeEnum;
+import automation.com.veracontroller.util.support.ServiceTypeEnum;
 
 
 abstract public class RestClient {

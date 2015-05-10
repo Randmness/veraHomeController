@@ -3,18 +3,19 @@ package automation.com.veracontroller.async;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.widget.Toast;
 
-import automation.com.veracontroller.adapter.BinaryLightListAdapter;
+import automation.com.veracontroller.adapter.SceneListAdapter;
 import automation.com.veracontroller.util.RoomDataUtil;
 import automation.com.veracontroller.util.RestClient;
 
-public class FetchBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
+public class FetchScenesTask extends AsyncTask<Void, Void, Boolean> {
     private Activity activity;
-    private BinaryLightListAdapter adapter;
+    private SceneListAdapter adapter;
     SwipeRefreshLayout swipe;
 
-    public FetchBinaryLightTask(Activity activity, BinaryLightListAdapter adapter, SwipeRefreshLayout swipe) {
+    public FetchScenesTask(Activity activity, SceneListAdapter adapter, SwipeRefreshLayout swipe) {
         this.activity = activity;
         this.adapter = adapter;
         this.swipe = swipe;
@@ -23,7 +24,7 @@ public class FetchBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Void... arg0) {
         try {
-            adapter.setList(RoomDataUtil.getLights(RestClient.fetchConfigurationDetails()));
+            adapter.setScenes(RoomDataUtil.getScenes(RestClient.fetchConfigurationDetails()));
         } catch (Exception e) {
             return false;
         }
@@ -34,7 +35,7 @@ public class FetchBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
     protected void onPostExecute(Boolean result) {
         if (result) {
             adapter.clear();
-            adapter.addAll(adapter.getLights());
+            adapter.addAll(adapter.getScenes());
             adapter.notifyDataSetChanged();
         } else {
             Toast.makeText(activity, "Failed to retrieve details.", Toast.LENGTH_LONG).show();

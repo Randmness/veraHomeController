@@ -35,7 +35,7 @@ public class SplashScreen extends Activity {
 
                 @Override
                 public void run() {
-                    new FetchLocationDetailsTask(SplashScreen.this).execute();
+                    new FetchLocationDetailsTask(SplashScreen.this, true).execute();
                 }
             }, SPLASH_DELAY);
         } else {

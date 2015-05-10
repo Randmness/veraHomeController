@@ -7,7 +7,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import automation.com.veracontroller.pojo.Scene;
-import automation.com.veracontroller.singleton.RoomData;
 import automation.com.veracontroller.util.RestClient;
 
 public class ExecuteSceneTask extends AsyncTask<Void, Void, Boolean> {
@@ -30,7 +29,7 @@ public class ExecuteSceneTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... arg0) {
         try {
             RestClient.executeSceneCommand(scene.getSceneNum());
-            //RoomData.resetMap(RestClient.fetchConfigurationDetails());
+            //RoomDataUtil.resetMap(RestClient.fetchConfigurationDetails());
         } catch (Exception e) {
             Log.e("Failure", "Failed to execute command.");
             return false;

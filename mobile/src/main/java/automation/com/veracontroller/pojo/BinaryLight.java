@@ -52,7 +52,6 @@ public class BinaryLight implements Parcelable {
         this.state = state;
     }
 
-
     public BinaryLight(Parcel in) {
         String[] data = new String[4];
 

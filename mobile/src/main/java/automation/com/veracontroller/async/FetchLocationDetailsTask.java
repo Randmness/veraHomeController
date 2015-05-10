@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.util.Log;
 import android.content.SharedPreferences;
 import android.widget.Toast;
@@ -14,23 +13,19 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import automation.com.veracontroller.DeviceActivity;
-import automation.com.veracontroller.pojo.Room;
-import automation.com.veracontroller.pojo.Scene;
-import automation.com.veracontroller.singleton.RoomData;
 import automation.com.veracontroller.util.RestClient;
 
 public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
     private Activity activity;
     private ProgressDialog dialog;
+    private boolean initialEntry;
 
-    HashMap<Integer, Room> roomsMap = new HashMap<Integer, Room>();
-
-    public FetchLocationDetailsTask(Activity activity) {
+    public FetchLocationDetailsTask(Activity activity, boolean initialEntry) {
         this.activity = activity;
+        this.initialEntry = initialEntry;
     }
 
     @Override
@@ -87,9 +82,10 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
     protected void onPostExecute(Boolean result) {
 
         if (result) {
-            Intent intent = new Intent(activity, DeviceActivity.class);
-            activity.startActivity(intent);
-            activity.finish();
+            if (initialEntry) {
+                activity.startActivity(new Intent(activity, DeviceActivity.class));
+                activity.finish();
+            }
         } else {
             Toast.makeText(activity, "Failed to retrieve details.", Toast.LENGTH_LONG).show();
         }

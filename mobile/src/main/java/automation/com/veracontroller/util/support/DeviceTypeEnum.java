@@ -1,6 +1,4 @@
-package automation.com.veracontroller.pojo.support;
-
-import android.bluetooth.BluetoothClass;
+package automation.com.veracontroller.util.support;
 
 /**
  * Created by root on 2/22/15.
