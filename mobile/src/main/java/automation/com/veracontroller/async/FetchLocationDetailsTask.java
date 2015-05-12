@@ -13,15 +13,20 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import automation.com.veracontroller.DeviceActivity;
+import automation.com.veracontroller.LoginActivity;
 import automation.com.veracontroller.util.RestClient;
 
 public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
     private Activity activity;
     private ProgressDialog dialog;
     private boolean initialEntry;
+    private String serialNumber;
+
+    private ArrayList<String> userList = new ArrayList<>();
 
     public FetchLocationDetailsTask(Activity activity, boolean initialEntry) {
         this.activity = activity;
@@ -49,16 +54,18 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
 
     protected void processResult (JSONObject results) throws Exception {
         JSONObject unit = results.getJSONArray("units").getJSONObject(0);
-        String serialNumber = unit.getString("serialNumber");
+        serialNumber = unit.getString("serialNumber");
         String localIP = unit.getString("ipAddress");
         String remoteUrl = unit.getString("active_server");
+
         updateConstants(serialNumber, localIP, remoteUrl);
 
-        JSONArray users = unit.getJSONArray("users");
-        List<String> userList = new ArrayList<String>();
-        for(int index = 0; index < users.length(); index++) {
-            userList.add(users.getString(index));
-            Log.i("User", userList.get(index));
+        if (initialEntry) {
+            JSONArray users = unit.getJSONArray("users");
+            for (int index = 0; index < users.length(); index++) {
+                userList.add(users.getString(index));
+                Log.i("User", userList.get(index));
+            }
         }
     }
 
@@ -70,7 +77,7 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
         RestClient.setRemoteURL(savedRemoteUrl);
 
 
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = activity.getSharedPreferences("PREF",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("serialNumber", serialNumber);
         editor.putString("localUrl", savedLocalUrl);
@@ -82,10 +89,14 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
     protected void onPostExecute(Boolean result) {
 
         if (result) {
+            Intent intent = new Intent(activity, DeviceActivity.class);
             if (initialEntry) {
-                activity.startActivity(new Intent(activity, DeviceActivity.class));
-                activity.finish();
+                intent = new Intent(activity, LoginActivity.class);
+                intent.putStringArrayListExtra(LoginActivity.USER_EXTRA, userList);
+                intent.putExtra(LoginActivity.SERIAL, serialNumber);
             }
+            activity.startActivity(intent);
+            activity.finish();
         } else {
             Toast.makeText(activity, "Failed to retrieve details.", Toast.LENGTH_LONG).show();
         }

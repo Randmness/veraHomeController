@@ -8,4 +8,5 @@
     <string name="title_activity_devices">Vera Devices</string>
     <string name="viewHolder">View Holder</string>
     <string name="objectHolder">Object Holder</string>
+    <string name="title_activity_login">LoginActivity</string>
 </resources>
