@@ -1,9 +1,12 @@
 package automation.com.veracontroller;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -28,28 +31,34 @@ public class SplashScreen extends Activity {
 
         setContentView(R.layout.activity_splash_screen);
 
-        SharedPreferences sharedPref = SplashScreen.this.getSharedPreferences("PREF",Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = SplashScreen.this.getSharedPreferences("PREF", Context.MODE_PRIVATE);
         String localURL = sharedPref.getString("localUrl", null);
 
         if (localURL == null || true) {
-            Log.i("URL NOT FOUND", "URL NOT FOUND!");
             new Handler().postDelayed(new Runnable() {
-
                 @Override
                 public void run() {
-                    new FetchLocationDetailsTask(SplashScreen.this, true).execute();
+                    AlertDialog.Builder webDialog = new AlertDialog.Builder(SplashScreen.this);
+                    webDialog.setMessage("More information?");
+                    webDialog.setCancelable(true);
+                    webDialog.setPositiveButton("Local Only",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    new FetchLocationDetailsTask(SplashScreen.this, false).execute();
+                                }
+                            });
+                    webDialog.setNegativeButton("Remote",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    new FetchLocationDetailsTask(SplashScreen.this, true).execute();
+                                }
+                            });
+
+                    AlertDialog alertWeb = webDialog.create();
+                    alertWeb.show();
                 }
             }, SPLASH_DELAY);
-            /**
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    new FetchLocationDetailsTask(SplashScreen.this, false).execute();
-                }
-            }, SPLASH_DELAY);**/
         } else {
-            Log.i("URL FOUND", "URL FOUND");
             boolean leverageRemote = sharedPref.getBoolean("leverageRemote", false);
             if (leverageRemote) {
                 String remoteUrl = sharedPref.getString("remoteUrl", null);
