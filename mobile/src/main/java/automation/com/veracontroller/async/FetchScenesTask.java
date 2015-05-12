@@ -3,17 +3,16 @@ package automation.com.veracontroller.async;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.widget.Toast;
 
 import automation.com.veracontroller.adapter.SceneListAdapter;
-import automation.com.veracontroller.util.RoomDataUtil;
 import automation.com.veracontroller.util.RestClient;
+import automation.com.veracontroller.util.RoomDataUtil;
 
 public class FetchScenesTask extends AsyncTask<Void, Void, Boolean> {
+    SwipeRefreshLayout swipe;
     private Activity activity;
     private SceneListAdapter adapter;
-    SwipeRefreshLayout swipe;
 
     public FetchScenesTask(Activity activity, SceneListAdapter adapter, SwipeRefreshLayout swipe) {
         this.activity = activity;

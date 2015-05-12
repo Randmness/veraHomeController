@@ -40,7 +40,9 @@ abstract public class RestClient {
         REMOTE_URL = remoteUrl;
     }
 
-    public static void setLeverageRemote(boolean leverageRemote) {LEVERAGE_REMOTE = leverageRemote;}
+    public static void setLeverageRemote(boolean leverageRemote) {
+        LEVERAGE_REMOTE = leverageRemote;
+    }
 
     public static void updateCredentials(String userName, String pwd, String serial) {
         CREDENTIAL_PATH.replace("[$USER_NAME]", userName);
@@ -113,7 +115,7 @@ abstract public class RestClient {
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", "user_data2");
-        return executeCommand(remoteUrl.toString(), DATA_REQUEST_QUERY,  map);
+        return executeCommand(remoteUrl.toString(), DATA_REQUEST_QUERY, map);
     }
 
     public static JSONObject fetchLocationDetails() throws JSONException {

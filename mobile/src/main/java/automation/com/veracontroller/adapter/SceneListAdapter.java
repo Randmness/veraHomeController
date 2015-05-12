@@ -1,7 +1,6 @@
 package automation.com.veracontroller.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +22,12 @@ public class SceneListAdapter extends ArrayAdapter<Scene> {
         this.scenes = scenes;
     }
 
-    public void setScenes(List<Scene> scenes) {
-        this.scenes = scenes;
-    }
-
     public List<Scene> getScenes() {
         return this.scenes;
+    }
+
+    public void setScenes(List<Scene> scenes) {
+        this.scenes = scenes;
     }
 
     @Override

@@ -4,33 +4,27 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import automation.com.veracontroller.R;
-import automation.com.veracontroller.adapter.BinaryLightListAdapter;
 import automation.com.veracontroller.adapter.SceneListAdapter;
 import automation.com.veracontroller.async.ExecuteSceneTask;
-import automation.com.veracontroller.async.FetchBinaryLightTask;
 import automation.com.veracontroller.async.FetchScenesTask;
 import automation.com.veracontroller.pojo.Scene;
 
 public class SceneFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+    private static final String SCENES = "SCENE_DATA";
     private SwipeRefreshLayout swipeLayout;
     private SceneListAdapter adapter;
     private View view;
-
     private List<Scene> scenes = new ArrayList<>();
-    private static final String SCENES = "SCENE_DATA";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,7 +64,8 @@ public class SceneFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         if (savedInstanceState == null) {
             swipeLayout.post(new Runnable() {
-                @Override public void run() {
+                @Override
+                public void run() {
                     swipeLayout.setRefreshing(true);
                 }
             });
@@ -97,8 +92,7 @@ public class SceneFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState)
-    {
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(SCENES, (ArrayList) adapter.getScenes());
     }

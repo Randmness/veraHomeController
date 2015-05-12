@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +18,11 @@ import automation.com.veracontroller.async.FetchBinaryLightTask;
 import automation.com.veracontroller.pojo.BinaryLight;
 
 public class BinaryLightFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+    private static final String BINARY_LIGHTS = "BINARY_LIGHTS";
     private SwipeRefreshLayout swipeLayout;
     private BinaryLightListAdapter adapter;
     private View view;
-
     private List<BinaryLight> lights = new ArrayList<>();
-    private static final String BINARY_LIGHTS = "BINARY_LIGHTS";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +53,8 @@ public class BinaryLightFragment extends Fragment implements SwipeRefreshLayout.
 
         if (savedInstanceState == null) {
             swipeLayout.post(new Runnable() {
-                @Override public void run() {
+                @Override
+                public void run() {
                     swipeLayout.setRefreshing(true);
                 }
             });
@@ -82,8 +81,7 @@ public class BinaryLightFragment extends Fragment implements SwipeRefreshLayout.
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState)
-    {
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(BINARY_LIGHTS, (ArrayList) adapter.getLights());
     }

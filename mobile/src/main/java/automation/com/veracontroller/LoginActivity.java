@@ -3,7 +3,6 @@ package automation.com.veracontroller;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,13 +11,10 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 import automation.com.veracontroller.async.AuthenticateUserTask;
-import automation.com.veracontroller.async.FetchBinaryLightTask;
-import automation.com.veracontroller.async.FetchLocationDetailsTask;
 
 
 public class LoginActivity extends Activity {

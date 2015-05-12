@@ -4,17 +4,15 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.content.SharedPreferences;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import automation.com.veracontroller.DeviceActivity;
 import automation.com.veracontroller.LoginActivity;
@@ -52,7 +50,7 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
         return true;
     }
 
-    protected void processResult (JSONObject results) throws Exception {
+    protected void processResult(JSONObject results) throws Exception {
         JSONObject unit = results.getJSONArray("units").getJSONObject(0);
         serialNumber = unit.getString("serialNumber");
         String localIP = unit.getString("ipAddress");
@@ -70,14 +68,14 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
     }
 
     protected void updateConstants(String serialNumber, String localUrl, String remoteUrl) {
-        String savedLocalUrl = "http://"+localUrl+":3480/";
-        String savedRemoteUrl = "http://"+remoteUrl+"/";
+        String savedLocalUrl = "http://" + localUrl + ":3480/";
+        String savedRemoteUrl = "http://" + remoteUrl + "/";
 
         RestClient.setLocalURL(savedLocalUrl);
         RestClient.setRemoteURL(savedRemoteUrl);
 
 
-        SharedPreferences sharedPref = activity.getSharedPreferences("PREF",Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = activity.getSharedPreferences("PREF", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("serialNumber", serialNumber);
         editor.putString("localUrl", savedLocalUrl);

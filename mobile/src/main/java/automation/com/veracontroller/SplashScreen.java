@@ -6,12 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
-import automation.com.veracontroller.async.FetchBinaryLightTask;
 import automation.com.veracontroller.async.FetchLocationDetailsTask;
 import automation.com.veracontroller.util.RestClient;
 
@@ -40,7 +37,7 @@ public class SplashScreen extends Activity {
                 public void run() {
                     AlertDialog.Builder webDialog = new AlertDialog.Builder(SplashScreen.this);
                     webDialog.setMessage("More information?");
-                    webDialog.setCancelable(true);
+                    webDialog.setCancelable(false);
                     webDialog.setPositiveButton("Local Only",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {

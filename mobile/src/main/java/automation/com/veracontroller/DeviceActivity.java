@@ -14,8 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
 
-import java.util.HashMap;
-
 import automation.com.veracontroller.async.ToggleBinaryLightTask;
 import automation.com.veracontroller.fragments.BinaryLightFragment;
 import automation.com.veracontroller.fragments.SceneFragment;
@@ -30,8 +28,8 @@ public class DeviceActivity extends FragmentActivity {
     }
 
     /**
-     *  Binary light click.
-     *  
+     * Binary light click.
+     *
      * @param view
      */
     public void onToggleClicked(View view) {
@@ -40,7 +38,6 @@ public class DeviceActivity extends FragmentActivity {
         Log.i("Light", clickedLight.getName());
         new ToggleBinaryLightTask(view.getContext(), clickedLight, aSwitch.isChecked()).execute();
     }
-
 
 
     @Override

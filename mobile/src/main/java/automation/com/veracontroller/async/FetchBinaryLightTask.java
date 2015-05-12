@@ -6,13 +6,13 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.Toast;
 
 import automation.com.veracontroller.adapter.BinaryLightListAdapter;
-import automation.com.veracontroller.util.RoomDataUtil;
 import automation.com.veracontroller.util.RestClient;
+import automation.com.veracontroller.util.RoomDataUtil;
 
 public class FetchBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
+    SwipeRefreshLayout swipe;
     private Activity activity;
     private BinaryLightListAdapter adapter;
-    SwipeRefreshLayout swipe;
 
     public FetchBinaryLightTask(Activity activity, BinaryLightListAdapter adapter, SwipeRefreshLayout swipe) {
         this.activity = activity;
