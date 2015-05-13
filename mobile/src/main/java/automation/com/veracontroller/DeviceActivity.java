@@ -1,5 +1,11 @@
 package automation.com.veracontroller;
 
+import android.app.AlertDialog;
+import android.bluetooth.BluetoothClass;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,10 +20,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
 
+import automation.com.veracontroller.async.FetchLocationDetailsTask;
 import automation.com.veracontroller.async.ToggleBinaryLightTask;
 import automation.com.veracontroller.fragments.BinaryLightFragment;
 import automation.com.veracontroller.fragments.SceneFragment;
 import automation.com.veracontroller.pojo.BinaryLight;
+import automation.com.veracontroller.util.RestClient;
 
 public class DeviceActivity extends FragmentActivity {
     public static PagerAdapter adapterViewPager;
@@ -59,15 +67,117 @@ public class DeviceActivity extends FragmentActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if (RestClient.getLeverageRemote()) {
+            menu.findItem(R.id.enableRemote).setChecked(true);
+            menu.findItem(R.id.updateRemoteLogin).setVisible(true);
+        } else {
+            menu.findItem(R.id.enableRemote).setChecked(false);
+            menu.findItem(R.id.updateRemoteLogin).setVisible(false);
+        }
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch(id) {
+            case R.id.updateLocationDetails:
+                AlertDialog.Builder webDialog = new AlertDialog.Builder(DeviceActivity.this);
+                webDialog.setMessage("Must be connected to wifi.");
+                webDialog.setCancelable(true);
+                webDialog.setPositiveButton("Update Location Details",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                new FetchLocationDetailsTask(DeviceActivity.this, false).execute();
+                            }
+                        });
+                webDialog.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                AlertDialog alertWeb = webDialog.create();
+                alertWeb.show();
+                break;
+            case R.id.sendFeedback:
+                Intent email = new Intent(Intent.ACTION_SEND);
+                email.putExtra(Intent.EXTRA_EMAIL, new String[]{"test@gmail.com"});
+                email.putExtra(Intent.EXTRA_SUBJECT, "Vera Home Controller: Feedback");
+                email.setType("message/rfc822");
+                startActivity(Intent.createChooser(email, "Send Email"));
+                break;
+            case R.id.updateRemoteLogin:
+                AlertDialog.Builder loginDialog = new AlertDialog.Builder(DeviceActivity.this);
+                loginDialog.setMessage("Must be connected to wifi.");
+                loginDialog.setCancelable(false);
+                loginDialog.setPositiveButton("Update Credentials",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                new FetchLocationDetailsTask(DeviceActivity.this, true).execute();
+                            }
+                        });
+                loginDialog.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                AlertDialog loginWeb = loginDialog.create();
+                loginWeb.show();
+                break;
+            case R.id.enableRemote:
+                SharedPreferences sharedPref = getSharedPreferences("PREF", Context.MODE_PRIVATE);
+                if (item.isChecked()) {
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putBoolean("leverageRemote", true);
+                    editor.commit();
+                    RestClient.setLeverageRemote(false);
+                } else {
+                    String password = sharedPref.getString("password", null);
+
+                    if (password == null) {
+                        AlertDialog.Builder remoteDialog = new AlertDialog.Builder(DeviceActivity.this);
+                        remoteDialog.setMessage("Must be connected to wifi.");
+                        remoteDialog.setCancelable(false);
+                        remoteDialog.setPositiveButton("Update Remote Credentials",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        new FetchLocationDetailsTask(DeviceActivity.this, true).execute();
+                                    }
+                                });
+                        remoteDialog.setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                    }
+                                });
+
+                        AlertDialog remoteWeb = remoteDialog.create();
+                        remoteWeb.show();
+                    } else {
+                        String username = sharedPref.getString("username", null);
+                        String serial = sharedPref.getString("serialNumber", null);
+                        String remoteUrl = sharedPref.getString("remoteUrl", null);
+                        RestClient.setLeverageRemote(true);
+                        RestClient.setRemoteURL(remoteUrl);
+                        RestClient.updateCredentials(username, password, serial);
+
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putBoolean("leverageRemote", true);
+                        editor.commit();
+                    }
+                }
+                invalidateOptionsMenu();
+                break;
         }
 
         return super.onOptionsItemSelected(item);

@@ -14,7 +14,7 @@ import automation.com.veracontroller.util.RestClient;
 
 public class SplashScreen extends Activity {
 
-    private static final int SPLASH_DELAY = 4000;
+    private static final int SPLASH_DELAY = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class SplashScreen extends Activity {
         SharedPreferences sharedPref = SplashScreen.this.getSharedPreferences("PREF", Context.MODE_PRIVATE);
         String localURL = sharedPref.getString("localUrl", null);
 
-        if (localURL == null || true) {
+        if (localURL == null) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -65,9 +65,8 @@ public class SplashScreen extends Activity {
                 RestClient.setRemoteURL(remoteUrl);
                 RestClient.updateCredentials(username, password, serialNumber);
                 RestClient.setLeverageRemote(leverageRemote);
-            } else {
-                RestClient.setLocalURL(localURL);
             }
+            RestClient.setLocalURL(localURL);
 
             new Handler().postDelayed(new Runnable() {
                 @Override

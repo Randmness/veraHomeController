@@ -36,7 +36,7 @@ public class AuthenticateUserTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... arg0) {
         try {
             RestClient.attemptAuthentication(username, password, serial);
-            updateConstants(username, password, serial);
+            updateConstants();
         } catch (Exception e) {
             Log.e("Error", e.getMessage());
             return false;
@@ -46,7 +46,7 @@ public class AuthenticateUserTask extends AsyncTask<Void, Void, Boolean> {
         return true;
     }
 
-    protected void updateConstants(String username, String password, String serial) {
+    protected void updateConstants() {
         SharedPreferences sharedPref = activity.getSharedPreferences("PREF", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("username", username);
@@ -54,7 +54,10 @@ public class AuthenticateUserTask extends AsyncTask<Void, Void, Boolean> {
         editor.putBoolean("leverageRemote", true);
         editor.commit();
 
+        RestClient.setRemoteURL(sharedPref.getString("remoteUrl",null));
+        Log.i("updateCredentials", username+" "+password);
         RestClient.updateCredentials(username, password, serial);
+        RestClient.setLeverageRemote(true);
     }
 
     @Override

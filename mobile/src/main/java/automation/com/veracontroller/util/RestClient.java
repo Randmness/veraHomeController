@@ -44,10 +44,12 @@ abstract public class RestClient {
         LEVERAGE_REMOTE = leverageRemote;
     }
 
+    public static boolean getLeverageRemote() { return LEVERAGE_REMOTE; }
+
     public static void updateCredentials(String userName, String pwd, String serial) {
-        CREDENTIAL_PATH.replace("[$USER_NAME]", userName);
-        CREDENTIAL_PATH.replace("[$PWD]", pwd);
-        CREDENTIAL_PATH.replace("[$SERIAL]", serial);
+        CREDENTIAL_PATH = CREDENTIAL_PATH.replace("[$USER_NAME]", userName);
+        CREDENTIAL_PATH = CREDENTIAL_PATH.replace("[$PWD]", pwd);
+        CREDENTIAL_PATH = CREDENTIAL_PATH.replace("[$SERIAL]", serial);
     }
 
     private static String urlPreference() {

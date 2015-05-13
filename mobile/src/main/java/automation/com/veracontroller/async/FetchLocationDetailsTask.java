@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import automation.com.veracontroller.DeviceActivity;
 import automation.com.veracontroller.LoginActivity;
+import automation.com.veracontroller.SplashScreen;
 import automation.com.veracontroller.util.RestClient;
 
 public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
@@ -94,7 +95,10 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
                 intent.putExtra(LoginActivity.SERIAL, serialNumber);
             }
             activity.startActivity(intent);
-            activity.finish();
+
+            if (activity instanceof SplashScreen) {
+                activity.finish();
+            }
         } else {
             Toast.makeText(activity, "Failed to retrieve details.", Toast.LENGTH_LONG).show();
         }

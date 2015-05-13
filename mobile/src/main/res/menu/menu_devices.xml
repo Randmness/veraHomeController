@@ -2,6 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="automation.com.veracontroller.DeviceActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+
+    <item android:id="@+id/updateLocationDetails" android:title="@string/updateLocationDetails"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/updateRemoteLogin" android:title="@string/updateLogin"
+        android:orderInCategory="150" app:showAsAction="never" />
+    <item android:id="@+id/enableRemote" android:title="@string/enableRemote"
+        android:orderInCategory="200" app:showAsAction="never" android:checkable="true" />
+    <item android:id="@+id/sendFeedback" android:title="@string/sendFeedback"
+        android:orderInCategory="300" app:showAsAction="never" />
 </menu>
