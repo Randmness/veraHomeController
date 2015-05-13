@@ -138,7 +138,7 @@ public class DeviceActivity extends FragmentActivity {
                 SharedPreferences sharedPref = getSharedPreferences("PREF", Context.MODE_PRIVATE);
                 if (item.isChecked()) {
                     SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putBoolean("leverageRemote", true);
+                    editor.putBoolean("leverageRemote", false);
                     editor.commit();
                     RestClient.setLeverageRemote(false);
                 } else {
