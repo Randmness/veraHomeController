@@ -7,13 +7,21 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +39,7 @@ abstract public class RestClient {
     private static Boolean LEVERAGE_REMOTE = false;
 
     private static String CREDENTIAL_PATH = "[$USER_NAME]/[$PWD]/[$SERIAL]/";
+    private static int CONNECTION_TIMEOUT = 10000;
 
     public static void setLocalURL(String localUrl) {
         LOCAL_URL = localUrl;
@@ -126,6 +135,8 @@ abstract public class RestClient {
 
     public static JSONObject executeCommand(String url, String query, Map<String, Object> params) throws JSONException {
         StringBuilder builder = new StringBuilder();
+        BufferedReader reader = null;
+        InputStream content = null;
         try {
             if (params != null) {
                 for (String key : params.keySet()) {
@@ -136,14 +147,17 @@ abstract public class RestClient {
 
             Log.i("Query: ", url + query);
 
-            HttpClient client = new DefaultHttpClient();
+            HttpParams httpParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams, CONNECTION_TIMEOUT);
+            HttpConnectionParams.setSoTimeout(httpParams, CONNECTION_TIMEOUT);
+
+            HttpClient client = new DefaultHttpClient(httpParams);
             HttpGet httpGet = new HttpGet(url + query);
             HttpResponse response = client.execute(httpGet);
 
             if (response.getStatusLine().getStatusCode() == 200) {
-                HttpEntity entity = response.getEntity();
-                InputStream content = entity.getContent();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+                content = response.getEntity().getContent();
+                reader = new BufferedReader(new InputStreamReader(content));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     builder.append(line);
@@ -153,10 +167,17 @@ abstract public class RestClient {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                content.close();
+            } catch (IOException e){}
+
+            try {
+                reader.close();
+            } catch (IOException e) {}
         }
 
         Log.i("Output: ", builder.toString());
         return new JSONObject(builder.toString());
     }
-
 }
