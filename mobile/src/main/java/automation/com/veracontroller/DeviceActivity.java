@@ -20,14 +20,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 import automation.com.veracontroller.async.FetchLocationDetailsTask;
 import automation.com.veracontroller.async.ToggleBinaryLightTask;
 import automation.com.veracontroller.fragments.BinaryLightFragment;
 import automation.com.veracontroller.fragments.SceneFragment;
 import automation.com.veracontroller.pojo.BinaryLight;
+import automation.com.veracontroller.pojo.Scene;
 import automation.com.veracontroller.util.RestClient;
 
 public class DeviceActivity extends FragmentActivity {
+    public static final String SCENE_LIST = "SCENE_LIST";
+    public static final String LIGHT_LIST = "LIGHT_LIST";
+
+    private List<BinaryLight> lights = new ArrayList<>();
+    private List<Scene> scenes = new ArrayList<>();
+
     public static PagerAdapter adapterViewPager;
 
     public void onFragmentInteraction(Uri uri) {
@@ -53,7 +64,10 @@ public class DeviceActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_devices);
 
-        adapterViewPager = new DevicePagerActivity(getSupportFragmentManager());
+        lights = getIntent().getParcelableArrayListExtra(LIGHT_LIST);
+        scenes = getIntent().getParcelableArrayListExtra(SCENE_LIST);
+
+        adapterViewPager = new DevicePagerActivity(getSupportFragmentManager(), (ArrayList) lights, (ArrayList) scenes);
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(adapterViewPager);
     }
@@ -185,9 +199,13 @@ public class DeviceActivity extends FragmentActivity {
 
     public static class DevicePagerActivity extends FragmentStatePagerAdapter {
         private static int NUM_ITEMS = 2;
+        private ArrayList<BinaryLight> lights = new ArrayList<>();
+        private ArrayList<Scene> scenes = new ArrayList<>();
 
-        public DevicePagerActivity(FragmentManager fragmentManager) {
+        public DevicePagerActivity(FragmentManager fragmentManager, ArrayList<BinaryLight>lights, ArrayList<Scene> scenes) {
             super(fragmentManager);
+            this.lights = lights;
+            this.scenes = scenes;
         }
 
         // Returns total number of pages
@@ -201,9 +219,9 @@ public class DeviceActivity extends FragmentActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new BinaryLightFragment();
+                    return BinaryLightFragment.newInstance(lights);
                 case 1:
-                    return new SceneFragment();
+                    return SceneFragment.newInstance(scenes);
                 default:
                     return null;
             }

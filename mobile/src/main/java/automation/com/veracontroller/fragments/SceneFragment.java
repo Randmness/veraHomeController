@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +27,24 @@ public class SceneFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private View view;
     private List<Scene> scenes = new ArrayList<>();
 
+    public static SceneFragment newInstance(ArrayList<Scene> startingScenes) {
+        SceneFragment myFragment = new SceneFragment();
+
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(SCENES, startingScenes);
+        myFragment.setArguments(args);
+
+        return myFragment;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         if (savedInstanceState != null) {
             scenes = savedInstanceState.getParcelableArrayList(SCENES);
+        } else {
+            scenes = getArguments().getParcelableArrayList(SCENES);
         }
 
         if (view == null) {
@@ -61,22 +74,6 @@ public class SceneFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 new ExecuteSceneTask(getActivity(), clickedScene).execute();
             }
         });
-
-        if (savedInstanceState == null) {
-            swipeLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    swipeLayout.setRefreshing(true);
-                }
-            });
-
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    new FetchScenesTask(getActivity(), adapter, swipeLayout).execute();
-                }
-            });
-        }
 
         return view;
     }

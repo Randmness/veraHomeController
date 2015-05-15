@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import automation.com.veracontroller.DeviceActivity;
+import automation.com.veracontroller.SplashScreen;
 import automation.com.veracontroller.util.RestClient;
 
 public class AuthenticateUserTask extends AsyncTask<Void, Void, Boolean> {
@@ -55,7 +56,7 @@ public class AuthenticateUserTask extends AsyncTask<Void, Void, Boolean> {
         editor.commit();
 
         RestClient.setRemoteURL(sharedPref.getString("remoteUrl",null));
-        Log.i("updateCredentials", username+" "+password);
+        Log.i("updateCredentials", username + " " + password);
         RestClient.updateCredentials(username, password, serial);
         RestClient.setLeverageRemote(true);
     }
@@ -63,8 +64,10 @@ public class AuthenticateUserTask extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean result) {
         if (result) {
-            Intent intent = new Intent(activity, DeviceActivity.class);
-            activity.startActivity(intent);
+            if (activity instanceof SplashScreen) {
+                Intent intent = new Intent(activity, DeviceActivity.class);
+                activity.startActivity(intent);
+            }
             activity.finish();
         } else {
             Toast.makeText(activity, "Failed to authenticate.", Toast.LENGTH_LONG).show();

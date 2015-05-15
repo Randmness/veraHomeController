@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 
+import automation.com.veracontroller.async.FetchConfigurationDetailsTask;
 import automation.com.veracontroller.async.FetchLocationDetailsTask;
 import automation.com.veracontroller.util.RestClient;
 
@@ -71,8 +72,7 @@ public class SplashScreen extends Activity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    SplashScreen.this.startActivity(new Intent(SplashScreen.this, DeviceActivity.class));
-                    SplashScreen.this.finish();
+                    new FetchConfigurationDetailsTask(SplashScreen.this).execute();
                 }
             }, SPLASH_DELAY);
         }
