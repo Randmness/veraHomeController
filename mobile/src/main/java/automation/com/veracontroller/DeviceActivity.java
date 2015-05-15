@@ -3,37 +3,32 @@ package automation.com.veracontroller;
 import android.app.AlertDialog;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
-import android.bluetooth.BluetoothClass;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ComponentInfo;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Switch;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+import automation.com.veracontroller.async.FetchConfigurationDetailsTask;
 import automation.com.veracontroller.async.FetchLocationDetailsTask;
 import automation.com.veracontroller.async.ToggleBinaryLightTask;
-import automation.com.veracontroller.fragments.BinaryLightFragment;
-import automation.com.veracontroller.fragments.SceneFragment;
+import automation.com.veracontroller.fragments.support.DevicePagerAdapter;
 import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
 import automation.com.veracontroller.service.PollingService;
@@ -42,15 +37,26 @@ import automation.com.veracontroller.util.RestClient;
 public class DeviceActivity extends FragmentActivity {
     public static final String SCENE_LIST = "SCENE_LIST";
     public static final String LIGHT_LIST = "LIGHT_LIST";
+    private static final int POLLING_INTERVAL = 5000;
+    public static final int MSG_SERVICE_OBJ = 2;
 
+    //startup constraints
     private List<BinaryLight> lights = new ArrayList<>();
     private List<Scene> scenes = new ArrayList<>();
 
-    public static PagerAdapter adapterViewPager;
-    private ComponentName componentName;
-    private JobScheduler jobScheduler;
+    private PollingService service;
 
-    private static final int POLLING_INTERVAL = 5000;
+    Handler mHandler = new Handler(/* default looper */) {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_SERVICE_OBJ:
+                    service = (PollingService) msg.obj;
+                    service.setActivity(DeviceActivity.this);
+                    DeviceActivity.this.scheduleJob();
+            }
+        }
+    };
 
     /**
      * Binary light click.
@@ -60,7 +66,6 @@ public class DeviceActivity extends FragmentActivity {
     public void onToggleClicked(View view) {
         Switch aSwitch = ((Switch) view);
         BinaryLight clickedLight = (BinaryLight) view.getTag(R.string.objectHolder);
-        Log.i("Light", clickedLight.getName());
         new ToggleBinaryLightTask(view.getContext(), clickedLight, aSwitch.isChecked()).execute();
     }
 
@@ -72,12 +77,14 @@ public class DeviceActivity extends FragmentActivity {
 
         lights = getIntent().getParcelableArrayListExtra(LIGHT_LIST);
         scenes = getIntent().getParcelableArrayListExtra(SCENE_LIST);
-
-        adapterViewPager = new DevicePagerActivity(getSupportFragmentManager(), (ArrayList) lights, (ArrayList) scenes);
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
-        viewPager.setAdapter(adapterViewPager);
-        componentName = new ComponentName(this, PollingService.class);
-        scheduleJob();
+        viewPager.setAdapter(new DevicePagerAdapter(getSupportFragmentManager(), (ArrayList) lights, (ArrayList) scenes));
+
+        if (true) {
+            Intent startServiceIntent = new Intent(this, PollingService.class);
+            startServiceIntent.putExtra("messenger", new Messenger(mHandler));
+            startService(startServiceIntent);
+        }
     }
 
 
@@ -90,8 +97,12 @@ public class DeviceActivity extends FragmentActivity {
 
     @Override
     protected void onDestroy() {
+        Log.i("onDestroy", "Destroying all jobs.");
+        JobScheduler tm =
+                (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        tm.cancelAll();
+
         super.onDestroy();
-        jobScheduler.cancelAll();
     }
 
     @Override
@@ -105,6 +116,10 @@ public class DeviceActivity extends FragmentActivity {
             menu.findItem(R.id.updateRemoteLogin).setVisible(false);
         }
         return true;
+    }
+
+    public void pollingUpdate(PollingService service) {
+        new FetchConfigurationDetailsTask(false, getSupportFragmentManager().getFragments(), service).execute();
     }
 
     @Override
@@ -212,58 +227,9 @@ public class DeviceActivity extends FragmentActivity {
     }
 
     public void scheduleJob() {
-        JobInfo.Builder builder = new JobInfo.Builder(1, componentName);
+        JobInfo.Builder builder = new JobInfo.Builder(1, new ComponentName(this, PollingService.class));
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
         builder.setPeriodic(POLLING_INTERVAL);
-        jobScheduler =
-                (JobScheduler) getApplication().getSystemService(Context.JOB_SCHEDULER_SERVICE);
-
-        jobScheduler.schedule(builder.build());
-    }
-
-    public static class DevicePagerActivity extends FragmentStatePagerAdapter {
-        private static int NUM_ITEMS = 2;
-        private ArrayList<BinaryLight> lights = new ArrayList<>();
-        private ArrayList<Scene> scenes = new ArrayList<>();
-
-        public DevicePagerActivity(FragmentManager fragmentManager, ArrayList<BinaryLight>lights, ArrayList<Scene> scenes) {
-            super(fragmentManager);
-            this.lights = lights;
-            this.scenes = scenes;
-        }
-
-        // Returns total number of pages
-        @Override
-        public int getCount() {
-            return NUM_ITEMS;
-        }
-
-        // Returns the fragment to display for that page
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return BinaryLightFragment.newInstance(lights);
-                case 1:
-                    return SceneFragment.newInstance(scenes);
-                default:
-                    return null;
-            }
-        }
-
-        // Returns the page title for the top indicator
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Switches";
-                case 1:
-                    return "Scenes";
-                default:
-                    return "Unknown";
-            }
-        }
-
-
+        service.scheduleJob(builder.build());
     }
 }

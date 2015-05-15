@@ -30,7 +30,7 @@ public class ExecuteSceneTask extends AsyncTask<Void, Void, Boolean> {
         try {
             RestClient.executeSceneCommand(scene.getSceneNum());
         } catch (Exception e) {
-            Log.e("Failure", "Failed to execute command.");
+            Log.e("Failure", "Failed to execute scene.");
             return false;
         }
         return true;
@@ -40,9 +40,9 @@ public class ExecuteSceneTask extends AsyncTask<Void, Void, Boolean> {
     protected void onPostExecute(Boolean result) {
 
         if (result) {
-            Toast.makeText(context, "Success", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Successfully executed scene.", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(context, "Failure", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Failed to execute scene.", Toast.LENGTH_LONG).show();
         }
         dialog.dismiss();
     }

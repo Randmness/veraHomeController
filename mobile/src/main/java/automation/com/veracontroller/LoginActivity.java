@@ -21,12 +21,14 @@ public class LoginActivity extends Activity {
 
     public static final String USER_EXTRA = "USER EXTRA";
     public static final String SERIAL = "SERIAL NUMBER";
+    public static final String INITIAL_LOGIN = "INITIAL LOGIN";
 
     private List<String> userList = new ArrayList<>();
 
     private Spinner userSpinner;
     private TextView password;
     private String serialNumber;
+    private boolean initialLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,7 @@ public class LoginActivity extends Activity {
 
         userList = getIntent().getStringArrayListExtra(USER_EXTRA);
         serialNumber = getIntent().getStringExtra(SERIAL);
+        initialLogin = getIntent().getBooleanExtra(INITIAL_LOGIN, false);
 
         userSpinner = (Spinner) findViewById(R.id.users);
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getBaseContext(),
@@ -52,7 +55,7 @@ public class LoginActivity extends Activity {
                     @Override
                     public void run() {
                         new AuthenticateUserTask(LoginActivity.this,
-                                userSpinner.getSelectedItem().toString(), password.getText().toString(), serialNumber).execute();
+                                userSpinner.getSelectedItem().toString(), password.getText().toString(), serialNumber, initialLogin).execute();
                     }
                 });
 

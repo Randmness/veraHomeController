@@ -72,7 +72,7 @@ public class SplashScreen extends Activity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    new FetchConfigurationDetailsTask(SplashScreen.this).execute();
+                    new FetchConfigurationDetailsTask(SplashScreen.this, true).execute();
                 }
             }, SPLASH_DELAY);
         }

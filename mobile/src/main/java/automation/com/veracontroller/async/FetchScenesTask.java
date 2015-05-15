@@ -37,7 +37,7 @@ public class FetchScenesTask extends AsyncTask<Void, Void, Boolean> {
             adapter.addAll(adapter.getScenes());
             adapter.notifyDataSetChanged();
         } else {
-            Toast.makeText(activity, "Failed to retrieve details.", Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, "Failed to retrieve scene information.", Toast.LENGTH_LONG).show();
         }
         swipe.setRefreshing(false);
     }

@@ -9,8 +9,14 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
+import java.util.List;
+
 import automation.com.veracontroller.DeviceActivity;
 import automation.com.veracontroller.SplashScreen;
+import automation.com.veracontroller.pojo.BinaryLight;
+import automation.com.veracontroller.pojo.Scene;
 import automation.com.veracontroller.util.RestClient;
 
 public class AuthenticateUserTask extends AsyncTask<Void, Void, Boolean> {
@@ -19,8 +25,11 @@ public class AuthenticateUserTask extends AsyncTask<Void, Void, Boolean> {
     private String username;
     private String password;
     private String serial;
+    private boolean initialLogin;
+    private List<BinaryLight> lights;
+    private List<Scene> scenes;
 
-    public AuthenticateUserTask(Activity activity, String username, String password, String serial) {
+    public AuthenticateUserTask(Activity activity, String username, String password, String serial, boolean initialLogin) {
         this.activity = activity;
         this.username = username;
         this.password = password;
@@ -64,11 +73,11 @@ public class AuthenticateUserTask extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean result) {
         if (result) {
-            if (activity instanceof SplashScreen) {
-                Intent intent = new Intent(activity, DeviceActivity.class);
-                activity.startActivity(intent);
+            if (initialLogin) {
+                new FetchConfigurationDetailsTask(activity, true).execute();
+            } else {
+                activity.finish();
             }
-            activity.finish();
         } else {
             Toast.makeText(activity, "Failed to authenticate.", Toast.LENGTH_LONG).show();
         }

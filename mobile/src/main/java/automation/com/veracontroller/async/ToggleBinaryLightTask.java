@@ -31,9 +31,6 @@ public class ToggleBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... arg0) {
         try {
             RestClient.executeSwitchCommand(futureState, light.getDeviceNum());
-
-            //TODO
-            //adapter.setLights(RestClient.fetchConfigurationDetails());
         } catch (Exception e) {
             Log.e("Failure", "Failed to execute command.");
             return false;
@@ -45,9 +42,9 @@ public class ToggleBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
     protected void onPostExecute(Boolean result) {
 
         if (result) {
-            Toast.makeText(context, "Success", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Successfully toggled light.", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(context, "Failure", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Failed to toggle light.", Toast.LENGTH_LONG).show();
         }
         dialog.dismiss();
     }

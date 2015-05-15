@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import automation.com.veracontroller.R;
 import automation.com.veracontroller.adapter.SceneListAdapter;
 import automation.com.veracontroller.async.ExecuteSceneTask;
 import automation.com.veracontroller.async.FetchScenesTask;
+import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
 
 public class SceneFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -92,5 +94,12 @@ public class SceneFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(SCENES, (ArrayList) adapter.getScenes());
+    }
+
+    public void pollingUpdate(List<Scene> pollScenes) {
+        adapter.setScenes(pollScenes);
+        adapter.clear();
+        adapter.addAll(adapter.getScenes());
+        adapter.notifyDataSetChanged();
     }
 }

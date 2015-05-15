@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,10 +45,8 @@ public class BinaryLightFragment extends Fragment implements SwipeRefreshLayout.
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            Log.i("SAVED", "");
             lights = savedInstanceState.getParcelableArrayList(BINARY_LIGHTS);
         } else {
-
             lights = getArguments().getParcelableArrayList(BINARY_LIGHTS);
         }
 
@@ -87,5 +86,12 @@ public class BinaryLightFragment extends Fragment implements SwipeRefreshLayout.
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(BINARY_LIGHTS, (ArrayList) adapter.getLights());
+    }
+
+    public void pollingUpdate(List<BinaryLight> pollLights) {
+        adapter.setList(pollLights);
+        adapter.clear();
+        adapter.addAll(adapter.getLights());
+        adapter.notifyDataSetChanged();
     }
 }

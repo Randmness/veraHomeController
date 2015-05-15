@@ -37,7 +37,7 @@ public class FetchBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
             adapter.addAll(adapter.getLights());
             adapter.notifyDataSetChanged();
         } else {
-            Toast.makeText(activity, "Failed to retrieve details.", Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, "Failed to retrieve light information.", Toast.LENGTH_LONG).show();
         }
         swipe.setRefreshing(false);
     }

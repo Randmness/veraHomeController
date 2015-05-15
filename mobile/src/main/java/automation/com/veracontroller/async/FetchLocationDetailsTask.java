@@ -88,16 +88,24 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
     protected void onPostExecute(Boolean result) {
 
         if (result) {
-            Intent intent = new Intent(activity, DeviceActivity.class);
-            if (initialEntry) {
-                intent = new Intent(activity, LoginActivity.class);
-                intent.putStringArrayListExtra(LoginActivity.USER_EXTRA, userList);
-                intent.putExtra(LoginActivity.SERIAL, serialNumber);
-            }
-            activity.startActivity(intent);
-
             if (activity instanceof SplashScreen) {
+                Intent intent = new Intent(activity, DeviceActivity.class);
+                if (initialEntry) {
+                    intent = new Intent(activity, LoginActivity.class);
+                    intent.putStringArrayListExtra(LoginActivity.USER_EXTRA, userList);
+                    intent.putExtra(LoginActivity.INITIAL_LOGIN, true);
+                    intent.putExtra(LoginActivity.SERIAL, serialNumber);
+                }
+                activity.startActivity(intent);
                 activity.finish();
+
+            } else if (activity instanceof DeviceActivity) {
+                if (initialEntry) {
+                    Intent intent = new Intent(activity, LoginActivity.class);
+                    intent.putStringArrayListExtra(LoginActivity.USER_EXTRA, userList);
+                    intent.putExtra(LoginActivity.SERIAL, serialNumber);
+                    activity.startActivity(intent);
+                }
             }
         } else {
             Toast.makeText(activity, "Failed to retrieve details.", Toast.LENGTH_LONG).show();
