@@ -1,13 +1,18 @@
 package automation.com.veracontroller;
 
 import android.app.AlertDialog;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.bluetooth.BluetoothClass;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ComponentInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Switch;
 
 import java.lang.reflect.Array;
@@ -30,6 +36,7 @@ import automation.com.veracontroller.fragments.BinaryLightFragment;
 import automation.com.veracontroller.fragments.SceneFragment;
 import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
+import automation.com.veracontroller.service.PollingService;
 import automation.com.veracontroller.util.RestClient;
 
 public class DeviceActivity extends FragmentActivity {
@@ -40,11 +47,10 @@ public class DeviceActivity extends FragmentActivity {
     private List<Scene> scenes = new ArrayList<>();
 
     public static PagerAdapter adapterViewPager;
+    private ComponentName componentName;
+    private JobScheduler jobScheduler;
 
-    public void onFragmentInteraction(Uri uri) {
-        //you can leave it empty
-
-    }
+    private static final int POLLING_INTERVAL = 5000;
 
     /**
      * Binary light click.
@@ -70,6 +76,8 @@ public class DeviceActivity extends FragmentActivity {
         adapterViewPager = new DevicePagerActivity(getSupportFragmentManager(), (ArrayList) lights, (ArrayList) scenes);
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(adapterViewPager);
+        componentName = new ComponentName(this, PollingService.class);
+        scheduleJob();
     }
 
 
@@ -78,6 +86,12 @@ public class DeviceActivity extends FragmentActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_devices, menu);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        jobScheduler.cancelAll();
     }
 
     @Override
@@ -195,6 +209,16 @@ public class DeviceActivity extends FragmentActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void scheduleJob() {
+        JobInfo.Builder builder = new JobInfo.Builder(1, componentName);
+        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+        builder.setPeriodic(POLLING_INTERVAL);
+        jobScheduler =
+                (JobScheduler) getApplication().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+
+        jobScheduler.schedule(builder.build());
     }
 
     public static class DevicePagerActivity extends FragmentStatePagerAdapter {

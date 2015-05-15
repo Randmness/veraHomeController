@@ -18,10 +18,6 @@ import automation.com.veracontroller.util.support.ServiceTypeEnum;
  */
 abstract public class RoomDataUtil {
 
-    //Scenes
-    private static List<Scene> scenes = new ArrayList<Scene>();
-    private static List<String> sceneNames = new ArrayList<String>();
-
     public static List<BinaryLight> getLights(JSONObject results) throws JSONException {
 
         HashMap<Integer, String> rooms = new HashMap<>();
