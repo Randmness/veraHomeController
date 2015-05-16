@@ -7,6 +7,9 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
+import automation.com.veracontroller.constants.DataMapConstants;
+import automation.com.veracontroller.constants.IntentConstants;
+import automation.com.veracontroller.enums.DataPathEnum;
 import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
 import com.google.android.gms.wearable.DataEvent;
@@ -22,29 +25,25 @@ import java.util.ArrayList;
 import automation.com.veracontroller.DeviceActivity;
 import automation.com.veracontroller.R;
 
-/**
- * Created by mrand on 5/15/15.
- */
 public class WearableListener extends WearableListenerService {
-
-    private static final String WEARABLE_DATA_PATH = "/wearable_data";
     private Gson gson = new Gson();
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
-
-        Log.i("onDataChanged", "data received");
+        Log.i("Wearable Listener", "Data received on wear listener.");
         DataMap dataMap;
         for (DataEvent event : dataEvents) {
-
-            // Check the data type
             if (event.getType() == DataEvent.TYPE_CHANGED) {
-                // Check the data path
                 String path = event.getDataItem().getUri().getPath();
-                if (path.equals(WEARABLE_DATA_PATH)) {}
-                dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
-                sendLocalNotification(dataMap);
-                Log.v("myTag", "DataMap received on watch: " + dataMap);
+                switch (DataPathEnum.fromPath(path)) {
+                    case WEARABLE_DEVICE_ACTIVITY_LAUNCH:
+                        dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
+                        sendLocalNotification(dataMap);
+                        break;
+                    default:
+                        Log.e("Incorrect Path", path + "not found.");
+                        break;
+                }
             }
         }
     }
@@ -52,10 +51,10 @@ public class WearableListener extends WearableListenerService {
     private void sendLocalNotification(DataMap dataMap) {
         int notificationId = 001;
 
-        ArrayList<BinaryLight> lightList = gson.fromJson(dataMap.getString("LIGHTS"),
+        ArrayList<BinaryLight> lightList = gson.fromJson(dataMap.getString(DataMapConstants.LIGHT_LIST),
                 new TypeToken<ArrayList<BinaryLight>>() {
                 }.getType());
-        ArrayList<Scene> sceneList = gson.fromJson(dataMap.getString("SCENE"),
+        ArrayList<Scene> sceneList = gson.fromJson(dataMap.getString(DataMapConstants.SCENE_LIST),
                 new TypeToken<ArrayList<BinaryLight>>() {
                 }.getType());
 
@@ -64,11 +63,10 @@ public class WearableListener extends WearableListenerService {
 
         // Create a pending intent that starts this wearable app
         Intent startIntent = new Intent(this, DeviceActivity.class).setAction(Intent.ACTION_MAIN);
-        // Add extra data for app startup or initialization, if available
-        startIntent.putParcelableArrayListExtra("LIGHTS", lightList);
-        startIntent.putParcelableArrayListExtra("SCENES", sceneList);
+        startIntent.putParcelableArrayListExtra(IntentConstants.LIGHT_LIST, lightList);
+        startIntent.putParcelableArrayListExtra(IntentConstants.SCENE_LIST, sceneList);
         PendingIntent startPendingIntent =
-                PendingIntent.getActivity(this, 0, startIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                PendingIntent.getActivity(this, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notify = new NotificationCompat.Builder(this)
                 .setContentTitle("Title")

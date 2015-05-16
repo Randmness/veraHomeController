@@ -8,11 +8,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.List;
-
 import automation.com.veracontroller.constants.PreferenceConstants;
-import automation.com.veracontroller.pojo.BinaryLight;
-import automation.com.veracontroller.pojo.Scene;
 import automation.com.veracontroller.util.RestClient;
 
 public class AuthenticateUserTask extends AsyncTask<Void, Void, Boolean> {

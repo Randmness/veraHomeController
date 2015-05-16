@@ -32,6 +32,7 @@ import java.util.UUID;
 import automation.com.veracontroller.async.FetchConfigurationDetailsTask;
 import automation.com.veracontroller.async.FetchLocationDetailsTask;
 import automation.com.veracontroller.async.ToggleBinaryLightTask;
+import automation.com.veracontroller.constants.DataMapConstants;
 import automation.com.veracontroller.constants.IntentConstants;
 import automation.com.veracontroller.constants.PreferenceConstants;
 import automation.com.veracontroller.fragments.support.DevicePagerAdapter;
@@ -288,7 +289,7 @@ public class DeviceActivity extends FragmentActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public void scheduleJob() {
+    private void scheduleJob() {
         JobInfo.Builder builder = new JobInfo.Builder(1, new ComponentName(this, PollingService.class));
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
         builder.setPeriodic(POLLING_INTERVAL);
@@ -310,8 +311,8 @@ public class DeviceActivity extends FragmentActivity implements
         DataMap dataMap = new DataMap();
         String lightList = gson.toJson(lights,  new TypeToken<ArrayList<BinaryLight>>(){}.getType());
         String sceneList = gson.toJson(scenes, new TypeToken<ArrayList<Scene>>(){}.getType());
-        dataMap.putString("LIGHTS", lightList);
-        dataMap.putString("SCENES", sceneList);
+        dataMap.putString(DataMapConstants.LIGHT_LIST, lightList);
+        dataMap.putString(DataMapConstants.SCENE_LIST, sceneList);
         dataMap.putString("UUID", UUID.randomUUID().toString());
 
         Log.i("Lights",lightList);
