@@ -9,6 +9,8 @@
         android:orderInCategory="150" app:showAsAction="never" />
     <item android:id="@+id/enableRemote" android:title="@string/enableRemote"
         android:orderInCategory="200" app:showAsAction="never" android:checkable="true" />
+    <item android:id="@+id/enablePolling" android:title="Enable Background Polling"
+        android:orderInCategory="250" app:showAsAction="never" android:checkable="true" />
     <item android:id="@+id/sendFeedback" android:title="@string/sendFeedback"
         android:orderInCategory="300" app:showAsAction="never" />
 </menu>

@@ -79,5 +79,4 @@ public class PollingService extends JobService {
             return true;
         }
     }
-
 }

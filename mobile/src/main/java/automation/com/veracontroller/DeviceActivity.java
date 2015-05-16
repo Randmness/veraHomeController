@@ -45,15 +45,19 @@ public class DeviceActivity extends FragmentActivity {
     private List<Scene> scenes = new ArrayList<>();
 
     private PollingService service;
+    private SharedPreferences sharedPref;
+    private boolean pollingEnabled;
 
     Handler mHandler = new Handler(/* default looper */) {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_SERVICE_OBJ:
-                    service = (PollingService) msg.obj;
-                    service.setActivity(DeviceActivity.this);
-                    DeviceActivity.this.scheduleJob();
+                    if (service == null) {
+                        service = (PollingService) msg.obj;
+                        service.setActivity(DeviceActivity.this);
+                        DeviceActivity.this.scheduleJob();
+                    }
             }
         }
     };
@@ -75,15 +79,16 @@ public class DeviceActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_devices);
 
+        sharedPref = DeviceActivity.this.getSharedPreferences("PREF", Context.MODE_PRIVATE);
+        pollingEnabled = sharedPref.getBoolean("POLLING", false);
+
         lights = getIntent().getParcelableArrayListExtra(LIGHT_LIST);
         scenes = getIntent().getParcelableArrayListExtra(SCENE_LIST);
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(new DevicePagerAdapter(getSupportFragmentManager(), (ArrayList) lights, (ArrayList) scenes));
 
-        if (true) {
-            Intent startServiceIntent = new Intent(this, PollingService.class);
-            startServiceIntent.putExtra("messenger", new Messenger(mHandler));
-            startService(startServiceIntent);
+        if (pollingEnabled) {
+            createPollingService();
         }
     }
 
@@ -96,12 +101,40 @@ public class DeviceActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        Log.i("onDestroy", "Destroying all jobs.");
+    protected void onPause() {
+        super.onPause();
+        destroyAllJobs();
+    }
+
+    private void createPollingService() {
+        if (service == null) {
+            Intent startServiceIntent = new Intent(this, PollingService.class);
+            startServiceIntent.putExtra("messenger", new Messenger(mHandler));
+            startService(startServiceIntent);
+        } else {
+            scheduleJob();
+        }
+    }
+
+    private void destroyAllJobs() {
+        Log.i("Jobs", "Destroying all jobs.");
         JobScheduler tm =
                 (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         tm.cancelAll();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (service != null && pollingEnabled) {
+            this.scheduleJob();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        destroyAllJobs();
         super.onDestroy();
     }
 
@@ -115,6 +148,7 @@ public class DeviceActivity extends FragmentActivity {
             menu.findItem(R.id.enableRemote).setChecked(false);
             menu.findItem(R.id.updateRemoteLogin).setVisible(false);
         }
+        menu.findItem(R.id.enablePolling).setChecked(pollingEnabled);
         return true;
     }
 
@@ -130,6 +164,18 @@ public class DeviceActivity extends FragmentActivity {
         int id = item.getItemId();
 
         switch(id) {
+            case R.id.enablePolling:
+                SharedPreferences.Editor editor = sharedPref.edit();
+                if (item.isChecked()) {
+                    destroyAllJobs();
+                    pollingEnabled = false;
+                } else {
+                    pollingEnabled = true;
+                    createPollingService();
+                }
+                editor.putBoolean("POLLING", pollingEnabled);
+                editor.commit();
+                break;
             case R.id.updateLocationDetails:
                 AlertDialog.Builder webDialog = new AlertDialog.Builder(DeviceActivity.this);
                 webDialog.setMessage("Must be connected to wifi.");
@@ -180,7 +226,7 @@ public class DeviceActivity extends FragmentActivity {
             case R.id.enableRemote:
                 SharedPreferences sharedPref = getSharedPreferences("PREF", Context.MODE_PRIVATE);
                 if (item.isChecked()) {
-                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor = sharedPref.edit();
                     editor.putBoolean("leverageRemote", false);
                     editor.commit();
                     RestClient.setLeverageRemote(false);
@@ -214,7 +260,7 @@ public class DeviceActivity extends FragmentActivity {
                         RestClient.setRemoteURL(remoteUrl);
                         RestClient.updateCredentials(username, password, serial);
 
-                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor = sharedPref.edit();
                         editor.putBoolean("leverageRemote", true);
                         editor.commit();
                     }
