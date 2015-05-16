@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,11 +51,12 @@ public class ViewPagerAdapter extends GridPagerAdapter {
     @Override
     protected Object instantiateItem(ViewGroup viewGroup, int row, int col) {
         View view;
+        WearableListView listView;
+
         if (col == 0){
             view = inflater.inflate(R.layout.view_binary_lights, null);
-            WearableListView listView = (WearableListView) view.findViewById(R.id.wearableLightList);
+            listView = (WearableListView) view.findViewById(R.id.wearableLightList);
             listView.setAdapter(new BinaryListAdapter(context, lights));
-            listView.setGreedyTouchMode(true);
             listView.setClickListener(new WearableListView.ClickListener() {
                 @Override
                 public void onClick(WearableListView.ViewHolder viewHolder) {
@@ -63,15 +65,12 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                 }
 
                 @Override
-                public void onTopEmptyRegionClick() {
-
-                }
+                public void onTopEmptyRegionClick() {}
             });
         } else {
             view = inflater.inflate(R.layout.view_scenes, null);
-            WearableListView listView = (WearableListView) view.findViewById(R.id.wearableSceneList);
+            listView = (WearableListView) view.findViewById(R.id.wearableSceneList);
             listView.setAdapter(new SceneListAdapter(context, scenes));
-            listView.setGreedyTouchMode(true);
             listView.setClickListener(new WearableListView.ClickListener() {
                 @Override
                 public void onClick(WearableListView.ViewHolder viewHolder) {
@@ -80,11 +79,29 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                 }
 
                 @Override
-                public void onTopEmptyRegionClick() {
-
-                }
+                public void onTopEmptyRegionClick() {}
             });
         }
+
+        final TextView header = (TextView) view.findViewById(R.id.header);
+        listView.addOnScrollListener(new WearableListView.OnScrollListener() {
+            @Override
+            public void onScroll(int i) {}
+
+            @Override
+            public void onAbsoluteScrollChange(int i) {
+                if (i > 0)
+                    header.setY(-i);
+            }
+
+            @Override
+            public void onScrollStateChanged(int i) {}
+
+            @Override
+            public void onCentralPositionChanged(int i) {}
+        });
+
+        listView.setGreedyTouchMode(true);
         viewGroup.addView(view);
         return view;
     }
