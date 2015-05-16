@@ -7,6 +7,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import automation.com.veracontroller.pojo.BinaryLight;
+
 
 public class SplashActivity extends Activity {
 

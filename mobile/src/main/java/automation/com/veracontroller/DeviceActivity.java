@@ -35,6 +35,7 @@ import automation.com.veracontroller.async.ToggleBinaryLightTask;
 import automation.com.veracontroller.constants.DataMapConstants;
 import automation.com.veracontroller.constants.IntentConstants;
 import automation.com.veracontroller.constants.PreferenceConstants;
+import automation.com.veracontroller.enums.DataPathEnum;
 import automation.com.veracontroller.fragments.support.DevicePagerAdapter;
 import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
@@ -305,7 +306,6 @@ public class DeviceActivity extends FragmentActivity implements
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.i("Connected", "Connected to wearable device.");
-        String WEARABLE_DATA_PATH = "/wearable_data";
 
         // Create a DataMap object and send it to the data layer
         DataMap dataMap = new DataMap();
@@ -314,11 +314,7 @@ public class DeviceActivity extends FragmentActivity implements
         dataMap.putString(DataMapConstants.LIGHT_LIST, lightList);
         dataMap.putString(DataMapConstants.SCENE_LIST, sceneList);
         dataMap.putString("UUID", UUID.randomUUID().toString());
-
-        Log.i("Lights",lightList);
-        Log.i("Scene", sceneList);
-        //Requires a new thread to avoid blocking the UI
-        new DataLayerThread(WEARABLE_DATA_PATH, dataMap, googleClient).start();
+        new DataLayerThread(DataPathEnum.WEARABLE_DEVICE_ACTIVITY_LAUNCH.toString(), dataMap, googleClient).start();
     }
 
     // Disconnect from the data layer when the Activity stops

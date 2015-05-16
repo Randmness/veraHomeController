@@ -55,7 +55,7 @@ public class WearableListener extends WearableListenerService {
                 new TypeToken<ArrayList<BinaryLight>>() {
                 }.getType());
         ArrayList<Scene> sceneList = gson.fromJson(dataMap.getString(DataMapConstants.SCENE_LIST),
-                new TypeToken<ArrayList<BinaryLight>>() {
+                new TypeToken<ArrayList<Scene>>() {
                 }.getType());
 
         Log.i("TRANSFORMATION WORKED", lightList.size()+"");

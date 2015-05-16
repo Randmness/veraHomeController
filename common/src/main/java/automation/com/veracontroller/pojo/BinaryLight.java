@@ -52,6 +52,10 @@ public class BinaryLight implements Parcelable, Comparable<BinaryLight> {
         return this.name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public boolean isEnabled() {
         return this.state;
     }
