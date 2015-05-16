@@ -11,6 +11,7 @@ import android.os.Handler;
 
 import automation.com.veracontroller.async.FetchConfigurationDetailsTask;
 import automation.com.veracontroller.async.FetchLocationDetailsTask;
+import automation.com.veracontroller.constants.PreferenceConstants;
 import automation.com.veracontroller.util.RestClient;
 
 public class SplashScreen extends Activity {
@@ -26,11 +27,10 @@ public class SplashScreen extends Activity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
         setContentView(R.layout.activity_splash_screen);
 
-        SharedPreferences sharedPref = SplashScreen.this.getSharedPreferences("PREF", Context.MODE_PRIVATE);
-        String localURL = sharedPref.getString("localUrl", null);
+        SharedPreferences sharedPref = SplashScreen.this.getSharedPreferences(PreferenceConstants.PREF_KEY, Context.MODE_PRIVATE);
+        String localURL = sharedPref.getString(PreferenceConstants.LOCAL_URL, null);
 
         if (localURL == null) {
             new Handler().postDelayed(new Runnable() {
@@ -57,12 +57,12 @@ public class SplashScreen extends Activity {
                 }
             }, SPLASH_DELAY);
         } else {
-            boolean leverageRemote = sharedPref.getBoolean("leverageRemote", false);
+            boolean leverageRemote = sharedPref.getBoolean(PreferenceConstants.LEVERAGE_REMOTE, false);
             if (leverageRemote) {
-                String remoteUrl = sharedPref.getString("remoteUrl", null);
-                String serialNumber = sharedPref.getString("serialNumber", null);
-                String username = sharedPref.getString("username", null);
-                String password = sharedPref.getString("password", null);
+                String remoteUrl = sharedPref.getString(PreferenceConstants.REMOTE_URL, null);
+                String serialNumber = sharedPref.getString(PreferenceConstants.SERIAL_NUMBER, null);
+                String username = sharedPref.getString(PreferenceConstants.USER_NAME, null);
+                String password = sharedPref.getString(PreferenceConstants.PASSWORD, null);
                 RestClient.setRemoteURL(remoteUrl);
                 RestClient.updateCredentials(username, password, serialNumber);
                 RestClient.setLeverageRemote(leverageRemote);

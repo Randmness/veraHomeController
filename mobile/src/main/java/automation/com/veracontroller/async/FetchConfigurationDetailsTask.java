@@ -8,17 +8,17 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.mrand.common.pojo.BinaryLight;
-import com.example.mrand.common.pojo.Scene;
-
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import automation.com.veracontroller.DeviceActivity;
+import automation.com.veracontroller.constants.IntentConstants;
 import automation.com.veracontroller.fragments.BinaryLightFragment;
 import automation.com.veracontroller.fragments.SceneFragment;
+import automation.com.veracontroller.pojo.BinaryLight;
+import automation.com.veracontroller.pojo.Scene;
 import automation.com.veracontroller.service.PollingService;
 import automation.com.veracontroller.util.RestClient;
 import automation.com.veracontroller.util.RoomDataUtil;
@@ -73,12 +73,11 @@ public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean
         if (result) {
             if (initialPull) {
                 Intent intent = new Intent(activity, DeviceActivity.class);
-                intent.putParcelableArrayListExtra(DeviceActivity.LIGHT_LIST, lightList);
-                intent.putParcelableArrayListExtra(DeviceActivity.SCENE_LIST, sceneList);
+                intent.putParcelableArrayListExtra(IntentConstants.LIGHT_LIST, lightList);
+                intent.putParcelableArrayListExtra(IntentConstants.SCENE_LIST, sceneList);
                 activity.startActivity(intent);
                 activity.finish();
             } else {
-                //iterate through fragments
                 for (Fragment fragment : fragments) {
                     if (fragment instanceof BinaryLightFragment) {
                         ((BinaryLightFragment) fragment).pollingUpdate(lightList);

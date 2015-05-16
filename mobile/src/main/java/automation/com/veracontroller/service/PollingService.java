@@ -14,6 +14,7 @@ import android.util.Log;
 import java.util.LinkedList;
 
 import automation.com.veracontroller.DeviceActivity;
+import automation.com.veracontroller.constants.IntentConstants;
 
 public class PollingService extends JobService {
     private static final String TAG = "PollingService";
@@ -27,7 +28,7 @@ public class PollingService extends JobService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Messenger callback = intent.getParcelableExtra("messenger");
+        Messenger callback = intent.getParcelableExtra(IntentConstants.MESSENGER);
         Message m = Message.obtain();
         m.what = DeviceActivity.MSG_SERVICE_OBJ;
         m.obj = this;

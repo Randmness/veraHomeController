@@ -1,4 +1,4 @@
-package com.example.mrand.common.pojo;
+package automation.com.veracontroller.pojo;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -6,8 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.mrand.common.pojo.BinaryLight;
-
+import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.util.RestClient;
 
 public class ToggleBinaryLightTask extends AsyncTask<Void, Void, Boolean> {

@@ -6,8 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.mrand.common.pojo.Scene;
-
+import automation.com.veracontroller.pojo.Scene;
 import automation.com.veracontroller.util.RestClient;
 
 public class ExecuteSceneTask extends AsyncTask<Void, Void, Boolean> {

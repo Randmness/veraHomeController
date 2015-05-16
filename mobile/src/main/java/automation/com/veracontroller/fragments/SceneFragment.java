@@ -9,7 +9,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.mrand.common.pojo.Scene;
+import automation.com.veracontroller.constants.IntentConstants;
+import automation.com.veracontroller.pojo.Scene;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,6 @@ import automation.com.veracontroller.async.ExecuteSceneTask;
 import automation.com.veracontroller.async.FetchScenesTask;
 
 public class SceneFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-    private static final String SCENES = "SCENE_DATA";
     private SwipeRefreshLayout swipeLayout;
     private SceneListAdapter adapter;
     private View view;
@@ -30,7 +30,7 @@ public class SceneFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         SceneFragment myFragment = new SceneFragment();
 
         Bundle args = new Bundle();
-        args.putParcelableArrayList(SCENES, startingScenes);
+        args.putParcelableArrayList(IntentConstants.SCENE_LIST, startingScenes);
         myFragment.setArguments(args);
 
         return myFragment;
@@ -41,9 +41,9 @@ public class SceneFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                              Bundle savedInstanceState) {
 
         if (savedInstanceState != null) {
-            scenes = savedInstanceState.getParcelableArrayList(SCENES);
+            scenes = savedInstanceState.getParcelableArrayList(IntentConstants.SCENE_LIST);
         } else {
-            scenes = getArguments().getParcelableArrayList(SCENES);
+            scenes = getArguments().getParcelableArrayList(IntentConstants.SCENE_LIST);
         }
 
         if (view == null) {
@@ -90,7 +90,7 @@ public class SceneFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(SCENES, (ArrayList) adapter.getScenes());
+        outState.putParcelableArrayList(IntentConstants.SCENE_LIST, (ArrayList) adapter.getScenes());
     }
 
     public void pollingUpdate(List<Scene> pollScenes) {

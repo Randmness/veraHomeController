@@ -12,9 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
@@ -28,23 +26,26 @@ import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import automation.com.veracontroller.async.FetchConfigurationDetailsTask;
 import automation.com.veracontroller.async.FetchLocationDetailsTask;
 import automation.com.veracontroller.async.ToggleBinaryLightTask;
+import automation.com.veracontroller.constants.IntentConstants;
+import automation.com.veracontroller.constants.PreferenceConstants;
 import automation.com.veracontroller.fragments.support.DevicePagerAdapter;
-import com.example.mrand.common.pojo.BinaryLight;
-import com.example.mrand.common.pojo.Scene;
+import automation.com.veracontroller.pojo.BinaryLight;
+import automation.com.veracontroller.pojo.Scene;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import automation.com.veracontroller.service.DataLayerThread;
 import automation.com.veracontroller.service.PollingService;
 import automation.com.veracontroller.util.RestClient;
 
 public class DeviceActivity extends FragmentActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    public static final String SCENE_LIST = "SCENE_LIST";
-    public static final String LIGHT_LIST = "LIGHT_LIST";
     private static final int POLLING_INTERVAL = 5000;
     public static final int MSG_SERVICE_OBJ = 2;
 
@@ -56,6 +57,7 @@ public class DeviceActivity extends FragmentActivity implements
     private SharedPreferences sharedPref;
     private boolean pollingEnabled;
     private GoogleApiClient googleClient;
+    private Gson gson = new Gson();
 
     Handler mHandler = new Handler(/* default looper */) {
         @Override
@@ -88,11 +90,11 @@ public class DeviceActivity extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_devices);
 
-        sharedPref = DeviceActivity.this.getSharedPreferences("PREF", Context.MODE_PRIVATE);
-        pollingEnabled = sharedPref.getBoolean("POLLING", false);
+        sharedPref = DeviceActivity.this.getSharedPreferences(PreferenceConstants.PREF_KEY, Context.MODE_PRIVATE);
+        pollingEnabled = sharedPref.getBoolean(PreferenceConstants.POLLING_ENABLED, false);
 
-        lights = getIntent().getParcelableArrayListExtra(LIGHT_LIST);
-        scenes = getIntent().getParcelableArrayListExtra(SCENE_LIST);
+        lights = getIntent().getParcelableArrayListExtra(IntentConstants.LIGHT_LIST);
+        scenes = getIntent().getParcelableArrayListExtra(IntentConstants.SCENE_LIST);
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(new DevicePagerAdapter(getSupportFragmentManager(), (ArrayList) lights, (ArrayList) scenes));
         googleClient = new GoogleApiClient.Builder(this)
@@ -123,7 +125,7 @@ public class DeviceActivity extends FragmentActivity implements
     private void createPollingService() {
         if (service == null) {
             Intent startServiceIntent = new Intent(this, PollingService.class);
-            startServiceIntent.putExtra("messenger", new Messenger(mHandler));
+            startServiceIntent.putExtra(IntentConstants.MESSENGER, new Messenger(mHandler));
             startService(startServiceIntent);
         } else {
             scheduleJob();
@@ -187,7 +189,7 @@ public class DeviceActivity extends FragmentActivity implements
                     pollingEnabled = true;
                     createPollingService();
                 }
-                editor.putBoolean("POLLING", pollingEnabled);
+                editor.putBoolean(PreferenceConstants.POLLING_ENABLED, pollingEnabled);
                 editor.commit();
                 break;
             case R.id.updateLocationDetails:
@@ -238,14 +240,14 @@ public class DeviceActivity extends FragmentActivity implements
                 loginWeb.show();
                 break;
             case R.id.enableRemote:
-                SharedPreferences sharedPref = getSharedPreferences("PREF", Context.MODE_PRIVATE);
+                SharedPreferences sharedPref = getSharedPreferences(PreferenceConstants.PREF_KEY, Context.MODE_PRIVATE);
                 if (item.isChecked()) {
                     editor = sharedPref.edit();
-                    editor.putBoolean("leverageRemote", false);
+                    editor.putBoolean(PreferenceConstants.LEVERAGE_REMOTE, false);
                     editor.commit();
                     RestClient.setLeverageRemote(false);
                 } else {
-                    String password = sharedPref.getString("password", null);
+                    String password = sharedPref.getString(PreferenceConstants.PASSWORD, null);
 
                     if (password == null) {
                         AlertDialog.Builder remoteDialog = new AlertDialog.Builder(DeviceActivity.this);
@@ -267,15 +269,15 @@ public class DeviceActivity extends FragmentActivity implements
                         AlertDialog remoteWeb = remoteDialog.create();
                         remoteWeb.show();
                     } else {
-                        String username = sharedPref.getString("username", null);
-                        String serial = sharedPref.getString("serialNumber", null);
-                        String remoteUrl = sharedPref.getString("remoteUrl", null);
+                        String username = sharedPref.getString(PreferenceConstants.USER_NAME, null);
+                        String serial = sharedPref.getString(PreferenceConstants.SERIAL_NUMBER, null);
+                        String remoteUrl = sharedPref.getString(PreferenceConstants.REMOTE_URL, null);
                         RestClient.setLeverageRemote(true);
                         RestClient.setRemoteURL(remoteUrl);
                         RestClient.updateCredentials(username, password, serial);
 
                         editor = sharedPref.edit();
-                        editor.putBoolean("leverageRemote", true);
+                        editor.putBoolean(PreferenceConstants.LEVERAGE_REMOTE, true);
                         editor.commit();
                     }
                 }
@@ -306,8 +308,14 @@ public class DeviceActivity extends FragmentActivity implements
 
         // Create a DataMap object and send it to the data layer
         DataMap dataMap = new DataMap();
+        String lightList = gson.toJson(lights,  new TypeToken<ArrayList<BinaryLight>>(){}.getType());
+        String sceneList = gson.toJson(scenes, new TypeToken<ArrayList<Scene>>(){}.getType());
+        dataMap.putString("LIGHTS", lightList);
+        dataMap.putString("SCENES", sceneList);
+        dataMap.putString("UUID", UUID.randomUUID().toString());
 
-
+        Log.i("Lights",lightList);
+        Log.i("Scene", sceneList);
         //Requires a new thread to avoid blocking the UI
         new DataLayerThread(WEARABLE_DATA_PATH, dataMap, googleClient).start();
     }

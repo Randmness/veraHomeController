@@ -8,7 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.example.mrand.common.pojo.BinaryLight;
+import automation.com.veracontroller.constants.IntentConstants;
+import automation.com.veracontroller.pojo.BinaryLight;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,6 @@ import automation.com.veracontroller.adapter.BinaryLightListAdapter;
 import automation.com.veracontroller.async.FetchBinaryLightTask;
 
 public class BinaryLightFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-    private static final String BINARY_LIGHTS = "BINARY_LIGHTS";
     private SwipeRefreshLayout swipeLayout;
     private BinaryLightListAdapter adapter;
     private View view;
@@ -28,7 +28,7 @@ public class BinaryLightFragment extends Fragment implements SwipeRefreshLayout.
         BinaryLightFragment myFragment = new BinaryLightFragment();
 
         Bundle args = new Bundle();
-        args.putParcelableArrayList(BINARY_LIGHTS, startingScenes);
+        args.putParcelableArrayList(IntentConstants.LIGHT_LIST, startingScenes);
         myFragment.setArguments(args);
 
         return myFragment;
@@ -38,9 +38,9 @@ public class BinaryLightFragment extends Fragment implements SwipeRefreshLayout.
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            lights = savedInstanceState.getParcelableArrayList(BINARY_LIGHTS);
+            lights = savedInstanceState.getParcelableArrayList(IntentConstants.LIGHT_LIST);
         } else {
-            lights = getArguments().getParcelableArrayList(BINARY_LIGHTS);
+            lights = getArguments().getParcelableArrayList(IntentConstants.LIGHT_LIST);
         }
 
         view = inflater.inflate(R.layout.fragment_binary_light, container, false);
@@ -78,7 +78,7 @@ public class BinaryLightFragment extends Fragment implements SwipeRefreshLayout.
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(BINARY_LIGHTS, (ArrayList) adapter.getLights());
+        outState.putParcelableArrayList(IntentConstants.LIGHT_LIST, (ArrayList) adapter.getLights());
     }
 
     public void pollingUpdate(List<BinaryLight> pollLights) {

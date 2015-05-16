@@ -9,8 +9,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import com.example.mrand.common.pojo.BinaryLight;
-import com.example.mrand.common.pojo.Scene;
+import automation.com.veracontroller.pojo.BinaryLight;
+import automation.com.veracontroller.pojo.Scene;
 import automation.com.veracontroller.util.support.DeviceTypeEnum;
 import automation.com.veracontroller.util.support.ServiceTypeEnum;
 

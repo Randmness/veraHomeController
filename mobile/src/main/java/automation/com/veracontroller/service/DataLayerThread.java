@@ -1,5 +1,7 @@
 package automation.com.veracontroller.service;
 
+import android.util.Log;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataMap;
@@ -30,7 +32,7 @@ public class DataLayerThread extends Thread {
             DataApi.DataItemResult result = Wearable.DataApi.putDataItem(googleClient,request).await();
             if (result.getStatus().isSuccess()) {
                 //Log.v("myTag", "DataMap: " + dataMap + " sent to: " + node.getDisplayName());
-                System.out.print("Success");
+
             } else {
                 //Log.v("myTag", "ERROR: failed to send DataMap");
             }

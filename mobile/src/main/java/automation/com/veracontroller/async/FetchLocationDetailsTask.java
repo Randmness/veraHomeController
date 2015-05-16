@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import automation.com.veracontroller.DeviceActivity;
 import automation.com.veracontroller.LoginActivity;
 import automation.com.veracontroller.SplashScreen;
+import automation.com.veracontroller.constants.IntentConstants;
+import automation.com.veracontroller.constants.PreferenceConstants;
 import automation.com.veracontroller.util.RestClient;
 
 public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
@@ -76,11 +78,11 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
         RestClient.setRemoteURL(savedRemoteUrl);
 
 
-        SharedPreferences sharedPref = activity.getSharedPreferences("PREF", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = activity.getSharedPreferences(PreferenceConstants.PREF_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("serialNumber", serialNumber);
-        editor.putString("localUrl", savedLocalUrl);
-        editor.putString("remoteUrl", savedRemoteUrl);
+        editor.putString(PreferenceConstants.SERIAL_NUMBER, serialNumber);
+        editor.putString(PreferenceConstants.LOCAL_URL, savedLocalUrl);
+        editor.putString(PreferenceConstants.REMOTE_URL, savedRemoteUrl);
         editor.commit();
     }
 
@@ -92,9 +94,9 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
                 Intent intent = new Intent(activity, DeviceActivity.class);
                 if (initialEntry) {
                     intent = new Intent(activity, LoginActivity.class);
-                    intent.putStringArrayListExtra(LoginActivity.USER_EXTRA, userList);
-                    intent.putExtra(LoginActivity.INITIAL_LOGIN, true);
-                    intent.putExtra(LoginActivity.SERIAL, serialNumber);
+                    intent.putStringArrayListExtra(IntentConstants.USER_LIST, userList);
+                    intent.putExtra(IntentConstants.INITIAL_LOGIN, true);
+                    intent.putExtra(IntentConstants.SERIAL_NUMBER, serialNumber);
                 }
                 activity.startActivity(intent);
                 activity.finish();
@@ -102,8 +104,8 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
             } else if (activity instanceof DeviceActivity) {
                 if (initialEntry) {
                     Intent intent = new Intent(activity, LoginActivity.class);
-                    intent.putStringArrayListExtra(LoginActivity.USER_EXTRA, userList);
-                    intent.putExtra(LoginActivity.SERIAL, serialNumber);
+                    intent.putStringArrayListExtra(IntentConstants.USER_LIST, userList);
+                    intent.putExtra(IntentConstants.SERIAL_NUMBER, serialNumber);
                     activity.startActivity(intent);
                 }
             }

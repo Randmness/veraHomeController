@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import automation.com.veracontroller.R;
-import com.example.mrand.common.pojo.Scene;
+import automation.com.veracontroller.pojo.Scene;
 
 public class SceneListAdapter extends ArrayAdapter<Scene> {
     private final Context context;

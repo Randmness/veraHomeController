@@ -1,6 +1,7 @@
 package automation.com.veracontroller;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -15,14 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import automation.com.veracontroller.async.AuthenticateUserTask;
+import automation.com.veracontroller.constants.IntentConstants;
 
 
 public class LoginActivity extends Activity {
-
-    public static final String USER_EXTRA = "USER EXTRA";
-    public static final String SERIAL = "SERIAL NUMBER";
-    public static final String INITIAL_LOGIN = "INITIAL LOGIN";
-
     private List<String> userList = new ArrayList<>();
 
     private Spinner userSpinner;
@@ -35,9 +32,9 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        userList = getIntent().getStringArrayListExtra(USER_EXTRA);
-        serialNumber = getIntent().getStringExtra(SERIAL);
-        initialLogin = getIntent().getBooleanExtra(INITIAL_LOGIN, false);
+        userList = getIntent().getStringArrayListExtra(IntentConstants.USER_LIST);
+        serialNumber = getIntent().getStringExtra(IntentConstants.SERIAL_NUMBER);
+        initialLogin = getIntent().getBooleanExtra(IntentConstants.INITIAL_LOGIN, false);
 
         userSpinner = (Spinner) findViewById(R.id.users);
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getBaseContext(),
