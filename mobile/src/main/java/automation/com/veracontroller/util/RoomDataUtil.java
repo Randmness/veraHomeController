@@ -5,11 +5,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import automation.com.veracontroller.pojo.BinaryLight;
-import automation.com.veracontroller.pojo.Scene;
+import com.example.mrand.common.pojo.BinaryLight;
+import com.example.mrand.common.pojo.Scene;
 import automation.com.veracontroller.util.support.DeviceTypeEnum;
 import automation.com.veracontroller.util.support.ServiceTypeEnum;
 
@@ -56,6 +57,7 @@ abstract public class RoomDataUtil {
             }
         }
 
+        Collections.sort(lights, BinaryLight.Comparators.NAME);
         return lights;
     }
 

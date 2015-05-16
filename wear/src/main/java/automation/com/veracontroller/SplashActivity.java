@@ -1,6 +1,7 @@
 package automation.com.veracontroller;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,7 +10,7 @@ import android.view.Menu;
 
 public class SplashActivity extends Activity {
 
-    private static final int SPLASH_DELAY = 2000;
+    private static final int SPLASH_DELAY = 20000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +20,9 @@ public class SplashActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                ProgressDialog dialog = ProgressDialog.show(SplashActivity.this,
+                        "Fetching configuration", "Fetching configuration data");
+                dialog.dismiss();
                 Intent intent = new Intent(SplashActivity.this, DeviceActivity.class);
                 startActivity(intent);
                 finish();

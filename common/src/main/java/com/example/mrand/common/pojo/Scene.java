@@ -1,13 +1,10 @@
-package automation.com.veracontroller.pojo;
+package com.example.mrand.common.pojo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by root on 2/22/15.
- */
 public class Scene implements Parcelable {
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+    public static final Creator CREATOR = new Creator() {
         public Scene createFromParcel(Parcel in) {
             return new Scene(in);
         }

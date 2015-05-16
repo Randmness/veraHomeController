@@ -2,16 +2,14 @@ package automation.com.veracontroller.async;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.games.multiplayer.realtime.Room;
-import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
+import com.example.mrand.common.pojo.BinaryLight;
+import com.example.mrand.common.pojo.Scene;
 
 import org.json.JSONObject;
 
@@ -19,11 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import automation.com.veracontroller.DeviceActivity;
-import automation.com.veracontroller.SplashScreen;
 import automation.com.veracontroller.fragments.BinaryLightFragment;
 import automation.com.veracontroller.fragments.SceneFragment;
-import automation.com.veracontroller.pojo.BinaryLight;
-import automation.com.veracontroller.pojo.Scene;
 import automation.com.veracontroller.service.PollingService;
 import automation.com.veracontroller.util.RestClient;
 import automation.com.veracontroller.util.RoomDataUtil;
@@ -51,8 +46,8 @@ public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean
     @Override
     protected void onPreExecute() {
         if (service == null) {
-        dialog = ProgressDialog.show(activity, "Fetch Configuration Details",
-                "Attempting to fetch configuration...");
+            dialog = ProgressDialog.show(activity, "Fetch Configuration Details",
+                    "Attempting to fetch configuration...");
         }
     }
 

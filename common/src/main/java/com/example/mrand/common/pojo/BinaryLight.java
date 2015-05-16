@@ -1,10 +1,12 @@
-package automation.com.veracontroller.pojo;
+package com.example.mrand.common.pojo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class BinaryLight implements Parcelable {
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+import java.util.Comparator;
+
+public class BinaryLight implements Parcelable, Comparable<BinaryLight> {
+    public static final Creator CREATOR = new Creator() {
         public BinaryLight createFromParcel(Parcel in) {
             return new BinaryLight(in);
         }
@@ -79,5 +81,25 @@ public class BinaryLight implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeStringArray(new String[]{String.valueOf(this.deviceNum), this.name, this.roomName,
                 String.valueOf(this.state)});
+    }
+
+    @Override
+    public String toString() {
+        return this.roomName+":"+this.getName();
+    }
+
+    @Override
+    public int compareTo(BinaryLight o) {
+        return Comparators.NAME.compare(this, o);
+    }
+
+    public static class Comparators {
+
+        public static Comparator<BinaryLight> NAME = new Comparator<BinaryLight>() {
+            @Override
+            public int compare(BinaryLight o1, BinaryLight o2) {
+                return o1.toString().compareTo(o2.toString());
+            }
+        };
     }
 }

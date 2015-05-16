@@ -1,16 +1,15 @@
 package automation.com.veracontroller.fragments;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import com.example.mrand.common.pojo.Scene;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +18,6 @@ import automation.com.veracontroller.R;
 import automation.com.veracontroller.adapter.SceneListAdapter;
 import automation.com.veracontroller.async.ExecuteSceneTask;
 import automation.com.veracontroller.async.FetchScenesTask;
-import automation.com.veracontroller.pojo.BinaryLight;
-import automation.com.veracontroller.pojo.Scene;
 
 public class SceneFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private static final String SCENES = "SCENE_DATA";

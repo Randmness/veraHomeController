@@ -22,19 +22,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.Wearable;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import automation.com.veracontroller.async.FetchConfigurationDetailsTask;
 import automation.com.veracontroller.async.FetchLocationDetailsTask;
 import automation.com.veracontroller.async.ToggleBinaryLightTask;
 import automation.com.veracontroller.fragments.support.DevicePagerAdapter;
-import automation.com.veracontroller.pojo.BinaryLight;
-import automation.com.veracontroller.pojo.Scene;
+import com.example.mrand.common.pojo.BinaryLight;
+import com.example.mrand.common.pojo.Scene;
+import automation.com.veracontroller.service.DataLayerThread;
 import automation.com.veracontroller.service.PollingService;
 import automation.com.veracontroller.util.RestClient;
 
-public class DeviceActivity extends FragmentActivity {
+public class DeviceActivity extends FragmentActivity implements
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static final String SCENE_LIST = "SCENE_LIST";
     public static final String LIGHT_LIST = "LIGHT_LIST";
     private static final int POLLING_INTERVAL = 5000;
@@ -47,6 +55,7 @@ public class DeviceActivity extends FragmentActivity {
     private PollingService service;
     private SharedPreferences sharedPref;
     private boolean pollingEnabled;
+    private GoogleApiClient googleClient;
 
     Handler mHandler = new Handler(/* default looper */) {
         @Override
@@ -86,6 +95,11 @@ public class DeviceActivity extends FragmentActivity {
         scenes = getIntent().getParcelableArrayListExtra(SCENE_LIST);
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(new DevicePagerAdapter(getSupportFragmentManager(), (ArrayList) lights, (ArrayList) scenes));
+        googleClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
 
         if (pollingEnabled) {
             createPollingService();
@@ -278,4 +292,39 @@ public class DeviceActivity extends FragmentActivity {
         builder.setPeriodic(POLLING_INTERVAL);
         service.scheduleJob(builder.build());
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        googleClient.connect();
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        Log.i("Connected", "Connected to wearable device.");
+        String WEARABLE_DATA_PATH = "/wearable_data";
+
+        // Create a DataMap object and send it to the data layer
+        DataMap dataMap = new DataMap();
+
+
+        //Requires a new thread to avoid blocking the UI
+        new DataLayerThread(WEARABLE_DATA_PATH, dataMap, googleClient).start();
+    }
+
+    // Disconnect from the data layer when the Activity stops
+    @Override
+    protected void onStop() {
+        if (null != googleClient && googleClient.isConnected()) {
+            googleClient.disconnect();
+        }
+        super.onStop();
+    }
+
+    // Placeholders for required connection callbacks
+    @Override
+    public void onConnectionSuspended(int cause) { }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) { }
 }

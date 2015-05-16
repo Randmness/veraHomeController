@@ -8,8 +8,8 @@ import java.util.ArrayList;
 
 import automation.com.veracontroller.fragments.BinaryLightFragment;
 import automation.com.veracontroller.fragments.SceneFragment;
-import automation.com.veracontroller.pojo.BinaryLight;
-import automation.com.veracontroller.pojo.Scene;
+import com.example.mrand.common.pojo.BinaryLight;
+import com.example.mrand.common.pojo.Scene;
 
 public class DevicePagerAdapter extends FragmentStatePagerAdapter {
     private static int NUM_ITEMS = 2;

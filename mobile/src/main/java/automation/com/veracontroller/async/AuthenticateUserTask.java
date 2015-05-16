@@ -3,20 +3,16 @@ package automation.com.veracontroller.async;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.json.JSONObject;
+import com.example.mrand.common.pojo.BinaryLight;
+import com.example.mrand.common.pojo.Scene;
 
 import java.util.List;
 
-import automation.com.veracontroller.DeviceActivity;
-import automation.com.veracontroller.SplashScreen;
-import automation.com.veracontroller.pojo.BinaryLight;
-import automation.com.veracontroller.pojo.Scene;
 import automation.com.veracontroller.util.RestClient;
 
 public class AuthenticateUserTask extends AsyncTask<Void, Void, Boolean> {
@@ -64,7 +60,7 @@ public class AuthenticateUserTask extends AsyncTask<Void, Void, Boolean> {
         editor.putBoolean("leverageRemote", true);
         editor.commit();
 
-        RestClient.setRemoteURL(sharedPref.getString("remoteUrl",null));
+        RestClient.setRemoteURL(sharedPref.getString("remoteUrl", null));
         Log.i("updateCredentials", username + " " + password);
         RestClient.updateCredentials(username, password, serial);
         RestClient.setLeverageRemote(true);

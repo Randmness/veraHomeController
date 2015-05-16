@@ -1,18 +1,14 @@
 package automation.com.veracontroller.fragments;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.mrand.common.pojo.BinaryLight;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +16,6 @@ import java.util.List;
 import automation.com.veracontroller.R;
 import automation.com.veracontroller.adapter.BinaryLightListAdapter;
 import automation.com.veracontroller.async.FetchBinaryLightTask;
-import automation.com.veracontroller.pojo.BinaryLight;
-import automation.com.veracontroller.pojo.Scene;
-import automation.com.veracontroller.util.RoomDataUtil;
 
 public class BinaryLightFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private static final String BINARY_LIGHTS = "BINARY_LIGHTS";

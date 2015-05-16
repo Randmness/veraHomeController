@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import automation.com.veracontroller.R;
-import automation.com.veracontroller.pojo.BinaryLight;
+import com.example.mrand.common.pojo.BinaryLight;
 
 public class BinaryLightListAdapter extends ArrayAdapter<BinaryLight> {
     private final Context context;
