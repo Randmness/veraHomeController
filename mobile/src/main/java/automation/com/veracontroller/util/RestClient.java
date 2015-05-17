@@ -45,6 +45,8 @@ abstract public class RestClient {
         LOCAL_URL = localUrl;
     }
 
+    public static String getLocalUrl() { return LOCAL_URL; }
+
     public static void setRemoteURL(String remoteUrl) {
         REMOTE_URL = remoteUrl;
     }

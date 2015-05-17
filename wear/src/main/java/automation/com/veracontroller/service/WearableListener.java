@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import automation.com.veracontroller.constants.DataMapConstants;
@@ -30,22 +31,42 @@ public class WearableListener extends WearableListenerService {
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
-        Log.i("Wearable Listener", "Data received on wear listener.");
         DataMap dataMap;
         for (DataEvent event : dataEvents) {
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 String path = event.getDataItem().getUri().getPath();
+                Log.i("Wearable Listener", "Data received on path: "+path);
                 switch (DataPathEnum.fromPath(path)) {
                     case WEARABLE_DEVICE_ACTIVITY_LAUNCH:
                         dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
                         sendLocalNotification(dataMap);
                         break;
+                    case WEARABLE_SPLASH_DATA_RESPONSE:
+                        dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
+                        broadcastSplashReceiver(dataMap);
+                        break;
                     default:
-                        Log.e("Incorrect Path", path + "not found.");
+                        Log.e("Incorrect Path", path + " not found.");
                         break;
                 }
             }
         }
+    }
+
+    private void broadcastSplashReceiver(DataMap dataMap) {
+        ArrayList<BinaryLight> lightList = gson.fromJson(dataMap.getString(DataMapConstants.LIGHT_LIST),
+                new TypeToken<ArrayList<BinaryLight>>() {
+                }.getType());
+        ArrayList<Scene> sceneList = gson.fromJson(dataMap.getString(DataMapConstants.SCENE_LIST),
+                new TypeToken<ArrayList<Scene>>() {
+                }.getType());
+
+        Intent messageIntent = new Intent();
+        messageIntent.putParcelableArrayListExtra(IntentConstants.LIGHT_LIST, lightList);
+        messageIntent.putParcelableArrayListExtra(IntentConstants.SCENE_LIST, sceneList);
+        messageIntent.setAction(Intent.ACTION_SEND);
+        messageIntent.putExtra("MESSAGE", DataPathEnum.WEARABLE_SPLASH_DATA_RESPONSE.toString());
+        LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
     }
 
     private void sendLocalNotification(DataMap dataMap) {

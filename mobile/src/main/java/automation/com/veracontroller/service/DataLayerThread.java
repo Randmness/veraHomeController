@@ -24,6 +24,7 @@ public class DataLayerThread extends Thread {
 
     public void run() {
         NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(googleClient).await();
+        Log.i("Nodes", nodes.getNodes().size()+"");
         for (Node node : nodes.getNodes()) {
             PutDataMapRequest putDMR = PutDataMapRequest.create(path);
             putDMR.getDataMap().putAll(dataMap);
