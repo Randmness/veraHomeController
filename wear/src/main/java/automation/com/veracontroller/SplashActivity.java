@@ -33,6 +33,7 @@ public class SplashActivity extends Activity implements
     private GoogleApiClient googleClient;
     private ProgressDialog dialog;
     private boolean firstEntry = true;
+    MessageReceiver messageReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class SplashActivity extends Activity implements
                 .build();
 
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
-        MessageReceiver messageReceiver = new MessageReceiver();
+        messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
     }
 
@@ -57,17 +58,35 @@ public class SplashActivity extends Activity implements
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (messageReceiver != null) {
+            registerReceiver(messageReceiver, new IntentFilter(Intent.ACTION_SEND));
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(messageReceiver);
+        } catch (IllegalArgumentException e){
+        }
+    }
+
+    @Override
     public void onConnected(Bundle connectionHint) {
         if (firstEntry) {
-        if (dialog == null) {
-            dialog = new ProgressDialog(this);
-            dialog.setMessage("Fetching configuration details...");
-            dialog.setCancelable(false);
-            dialog.setTitle("       Starting Up");
-        }
-        dialog.show();
-        new RequestDataThread(DataPathEnum.WEARABLE_SPLASH_DATA_REQUEST, "Requesting data.", googleClient).start();
-        firstEntry = false;
+            if (dialog == null) {
+                dialog = new ProgressDialog(this);
+                dialog.setMessage("Fetching configuration details...");
+                dialog.setCancelable(false);
+                dialog.setTitle("       Starting Up");
+            }
+            dialog.show();
+            new RequestDataThread(DataPathEnum.WEARABLE_SPLASH_DATA_REQUEST, "Requesting data.", googleClient).start();
+                firstEntry = false;
         }
     }
 
@@ -76,6 +95,11 @@ public class SplashActivity extends Activity implements
     protected void onStop() {
         if (null != googleClient && googleClient.isConnected()) {
             googleClient.disconnect();
+        }
+
+        try {
+            unregisterReceiver(messageReceiver);
+        } catch (IllegalArgumentException e){
         }
         super.onStop();
     }

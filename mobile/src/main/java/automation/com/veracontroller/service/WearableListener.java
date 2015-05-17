@@ -1,8 +1,11 @@
 package automation.com.veracontroller.service;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -23,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import automation.com.veracontroller.async.FetchLocationDetailsTask;
 import automation.com.veracontroller.constants.DataMapConstants;
 import automation.com.veracontroller.constants.PreferenceConstants;
 import automation.com.veracontroller.enums.DataPathEnum;
@@ -35,6 +39,9 @@ import automation.com.veracontroller.util.RoomDataUtil;
  * Created by mrand on 5/15/15.
  */
 public class WearableListener extends WearableListenerService{
+
+    private static final int LIGHT_CONCURRENT_CALL_DELAY = 500;
+    private static final int SCENE_CONCURRENT_CALL_DELAY = 2500;
 
     private Gson gson = new Gson();
     private GoogleApiClient googleClient;
@@ -62,12 +69,24 @@ public class WearableListener extends WearableListenerService{
                         dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
                         initializeClient();
                         toggleLightSwitch(dataMap);
-                        fetchConfigurationDetails(DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                fetchConfigurationDetails(DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
+                            }
+                        }, LIGHT_CONCURRENT_CALL_DELAY);
                         break;
                     case WEARABLE_DEVICE_SCENE_EXECUTION:
                         dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
                         initializeClient();
                         executeScene(dataMap);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                fetchConfigurationDetails(DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
+                            }
+                        }, SCENE_CONCURRENT_CALL_DELAY);
                         break;
                     default:
                         Log.e("Incorrect Path", path + " not found.");
@@ -100,7 +119,7 @@ public class WearableListener extends WearableListenerService{
 
     private void toggleLightSwitch(DataMap dataMap) {
         BinaryLight light = gson.fromJson(dataMap.getString(DataMapConstants.LIGHT), BinaryLight.class);
-        Log.i("Toggle Attempt: ", light.getName());
+        Log.i("Toggle Attempt: ", light.getName()+", Future State: "+light.onOrOff(!light.isEnabled()));
         RestClient.executeSwitchCommand(!light.isEnabled(), light.getDeviceNum());
     }
 

@@ -24,7 +24,6 @@ public class DataLayerThread extends Thread {
 
     public void run() {
         NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(googleClient).await();
-        Log.i("Nodes", nodes.getNodes().size()+"");
         for (Node node : nodes.getNodes()) {
             PutDataMapRequest putDMR = PutDataMapRequest.create(path);
             putDMR.getDataMap().putAll(dataMap);
@@ -33,7 +32,7 @@ public class DataLayerThread extends Thread {
             if (result.getStatus().isSuccess()) {
                 Log.i("Successful Data Sent: ",  dataMap + " sent to: " + node.getDisplayName()+", path:"+path);
             } else {
-                Log.v("Failed Data Sent:", "ERROR: failed to send DataMap");
+                Log.i("Failed Data Sent:", "ERROR: failed to send DataMap");
             }
         }
     }

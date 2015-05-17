@@ -21,11 +21,28 @@ public class BinaryListAdapter extends WearableListView.Adapter {
     public BinaryListAdapter(Context context, List<BinaryLight> items) {
         this.context = context;
         this.items = items;
+        setHasStableIds(true);
+    }
+
+    public void updateLights(List<BinaryLight> newItems) {
+        int itemCount = items.size();
+        this.items.clear();
+        notifyItemRangeRemoved(0, itemCount);
+        this.items = newItems;
+        notifyItemRangeInserted(0, items.size());
+        notifyDataSetChanged();
+
+
     }
 
     @Override
     public WearableListView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         return new WearableListView.ViewHolder(new BinaryLightItemView(context));
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return items.get(position).getDeviceNum();
     }
 
     @Override
@@ -46,10 +63,12 @@ public class BinaryListAdapter extends WearableListView.Adapter {
             imageView.setImageResource(R.mipmap.unlit_bulb);
         }
         itemView.setTag(R.integer.objectHolder, item);
+        itemView.setTag(R.id.wearableLightList, position);
     }
 
     @Override
     public int getItemCount() {
         return items.size();
     }
+
 }

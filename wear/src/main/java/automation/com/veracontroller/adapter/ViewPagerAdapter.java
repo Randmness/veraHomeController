@@ -1,23 +1,20 @@
 package automation.com.veracontroller.adapter;
 
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Color;
-import android.media.Image;
+import android.support.wearable.view.CircledImageView;
 import android.support.wearable.view.GridPagerAdapter;
 import android.support.wearable.view.WearableListView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataMap;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +22,7 @@ import automation.com.veracontroller.R;
 import automation.com.veracontroller.async.DataLayerThread;
 import automation.com.veracontroller.constants.DataMapConstants;
 import automation.com.veracontroller.enums.DataPathEnum;
+import automation.com.veracontroller.layout.BinaryLightItemView;
 import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
 
@@ -33,14 +31,21 @@ public class ViewPagerAdapter extends GridPagerAdapter {
     private LayoutInflater inflater;
     private Gson gson = new Gson();
     private GoogleApiClient googleApiClient;
+    private BinaryListAdapter binaryListAdapter;
+    private SceneListAdapter sceneListAdapter;
+
     private List<BinaryLight> lights;
     private List<Scene> scenes;
 
-    public ViewPagerAdapter(final Context context, List<BinaryLight> lights, List<Scene> scenes, GoogleApiClient googleApiClient) {
+    private ProgressDialog dialog;
+
+    public ViewPagerAdapter(final Context context, List<BinaryLight> lights, List<Scene> scenes,
+                            GoogleApiClient googleApiClient, ProgressDialog dialog) {
         this.context = context;
         this.lights = lights;
         this.scenes = scenes;
         this.googleApiClient = googleApiClient;
+        this.dialog = dialog;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -68,13 +73,17 @@ public class ViewPagerAdapter extends GridPagerAdapter {
         if (col == 0){
             view = inflater.inflate(R.layout.view_binary_lights, null);
             listView = (WearableListView) view.findViewById(R.id.wearableLightList);
-            listView.setAdapter(new BinaryListAdapter(context, lights));
+            binaryListAdapter = new BinaryListAdapter(context, lights);
+            listView.setAdapter(binaryListAdapter);
             listView.setClickListener(new WearableListView.ClickListener() {
                 @Override
                 public void onClick(WearableListView.ViewHolder viewHolder) {
-                    BinaryLight light = (BinaryLight) viewHolder.itemView.getTag(R.integer.objectHolder);
-                    Log.i("Scene clicked: ", light.getName());
+                    int position = (Integer) viewHolder.itemView.getTag(R.id.wearableLightList);
 
+                    BinaryLight light = lights.get(position);//(BinaryLight) viewHolder.itemView.getTag(R.integer.objectHolder);
+                    Log.i("Light Clicked", light.onOrOff()+", "+light.getName()+","+light.getDeviceNum()+ "POS"+position);
+                    dialog.setMessage("Turning "+light.onOrOff(!light.isEnabled())+ " "+ light.getName());
+                    dialog.show();
                     DataMap dataMap = new DataMap();
                     dataMap.putString(DataMapConstants.LIGHT, gson.toJson(light));
                     dataMap.putString("UUID", UUID.randomUUID().toString());
@@ -87,13 +96,15 @@ public class ViewPagerAdapter extends GridPagerAdapter {
         } else {
             view = inflater.inflate(R.layout.view_scenes, null);
             listView = (WearableListView) view.findViewById(R.id.wearableSceneList);
-            listView.setAdapter(new SceneListAdapter(context, scenes));
+            sceneListAdapter = new SceneListAdapter(context, scenes);
+            listView.setAdapter(sceneListAdapter);
             listView.setClickListener(new WearableListView.ClickListener() {
                 @Override
                 public void onClick(WearableListView.ViewHolder viewHolder) {
                     Scene scene = (Scene) viewHolder.itemView.getTag(R.integer.objectHolder);
-                    Log.i("Scene clicked: ", scene.getSceneName());
 
+                    dialog.setMessage("Executing scene: "+scene.getSceneName());
+                    dialog.show();
                     DataMap dataMap = new DataMap();
                     dataMap.putString(DataMapConstants.SCENE, gson.toJson(scene));
                     dataMap.putString("UUID", UUID.randomUUID().toString());
@@ -128,6 +139,18 @@ public class ViewPagerAdapter extends GridPagerAdapter {
         listView.setGreedyTouchMode(true);
         viewGroup.addView(view);
         return view;
+    }
+
+    public BinaryListAdapter getBinaryListAdapter() {
+        return this.binaryListAdapter;
+    }
+
+    public SceneListAdapter getSceneListAdapter() {
+        return this.sceneListAdapter;
+    }
+
+    public void updateLights(List<BinaryLight> newLights) {
+        this.lights = newLights;
     }
 
     @Override
