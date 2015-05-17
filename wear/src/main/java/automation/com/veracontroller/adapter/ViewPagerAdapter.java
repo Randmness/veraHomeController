@@ -79,7 +79,9 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                 }
 
                 @Override
-                public void onTopEmptyRegionClick() {}
+                public void onTopEmptyRegionClick() {
+                    Log.i("Top", "TOP CLICKED");
+                }
             });
         }
 

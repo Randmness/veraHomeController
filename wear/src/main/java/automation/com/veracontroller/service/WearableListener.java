@@ -58,9 +58,6 @@ public class WearableListener extends WearableListenerService {
                 new TypeToken<ArrayList<Scene>>() {
                 }.getType());
 
-        Log.i("TRANSFORMATION WORKED", lightList.size()+"");
-        Log.i("TRANSFORMATION WORKED", sceneList.size()+"");
-
         // Create a pending intent that starts this wearable app
         Intent startIntent = new Intent(this, DeviceActivity.class).setAction(Intent.ACTION_MAIN);
         startIntent.putParcelableArrayListExtra(IntentConstants.LIGHT_LIST, lightList);
@@ -69,9 +66,9 @@ public class WearableListener extends WearableListenerService {
                 PendingIntent.getActivity(this, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notify = new NotificationCompat.Builder(this)
-                .setContentTitle("Title")
-                .setContentText("Open app")
-                .setSmallIcon(R.drawable.ic_full_sad)
+                .setContentTitle("Vera Home Control")
+                .setContentText("Control your Vera via your wearable.")
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setAutoCancel(true)
                 .setContentIntent(startPendingIntent)
                 .build();

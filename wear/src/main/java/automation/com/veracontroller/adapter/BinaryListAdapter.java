@@ -40,7 +40,11 @@ public class BinaryListAdapter extends WearableListView.Adapter {
         room.setText(item.getRoomName());
 
         final CircledImageView imageView = (CircledImageView) itemView.findViewById(R.id.image);
-        imageView.setImageResource(R.drawable.ic_full_sad);
+        if (item.isEnabled()) {
+            imageView.setImageResource(R.mipmap.lit_light_bulb);
+        } else {
+            imageView.setImageResource(R.mipmap.unlit_bulb);
+        }
         itemView.setTag(R.integer.objectHolder, item);
     }
 
