@@ -7,15 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import automation.com.veracontroller.async.RequestDataThread;
 import automation.com.veracontroller.constants.IntentConstants;
@@ -71,22 +70,27 @@ public class SplashActivity extends Activity implements
         super.onPause();
         try {
             unregisterReceiver(messageReceiver);
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
         }
     }
 
     @Override
     public void onConnected(Bundle connectionHint) {
         if (firstEntry) {
-            if (dialog == null) {
-                dialog = new ProgressDialog(this);
-                dialog.setMessage("Fetching configuration details...");
-                dialog.setCancelable(false);
-                dialog.setTitle("       Starting Up");
-            }
-            dialog.show();
-            new RequestDataThread(DataPathEnum.WEARABLE_SPLASH_DATA_REQUEST, "Requesting data.", googleClient).start();
-                firstEntry = false;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (dialog == null) {
+                        dialog = new ProgressDialog(SplashActivity.this);
+                        dialog.setMessage("Fetching setup.");
+                        dialog.setCancelable(false);
+                        dialog.setTitle("       Starting Up");
+                    }
+                    dialog.show();
+                    new RequestDataThread(DataPathEnum.WEARABLE_SPLASH_DATA_REQUEST, "Requesting data.", googleClient).start();
+                    firstEntry = false;
+                }
+            }, SPLASH_DELAY);
         }
     }
 
@@ -99,17 +103,19 @@ public class SplashActivity extends Activity implements
 
         try {
             unregisterReceiver(messageReceiver);
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
         }
         super.onStop();
     }
 
     // Placeholders for required connection callbacks
     @Override
-    public void onConnectionSuspended(int cause) { }
+    public void onConnectionSuspended(int cause) {
+    }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) { }
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+    }
 
     public class MessageReceiver extends BroadcastReceiver {
         @Override

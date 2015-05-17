@@ -24,12 +24,12 @@ public class SceneListAdapter extends WearableListView.Adapter {
     }
 
     public void updateScenes(List<Scene> newScenes) {
-        int itemCount = sceneItems.size();
-        this.sceneItems.clear();
-        notifyItemRangeRemoved(0, itemCount);
         this.sceneItems = newScenes;
-        notifyItemRangeInserted(0, sceneItems.size());
         notifyDataSetChanged();
+    }
+
+    public List<Scene> getScenes() {
+        return this.sceneItems; 
     }
 
     @Override

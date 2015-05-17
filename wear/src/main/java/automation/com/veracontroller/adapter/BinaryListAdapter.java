@@ -25,14 +25,12 @@ public class BinaryListAdapter extends WearableListView.Adapter {
     }
 
     public void updateLights(List<BinaryLight> newItems) {
-        int itemCount = items.size();
-        this.items.clear();
-        notifyItemRangeRemoved(0, itemCount);
         this.items = newItems;
-        notifyItemRangeInserted(0, items.size());
         notifyDataSetChanged();
+    }
 
-
+    public List<BinaryLight> getLights() {
+        return this.items;
     }
 
     @Override

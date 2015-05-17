@@ -49,8 +49,13 @@ public class DeviceActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        lights = getIntent().getParcelableArrayListExtra(IntentConstants.LIGHT_LIST);
-        scenes = getIntent().getParcelableArrayListExtra(IntentConstants.SCENE_LIST);
+        if (savedInstanceState != null) {
+            lights = savedInstanceState.getParcelableArrayList(IntentConstants.LIGHT_LIST);
+            scenes = savedInstanceState.getParcelableArrayList(IntentConstants.SCENE_LIST);
+        } else {
+            lights = getIntent().getParcelableArrayListExtra(IntentConstants.LIGHT_LIST);
+            scenes = getIntent().getParcelableArrayListExtra(IntentConstants.SCENE_LIST);
+        }
 
         //Log.i("Lights", lights.size()+"");
         googleApiClient = new GoogleApiClient.Builder(this)
@@ -114,6 +119,15 @@ public class DeviceActivity extends Activity implements
         super.onStop();
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(IntentConstants.LIGHT_LIST,
+                (ArrayList) pagerAdapter.getBinaryListAdapter().getLights());
+        outState.putParcelableArrayList(IntentConstants.SCENE_LIST,
+                (ArrayList) pagerAdapter.getSceneListAdapter().getScenes());
+    }
+
     // Placeholders for required connection callbacks
     @Override
     public void onConnectionSuspended(int cause) { }
@@ -123,7 +137,7 @@ public class DeviceActivity extends Activity implements
 
     private void updateUI(List<BinaryLight> newLights, List<Scene> newScenes) {
         dialog.dismiss();
-        Log.i("Updating list", "Updating list"+newLights.get(3).onOrOff());
+        Log.i("Updating list", "Updating list" + newLights.get(3).onOrOff());
         pagerAdapter.updateLights(newLights);
         pagerAdapter.getBinaryListAdapter().updateLights(newLights);
 
