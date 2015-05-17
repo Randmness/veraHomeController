@@ -120,7 +120,6 @@ public class DeviceActivity extends Activity implements
 
     @Override
     protected void onPause() {
-        Log.i("onPause", "onPause called");
         try {
             unregisterReceiver(resultReceiver);
         } catch (IllegalArgumentException e) {
@@ -136,7 +135,6 @@ public class DeviceActivity extends Activity implements
     // Disconnect from the data layer when the Activity stops
     @Override
     protected void onStop() {
-        Log.i("onStop","onStop called.");
         if (null != googleApiClient && googleApiClient.isConnected()) {
             googleApiClient.disconnect();
         }
@@ -166,7 +164,6 @@ public class DeviceActivity extends Activity implements
 
     private void updateUI(List<BinaryLight> newLights, List<Scene> newScenes) {
         dialog.dismiss();
-        Log.i("Updating list", "Updating list" + newLights.get(3).onOrOff());
         pagerAdapter.updateLights(newLights);
         pagerAdapter.getBinaryListAdapter().updateLights(newLights);
 

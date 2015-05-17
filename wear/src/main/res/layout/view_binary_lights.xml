@@ -14,7 +14,7 @@
         android:layout_width="fill_parent"
         android:layout_height="60dp"
         android:gravity="center"
-        android:background="@android:color/background_dark"
+        android:background="@drawable/header_shape_lights"
         android:textSize="20sp"
         android:fontFamily="sans-serif-light"
         android:textStyle="bold"

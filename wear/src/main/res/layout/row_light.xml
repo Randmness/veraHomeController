@@ -22,11 +22,12 @@
         android:layout_marginRight="16dp"
         android:layout_width="wrap_content"
         android:textColor="@color/white"
-        android:textSize="16sp"/>
+        android:textSize="18sp"/>
 
     <TextView
         android:id="@+id/room"
         android:alpha="0.5"
+        android:textStyle="italic"
         android:fontFamily="sans-serif-condensed-light"
         android:gravity="center_vertical"
         android:layout_height="52dp"
@@ -35,5 +36,5 @@
         android:layout_marginRight="16dp"
         android:layout_width="wrap_content"
         android:textColor="@color/white"
-        android:textSize="16sp"/>
+        android:textSize="12sp"/>
 </merge>
