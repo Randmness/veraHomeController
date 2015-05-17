@@ -31,6 +31,7 @@ public class WearableListener extends WearableListenerService {
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
+        Log.i("Wearable Listener", "onDataChanged invoked");
         DataMap dataMap;
         for (DataEvent event : dataEvents) {
             if (event.getType() == DataEvent.TYPE_CHANGED) {
@@ -48,6 +49,12 @@ public class WearableListener extends WearableListenerService {
                     case WEARABLE_SPLASH_DATA_RESPONSE:
                         dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
                         broadcastSplashReceiver(dataMap, DataPathEnum.WEARABLE_SPLASH_DATA_RESPONSE);
+                        break;
+                    case WEARABLE_SPLASH_DATA_ERROR:
+                        broadcastErrorResponse(DataPathEnum.WEARABLE_SPLASH_DATA_ERROR);
+                        break;
+                    case WEARABLE_CONFIG_DATA_ERROR:
+                        broadcastErrorResponse(DataPathEnum.WEARABLE_CONFIG_DATA_ERROR);
                         break;
                     default:
                         Log.e("Incorrect Path", path + " not found.");
@@ -85,6 +92,17 @@ public class WearableListener extends WearableListenerService {
         messageIntent.putParcelableArrayListExtra(IntentConstants.LIGHT_LIST, lightList);
         messageIntent.putParcelableArrayListExtra(IntentConstants.SCENE_LIST, sceneList);
         messageIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        messageIntent.putExtra(IntentConstants.DATA_PATH, dataPathEnum.toString());
+        LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
+    }
+
+    private void broadcastErrorResponse(DataPathEnum dataPathEnum) {
+        Intent messageIntent = new Intent();
+        if (dataPathEnum == DataPathEnum.WEARABLE_SPLASH_DATA_ERROR) {
+            messageIntent.setAction(Intent.ACTION_SEND);
+        } else if (dataPathEnum == DataPathEnum.WEARABLE_CONFIG_DATA_ERROR) {
+            messageIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        }
         messageIntent.putExtra(IntentConstants.DATA_PATH, dataPathEnum.toString());
         LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
     }

@@ -1,30 +1,25 @@
 package automation.com.veracontroller;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.wearable.view.DismissOverlayView;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Wearable;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +36,7 @@ public class DeviceActivity extends Activity implements
     private List<Scene> scenes = new ArrayList<>();
     private GoogleApiClient googleApiClient;
     private ViewPagerAdapter pagerAdapter;
-    private ProgressDialog dialog;
+    private ProgressDialog deviceDialog;
 
     private DismissOverlayView mDismissOverlay;
 
@@ -69,13 +64,13 @@ public class DeviceActivity extends Activity implements
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        dialog = new ProgressDialog(this);
-        dialog.setCancelable(false);
-        dialog.setTitle("Executing..");
+        deviceDialog = new ProgressDialog(this);
+        deviceDialog.setCancelable(false);
+        deviceDialog.setTitle("Executing..");
 
         final Resources res = getResources();
         final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
-        pagerAdapter = new ViewPagerAdapter(this, lights, scenes, googleApiClient, dialog);
+        pagerAdapter = new ViewPagerAdapter(this, lights, scenes, googleApiClient, deviceDialog);
         pager.setAdapter(pagerAdapter);
         DotsPageIndicator dotsPageIndicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
         dotsPageIndicator.setPager(pager);
@@ -90,16 +85,33 @@ public class DeviceActivity extends Activity implements
             public void onReceive(Context context, Intent intent) {
                 String message = intent.getStringExtra(IntentConstants.DATA_PATH);
                 Log.i("MessageLister", "Message received on path: " + message);
-                if (DataPathEnum.fromPath(message) == DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE) {
-                    final List<BinaryLight> newLights = intent.getParcelableArrayListExtra(IntentConstants.LIGHT_LIST);
-                    final List<Scene> newScenes = intent.getParcelableArrayListExtra(IntentConstants.SCENE_LIST);
+                switch (DataPathEnum.fromPath(message)) {
+                    case WEARABLE_CONFIG_DATA_RESPONSE:
+                        final List<BinaryLight> newLights = intent.getParcelableArrayListExtra(IntentConstants.LIGHT_LIST);
+                        final List<Scene> newScenes = intent.getParcelableArrayListExtra(IntentConstants.SCENE_LIST);
 
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            activity.updateUI(newLights, newScenes);
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                activity.updateUI(newLights, newScenes);
+                            }
+                        });
+                        break;
+                    case WEARABLE_CONFIG_DATA_ERROR:
+                        if(deviceDialog.isShowing()) {
+                            deviceDialog.dismiss();
                         }
-                    });
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(DeviceActivity.this);
+                        alertDialog.setTitle("Error");
+                        alertDialog.setMessage("Communication with system has failed.");
+                        alertDialog.setPositiveButton("Close",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.create().show();
+                        break;
                 }
             }
         };
@@ -163,7 +175,7 @@ public class DeviceActivity extends Activity implements
     public void onConnectionFailed(ConnectionResult connectionResult) { }
 
     private void updateUI(List<BinaryLight> newLights, List<Scene> newScenes) {
-        dialog.dismiss();
+        deviceDialog.dismiss();
         pagerAdapter.updateLights(newLights);
         pagerAdapter.getBinaryListAdapter().updateLights(newLights);
 

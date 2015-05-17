@@ -1,6 +1,7 @@
 package automation.com.veracontroller.service;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -25,6 +26,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 
 import automation.com.veracontroller.async.FetchLocationDetailsTask;
 import automation.com.veracontroller.constants.DataMapConstants;
@@ -67,26 +69,63 @@ public class WearableListener extends WearableListenerService{
                 switch (DataPathEnum.fromPath(path)) {
                     case WEARABLE_DEVICE_LIGHT_TOGGLE:
                         dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
-                        initializeClient();
-                        toggleLightSwitch(dataMap);
+                        try {
+                            initializeClient();
+                            toggleLightSwitch(dataMap);
 
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                fetchConfigurationDetails(DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
-                            }
-                        }, LIGHT_CONCURRENT_CALL_DELAY);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        fetchConfigurationDetails(DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
+                                    } catch (Exception e) {
+                                        Log.e("Exception", e.getMessage());
+                                        DataMap dataMapResponse = new DataMap();
+                                        dataMapResponse.putString(DataMapConstants.ERROR, "Failed");
+                                        dataMapResponse.putString("UUID", UUID.randomUUID().toString());
+                                        new DataLayerThread(DataPathEnum.WEARABLE_CONFIG_DATA_ERROR.toString(),
+                                                dataMapResponse, googleClient).start();
+                                    }
+                                }
+                            }, LIGHT_CONCURRENT_CALL_DELAY);
+                        } catch (Exception e) {
+                            Log.e("Exception", e.getMessage());
+                            DataMap dataMapResponse = new DataMap();
+                            dataMapResponse.putString(DataMapConstants.ERROR, "Failed");
+                            dataMapResponse.putString("UUID", UUID.randomUUID().toString());
+                            new DataLayerThread(DataPathEnum.WEARABLE_CONFIG_DATA_ERROR.toString(),
+                                    dataMapResponse, googleClient).start();
+                        }
                         break;
                     case WEARABLE_DEVICE_SCENE_EXECUTION:
                         dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
-                        initializeClient();
-                        executeScene(dataMap);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                fetchConfigurationDetails(DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
-                            }
-                        }, SCENE_CONCURRENT_CALL_DELAY);
+                        try {
+                            initializeClient();
+                            executeScene(dataMap);
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        fetchConfigurationDetails(DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
+                                    } catch (Exception e) {
+                                        Log.e("Exception", e.getMessage());
+                                        DataMap dataMapResponse = new DataMap();
+                                        dataMapResponse.putString(DataMapConstants.ERROR, "Failed");
+                                        dataMapResponse.putString("UUID", UUID.randomUUID().toString());
+                                        new DataLayerThread(DataPathEnum.WEARABLE_CONFIG_DATA_ERROR.toString(),
+                                                dataMapResponse, googleClient).start();
+                                    }
+                                }
+                            }, SCENE_CONCURRENT_CALL_DELAY);
+                        } catch (Exception e) {
+                            Log.e("Exception", e.getMessage());
+                            DataMap dataMapResponse = new DataMap();
+                            dataMapResponse.putString(DataMapConstants.ERROR, "Failed");
+                            dataMapResponse.putString("UUID", UUID.randomUUID().toString());
+                            new DataLayerThread(DataPathEnum.WEARABLE_CONFIG_DATA_ERROR.toString(),
+                                    dataMapResponse, googleClient).start();
+                        }
                         break;
                     default:
                         Log.e("Incorrect Path", path + " not found.");
@@ -102,38 +141,55 @@ public class WearableListener extends WearableListenerService{
         Log.i("SERVICE", "Message received: "+messageEvent.getPath());
         switch (DataPathEnum.fromPath(messageEvent.getPath())) {
             case WEARABLE_SPLASH_DATA_REQUEST:
-                initializeClient();
-                fetchConfigurationDetails(DataPathEnum.WEARABLE_SPLASH_DATA_RESPONSE);
+                try {
+                    initializeClient();
+                    fetchConfigurationDetails(DataPathEnum.WEARABLE_SPLASH_DATA_RESPONSE);
+                } catch (Exception e) {
+                    Log.e("Exception", e.getMessage());
+                    DataMap dataMap = new DataMap();
+                    dataMap.putString(DataMapConstants.ERROR, "Failed");
+                    dataMap.putString("UUID", UUID.randomUUID().toString());
+                    new DataLayerThread(DataPathEnum.WEARABLE_SPLASH_DATA_ERROR.toString(),
+                            dataMap, googleClient).start();
+                }
                 break;
             case WEARABLE_CONFIG_DATA_REQUEST:
-                initializeClient();
-                fetchConfigurationDetails(DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
+                try {
+                    initializeClient();
+                    fetchConfigurationDetails(DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
+                } catch (Exception e) {
+                    Log.e("Exception", e.getMessage());
+                    DataMap dataMapResponse = new DataMap();
+                    dataMapResponse.putString(DataMapConstants.ERROR, "Failed");
+                    dataMapResponse.putString("UUID", UUID.randomUUID().toString());
+                    new DataLayerThread(DataPathEnum.WEARABLE_CONFIG_DATA_ERROR.toString(),
+                            dataMapResponse, googleClient).start();
+                }
                 break;
             default:
                 super.onMessageReceived(messageEvent);
         }
     }
 
-    private void executeScene(DataMap dataMap) {
+    private void executeScene(DataMap dataMap) throws Exception {
         initializeClient();
         Scene scene =  gson.fromJson(dataMap.getString(DataMapConstants.SCENE), Scene.class);
         Log.i("Scene Execution", "Attempting to execute scene:" + scene.getSceneName());
         RestClient.executeSceneCommand(scene.getSceneNum());
     }
 
-    private void toggleLightSwitch(DataMap dataMap) {
+    private void toggleLightSwitch(DataMap dataMap) throws Exception {
         BinaryLight light = gson.fromJson(dataMap.getString(DataMapConstants.LIGHT), BinaryLight.class);
         Log.i("Toggle Attempt: ", light.getName()+", Future State: "+light.onOrOff(!light.isEnabled()));
         RestClient.executeSwitchCommand(!light.isEnabled(), light.getDeviceNum());
     }
 
-    private void initializeClient() {
+    private void initializeClient() throws Exception {
         SharedPreferences sharedPref = getSharedPreferences(PreferenceConstants.PREF_KEY, Context.MODE_PRIVATE);
         String localUrl = sharedPref.getString(PreferenceConstants.LOCAL_URL, null);
 
         if (localUrl == null) {
-            //nothing setup at all
-            //FAILED
+            throw new Exception("Not currently setup.");
         } else {
             //setup, but not active
             if (RestClient.getLocalUrl() == null) {
@@ -152,22 +208,18 @@ public class WearableListener extends WearableListenerService{
         }
     }
 
-    private void fetchConfigurationDetails(DataPathEnum dataPathEnum) {
-        try {
-            JSONObject result = RestClient.fetchConfigurationDetails();
-            List<BinaryLight> lights = RoomDataUtil.getLights(result);
-            List<Scene> scenes = RoomDataUtil.getScenes(result);
+    private void fetchConfigurationDetails(DataPathEnum dataPathEnum) throws Exception {
+        JSONObject result = RestClient.fetchConfigurationDetails();
+        List<BinaryLight> lights = RoomDataUtil.getLights(result);
+        List<Scene> scenes = RoomDataUtil.getScenes(result);
 
-            DataMap dataMap = new DataMap();
-            String lightList = gson.toJson(lights, new TypeToken<ArrayList<BinaryLight>>(){}.getType());
-            String sceneList = gson.toJson(scenes, new TypeToken<ArrayList<Scene>>(){}.getType());
-            dataMap.putString(DataMapConstants.LIGHT_LIST, lightList);
-            dataMap.putString(DataMapConstants.SCENE_LIST, sceneList);
-            dataMap.putString("UUID", UUID.randomUUID().toString());
-            Log.i("Wearable listener", "Attempting to send data to : " + dataPathEnum.toString());
-            new DataLayerThread(dataPathEnum.toString(), dataMap, googleClient).start();
-        } catch (Exception e) {
-            Log.e("Failed", "Failed fetching information");
-        }
+        DataMap dataMap = new DataMap();
+        String lightList = gson.toJson(lights, new TypeToken<ArrayList<BinaryLight>>(){}.getType());
+        String sceneList = gson.toJson(scenes, new TypeToken<ArrayList<Scene>>(){}.getType());
+        dataMap.putString(DataMapConstants.LIGHT_LIST, lightList);
+        dataMap.putString(DataMapConstants.SCENE_LIST, sceneList);
+        dataMap.putString("UUID", UUID.randomUUID().toString());
+        Log.i("Wearable listener", "Attempting to send data to : " + dataPathEnum.toString());
+        new DataLayerThread(dataPathEnum.toString(), dataMap, googleClient).start();
     }
 }

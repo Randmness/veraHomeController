@@ -1,9 +1,11 @@
 package automation.com.veracontroller;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -30,9 +32,11 @@ public class SplashActivity extends Activity implements
     private static final int SPLASH_DELAY = 2000;
 
     private GoogleApiClient googleClient;
-    private ProgressDialog dialog;
+    private ProgressDialog activityDialog;
     private boolean firstEntry = true;
     MessageReceiver messageReceiver;
+
+    private boolean isAvailable = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +63,7 @@ public class SplashActivity extends Activity implements
     @Override
     protected void onResume() {
         super.onResume();
-
+        isAvailable = true;
         if (messageReceiver != null) {
             registerReceiver(messageReceiver, new IntentFilter(Intent.ACTION_SEND));
         }
@@ -68,6 +72,7 @@ public class SplashActivity extends Activity implements
     @Override
     protected void onPause() {
         super.onPause();
+        isAvailable = false;
         try {
             unregisterReceiver(messageReceiver);
         } catch (IllegalArgumentException e) {
@@ -80,13 +85,13 @@ public class SplashActivity extends Activity implements
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (dialog == null) {
-                        dialog = new ProgressDialog(SplashActivity.this);
-                        dialog.setMessage("Fetching setup.");
-                        dialog.setCancelable(false);
-                        dialog.setTitle("       Starting Up");
+                    if (activityDialog == null) {
+                        activityDialog = new ProgressDialog(SplashActivity.this);
+                        activityDialog.setMessage("Fetching setup.");
+                        activityDialog.setCancelable(false);
+                        activityDialog.setTitle("Starting Up");
                     }
-                    dialog.show();
+                    activityDialog.show();
                     new RequestDataThread(DataPathEnum.WEARABLE_SPLASH_DATA_REQUEST, "Requesting data.", googleClient).start();
                     firstEntry = false;
                 }
@@ -105,6 +110,7 @@ public class SplashActivity extends Activity implements
             unregisterReceiver(messageReceiver);
         } catch (IllegalArgumentException e) {
         }
+        isAvailable = false;
         super.onStop();
     }
 
@@ -121,16 +127,46 @@ public class SplashActivity extends Activity implements
         @Override
         public void onReceive(Context context, Intent intent) {
             String message = intent.getStringExtra(IntentConstants.DATA_PATH);
-            if (DataPathEnum.fromPath(message) == DataPathEnum.WEARABLE_SPLASH_DATA_RESPONSE) {
-                ArrayList<BinaryLight> lights = intent.getParcelableArrayListExtra(IntentConstants.LIGHT_LIST);
-                ArrayList<Scene> scenes = intent.getParcelableArrayListExtra(IntentConstants.SCENE_LIST);
+            switch (DataPathEnum.fromPath(message)) {
+                case WEARABLE_SPLASH_DATA_RESPONSE:
+                    ArrayList<BinaryLight> lights = intent.getParcelableArrayListExtra(IntentConstants.LIGHT_LIST);
+                    ArrayList<Scene> scenes = intent.getParcelableArrayListExtra(IntentConstants.SCENE_LIST);
 
-                Intent changeIntent = new Intent(SplashActivity.this, DeviceActivity.class);
-                changeIntent.putParcelableArrayListExtra(IntentConstants.LIGHT_LIST, lights);
-                changeIntent.putParcelableArrayListExtra(IntentConstants.SCENE_LIST, scenes);
-                SplashActivity.this.startActivity(changeIntent);
-                finish();
-                dialog.dismiss();
+                    Intent changeIntent = new Intent(SplashActivity.this, DeviceActivity.class);
+                    changeIntent.putParcelableArrayListExtra(IntentConstants.LIGHT_LIST, lights);
+                    changeIntent.putParcelableArrayListExtra(IntentConstants.SCENE_LIST, scenes);
+                    SplashActivity.this.startActivity(changeIntent);
+                    finish();
+                    activityDialog.dismiss();
+                    break;
+                case WEARABLE_SPLASH_DATA_ERROR:
+                    if (activityDialog.isShowing()) {
+                        activityDialog.dismiss();
+                    }
+
+                    if(isAvailable) {
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(SplashActivity.this);
+                        alertDialog.setMessage("Failed to retrieve starting configuration.");
+                        alertDialog.setPositiveButton("Retry",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        activityDialog.show();
+                                        new RequestDataThread(DataPathEnum.WEARABLE_SPLASH_DATA_REQUEST, "Requesting data.", googleClient).start();
+                                    }
+                                });
+                        alertDialog.setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                        finish();
+                                    }
+                                });
+
+                        alertDialog.create().show();
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }

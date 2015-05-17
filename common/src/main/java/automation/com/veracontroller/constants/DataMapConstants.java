@@ -8,4 +8,5 @@ public class DataMapConstants {
     public static final String SCENE_LIST = "DM: Scene List";
     public static final String LIGHT = "DM: Light";
     public static final String SCENE = "DM: Light";
+    public static final String ERROR = "DM: Error";
 }
