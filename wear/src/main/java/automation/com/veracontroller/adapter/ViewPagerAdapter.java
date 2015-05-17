@@ -155,6 +155,7 @@ public class ViewPagerAdapter extends GridPagerAdapter {
 
     @Override
     protected void destroyItem(ViewGroup viewGroup, int i, int i2, Object o) {
+
         viewGroup.removeView((View) o);
     }
 

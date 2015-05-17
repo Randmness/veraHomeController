@@ -12,9 +12,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.wearable.view.DismissOverlayView;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -39,6 +42,8 @@ public class DeviceActivity extends Activity implements
     private GoogleApiClient googleApiClient;
     private ViewPagerAdapter pagerAdapter;
     private ProgressDialog dialog;
+
+    private DismissOverlayView mDismissOverlay;
 
     private static final int ADAPTER_UPDATE = 0;
 
@@ -106,6 +111,24 @@ public class DeviceActivity extends Activity implements
     }
 
     @Override
+    protected void onResume() {
+        if (resultReceiver != null) {
+            registerReceiver(resultReceiver, new IntentFilter(Intent.ACTION_SEND));
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.i("onPause", "onPause called");
+        try {
+            unregisterReceiver(resultReceiver);
+        } catch (IllegalArgumentException e) {
+        }
+        super.onPause();
+    }
+
+    @Override
     public void onConnected(Bundle connectionHint) {
         Log.i("Connected", "Connected to wearable device.");
     }
@@ -113,9 +136,15 @@ public class DeviceActivity extends Activity implements
     // Disconnect from the data layer when the Activity stops
     @Override
     protected void onStop() {
+        Log.i("onStop","onStop called.");
         if (null != googleApiClient && googleApiClient.isConnected()) {
             googleApiClient.disconnect();
         }
+        try {
+            unregisterReceiver(resultReceiver);
+        } catch (IllegalArgumentException e) {
+        }
+        finish();
         super.onStop();
     }
 
