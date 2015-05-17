@@ -12,23 +12,35 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataMap;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import automation.com.veracontroller.R;
+import automation.com.veracontroller.async.DataLayerThread;
+import automation.com.veracontroller.constants.DataMapConstants;
+import automation.com.veracontroller.enums.DataPathEnum;
 import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
 
 public class ViewPagerAdapter extends GridPagerAdapter {
     private final Context context;
     private LayoutInflater inflater;
+    private Gson gson = new Gson();
+    private GoogleApiClient googleApiClient;
     private List<BinaryLight> lights;
     private List<Scene> scenes;
 
-    public ViewPagerAdapter(final Context context, List<BinaryLight> lights, List<Scene> scenes) {
+    public ViewPagerAdapter(final Context context, List<BinaryLight> lights, List<Scene> scenes, GoogleApiClient googleApiClient) {
         this.context = context;
         this.lights = lights;
         this.scenes = scenes;
+        this.googleApiClient = googleApiClient;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -61,7 +73,12 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                 @Override
                 public void onClick(WearableListView.ViewHolder viewHolder) {
                     BinaryLight light = (BinaryLight) viewHolder.itemView.getTag(R.integer.objectHolder);
-                    Log.i("Light clicked: ", light.getName());
+                    Log.i("Scene clicked: ", light.getName());
+
+                    DataMap dataMap = new DataMap();
+                    dataMap.putString(DataMapConstants.LIGHT, gson.toJson(light));
+                    dataMap.putString("UUID", UUID.randomUUID().toString());
+                    new DataLayerThread(DataPathEnum.WEARABLE_DEVICE_LIGHT_TOGGLE.toString(), dataMap, googleApiClient).start();
                 }
 
                 @Override
@@ -76,6 +93,11 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                 public void onClick(WearableListView.ViewHolder viewHolder) {
                     Scene scene = (Scene) viewHolder.itemView.getTag(R.integer.objectHolder);
                     Log.i("Scene clicked: ", scene.getSceneName());
+
+                    DataMap dataMap = new DataMap();
+                    dataMap.putString(DataMapConstants.SCENE, gson.toJson(scene));
+                    dataMap.putString("UUID", UUID.randomUUID().toString());
+                    new DataLayerThread(DataPathEnum.WEARABLE_DEVICE_SCENE_EXECUTION.toString(), dataMap, googleApiClient).start();
                 }
 
                 @Override

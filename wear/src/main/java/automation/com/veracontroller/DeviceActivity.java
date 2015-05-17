@@ -1,8 +1,13 @@
 package automation.com.veracontroller;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
 import android.util.Log;
@@ -16,6 +21,7 @@ import java.util.List;
 
 import automation.com.veracontroller.adapter.ViewPagerAdapter;
 import automation.com.veracontroller.constants.IntentConstants;
+import automation.com.veracontroller.enums.DataPathEnum;
 import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
 
@@ -43,10 +49,13 @@ public class DeviceActivity extends Activity implements
 
         final Resources res = getResources();
         final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
-        pager.setAdapter(new ViewPagerAdapter(this, lights, scenes));
+        pager.setAdapter(new ViewPagerAdapter(this, lights, scenes, googleApiClient));
         DotsPageIndicator dotsPageIndicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
         dotsPageIndicator.setPager(pager);
 
+        IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND_MULTIPLE);
+        MessageReceiver messageReceiver = new MessageReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
     }
 
 
@@ -76,5 +85,17 @@ public class DeviceActivity extends Activity implements
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) { }
+
+    public class MessageReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra(IntentConstants.DATA_PATH);
+            Log.i("MessageLister", "Message received on path: "+message);
+            if (DataPathEnum.fromPath(message) == DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE) {
+                ArrayList<BinaryLight> lights = intent.getParcelableArrayListExtra(IntentConstants.LIGHT_LIST);
+                ArrayList<Scene> scenes = intent.getParcelableArrayListExtra(IntentConstants.SCENE_LIST);
+            }
+        }
+    }
 
 }

@@ -7,4 +7,5 @@ public abstract class IntentConstants {
     public static final String SERIAL_NUMBER = "Intent: Serial Number";
     public static final String INITIAL_LOGIN = "Intent: Initial Login";
     public static final String MESSENGER = "Intent: Messenger";
+    public static final String DATA_PATH = "Intent: Data Path";
 }

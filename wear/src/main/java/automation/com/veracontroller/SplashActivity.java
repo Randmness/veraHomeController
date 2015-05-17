@@ -32,22 +32,12 @@ public class SplashActivity extends Activity implements
 
     private GoogleApiClient googleClient;
     private ProgressDialog dialog;
+    private boolean firstEntry = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
-        /*
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(SplashActivity.this, DeviceActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }, SPLASH_DELAY);
-*/
 
         googleClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -68,6 +58,7 @@ public class SplashActivity extends Activity implements
 
     @Override
     public void onConnected(Bundle connectionHint) {
+        if (firstEntry) {
         if (dialog == null) {
             dialog = new ProgressDialog(this);
             dialog.setMessage("Fetching configuration details...");
@@ -76,6 +67,8 @@ public class SplashActivity extends Activity implements
         }
         dialog.show();
         new RequestDataThread(DataPathEnum.WEARABLE_SPLASH_DATA_REQUEST, "Requesting data.", googleClient).start();
+        firstEntry = false;
+        }
     }
 
     // Disconnect from the data layer when the Activity stops
@@ -97,7 +90,7 @@ public class SplashActivity extends Activity implements
     public class MessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String message = intent.getStringExtra("MESSAGE");
+            String message = intent.getStringExtra(IntentConstants.DATA_PATH);
             if (DataPathEnum.fromPath(message) == DataPathEnum.WEARABLE_SPLASH_DATA_RESPONSE) {
                 ArrayList<BinaryLight> lights = intent.getParcelableArrayListExtra(IntentConstants.LIGHT_LIST);
                 ArrayList<Scene> scenes = intent.getParcelableArrayListExtra(IntentConstants.SCENE_LIST);
@@ -106,8 +99,8 @@ public class SplashActivity extends Activity implements
                 changeIntent.putParcelableArrayListExtra(IntentConstants.LIGHT_LIST, lights);
                 changeIntent.putParcelableArrayListExtra(IntentConstants.SCENE_LIST, scenes);
                 SplashActivity.this.startActivity(changeIntent);
-                dialog.dismiss();
                 finish();
+                dialog.dismiss();
             }
         }
     }

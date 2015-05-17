@@ -1,4 +1,4 @@
-package automation.com.veracontroller.service;
+package automation.com.veracontroller.async;
 
 import android.util.Log;
 
@@ -31,9 +31,9 @@ public class DataLayerThread extends Thread {
             PutDataRequest request = putDMR.asPutDataRequest();
             DataApi.DataItemResult result = Wearable.DataApi.putDataItem(googleClient,request).await();
             if (result.getStatus().isSuccess()) {
-                Log.i("Successful Data Sent: ",  dataMap + " sent to: " + node.getDisplayName()+", path:"+path);
+                Log.i("Successful Data Sent: ",  dataMap + " sent to: " + node.getDisplayName());
             } else {
-                Log.v("Failed Data Sent:", "ERROR: failed to send DataMap");
+                Log.i("Failed Data Sent:", "ERROR: failed to send DataMap");
             }
         }
     }

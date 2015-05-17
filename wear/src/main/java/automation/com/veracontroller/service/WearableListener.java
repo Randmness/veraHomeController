@@ -41,9 +41,13 @@ public class WearableListener extends WearableListenerService {
                         dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
                         sendLocalNotification(dataMap);
                         break;
+                    case WEARABLE_CONFIG_DATA_RESPONSE:
+                        dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
+                        broadcastConfigReceiver(dataMap, DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
+                        break;
                     case WEARABLE_SPLASH_DATA_RESPONSE:
                         dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
-                        broadcastSplashReceiver(dataMap);
+                        broadcastSplashReceiver(dataMap, DataPathEnum.WEARABLE_SPLASH_DATA_RESPONSE);
                         break;
                     default:
                         Log.e("Incorrect Path", path + " not found.");
@@ -53,7 +57,7 @@ public class WearableListener extends WearableListenerService {
         }
     }
 
-    private void broadcastSplashReceiver(DataMap dataMap) {
+    private void broadcastSplashReceiver(DataMap dataMap, DataPathEnum dataPathEnum) {
         ArrayList<BinaryLight> lightList = gson.fromJson(dataMap.getString(DataMapConstants.LIGHT_LIST),
                 new TypeToken<ArrayList<BinaryLight>>() {
                 }.getType());
@@ -65,7 +69,23 @@ public class WearableListener extends WearableListenerService {
         messageIntent.putParcelableArrayListExtra(IntentConstants.LIGHT_LIST, lightList);
         messageIntent.putParcelableArrayListExtra(IntentConstants.SCENE_LIST, sceneList);
         messageIntent.setAction(Intent.ACTION_SEND);
-        messageIntent.putExtra("MESSAGE", DataPathEnum.WEARABLE_SPLASH_DATA_RESPONSE.toString());
+        messageIntent.putExtra(IntentConstants.DATA_PATH, dataPathEnum.toString());
+        LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
+    }
+
+    private void broadcastConfigReceiver(DataMap dataMap, DataPathEnum dataPathEnum) {
+        ArrayList<BinaryLight> lightList = gson.fromJson(dataMap.getString(DataMapConstants.LIGHT_LIST),
+                new TypeToken<ArrayList<BinaryLight>>() {
+                }.getType());
+        ArrayList<Scene> sceneList = gson.fromJson(dataMap.getString(DataMapConstants.SCENE_LIST),
+                new TypeToken<ArrayList<Scene>>() {
+                }.getType());
+
+        Intent messageIntent = new Intent();
+        messageIntent.putParcelableArrayListExtra(IntentConstants.LIGHT_LIST, lightList);
+        messageIntent.putParcelableArrayListExtra(IntentConstants.SCENE_LIST, sceneList);
+        messageIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        messageIntent.putExtra(IntentConstants.DATA_PATH, dataPathEnum.toString());
         LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
     }
 
