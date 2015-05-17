@@ -20,6 +20,7 @@ import java.util.UUID;
 
 import automation.com.veracontroller.R;
 import automation.com.veracontroller.async.DataLayerThread;
+import automation.com.veracontroller.async.RequestDataThread;
 import automation.com.veracontroller.constants.DataMapConstants;
 import automation.com.veracontroller.enums.DataPathEnum;
 import automation.com.veracontroller.layout.BinaryLightItemView;
@@ -81,7 +82,6 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                     int position = (Integer) viewHolder.itemView.getTag(R.id.wearableLightList);
 
                     BinaryLight light = lights.get(position);//(BinaryLight) viewHolder.itemView.getTag(R.integer.objectHolder);
-                    Log.i("Light Clicked", light.onOrOff()+", "+light.getName()+","+light.getDeviceNum()+ "POS"+position);
                     dialog.setMessage("Turning "+light.onOrOff(!light.isEnabled())+ " "+ light.getName());
                     dialog.show();
                     DataMap dataMap = new DataMap();
@@ -91,7 +91,12 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                 }
 
                 @Override
-                public void onTopEmptyRegionClick() {}
+                public void onTopEmptyRegionClick() {
+                    dialog.setMessage("Fetching current details.");
+                    dialog.show();
+                    new RequestDataThread(DataPathEnum.WEARABLE_CONFIG_DATA_REQUEST,
+                            "Requesting update.", googleApiClient).start();
+                }
             });
         } else {
             view = inflater.inflate(R.layout.view_scenes, null);
@@ -102,7 +107,6 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                 @Override
                 public void onClick(WearableListView.ViewHolder viewHolder) {
                     Scene scene = (Scene) viewHolder.itemView.getTag(R.integer.objectHolder);
-
                     dialog.setMessage("Executing Scene: "+scene.getSceneName());
                     dialog.show();
                     DataMap dataMap = new DataMap();
@@ -113,7 +117,10 @@ public class ViewPagerAdapter extends GridPagerAdapter {
 
                 @Override
                 public void onTopEmptyRegionClick() {
-                    Log.i("Top", "TOP CLICKED");
+                    dialog.setMessage("Fetching current details.");
+                    dialog.show();
+                    new RequestDataThread(DataPathEnum.WEARABLE_CONFIG_DATA_REQUEST,
+                            "Requesting update.", googleApiClient).start();
                 }
             });
         }

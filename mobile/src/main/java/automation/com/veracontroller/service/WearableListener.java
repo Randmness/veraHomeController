@@ -105,6 +105,10 @@ public class WearableListener extends WearableListenerService{
                 initializeClient();
                 fetchConfigurationDetails(DataPathEnum.WEARABLE_SPLASH_DATA_RESPONSE);
                 break;
+            case WEARABLE_CONFIG_DATA_REQUEST:
+                initializeClient();
+                fetchConfigurationDetails(DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
+                break;
             default:
                 super.onMessageReceived(messageEvent);
         }
