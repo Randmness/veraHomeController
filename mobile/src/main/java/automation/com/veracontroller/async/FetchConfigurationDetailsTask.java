@@ -1,8 +1,12 @@
 package automation.com.veracontroller.async;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -14,7 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import automation.com.veracontroller.DeviceActivity;
+import automation.com.veracontroller.SplashScreen;
 import automation.com.veracontroller.constants.IntentConstants;
+import automation.com.veracontroller.constants.PreferenceConstants;
 import automation.com.veracontroller.fragments.BinaryLightFragment;
 import automation.com.veracontroller.fragments.SceneFragment;
 import automation.com.veracontroller.pojo.BinaryLight;
@@ -88,6 +94,73 @@ public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean
                 service.callJobFinished();
             }
         } else {
+            if (activity instanceof SplashScreen) {
+                final SharedPreferences sharedPref = activity.getSharedPreferences(PreferenceConstants.PREF_KEY, Context.MODE_PRIVATE);
+
+                if (RestClient.getLeverageRemote()) {
+                    AlertDialog.Builder webDialog = new AlertDialog.Builder(activity);
+                    webDialog.setMessage("Failed to login.");
+                    webDialog.setCancelable(false);
+                    webDialog.setPositiveButton("Switch to Local Setup",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                    RestClient.setLeverageRemote(false);
+                                    new FetchConfigurationDetailsTask(activity, true).execute();
+                                }
+                            });
+                    webDialog.setNeutralButton("Retry Remote Setup",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                    new FetchConfigurationDetailsTask(activity, true).execute();
+                                }
+                            });
+                    webDialog.setNegativeButton("Update Location Details",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                    new FetchLocationDetailsTask(activity, false).execute();
+                                }
+                            });
+                    webDialog.create().show();
+                } else {
+                    final String password = sharedPref.getString(PreferenceConstants.PASSWORD, null);
+                    AlertDialog.Builder webDialog = new AlertDialog.Builder(activity);
+                    webDialog.setMessage("Failed to login.");
+                    webDialog.setCancelable(false);
+                    if (password != null) {
+                        webDialog.setPositiveButton("Switch to Remote Setup",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                        String serialNumber = sharedPref.getString(PreferenceConstants.SERIAL_NUMBER, null);
+                                        String username = sharedPref.getString(PreferenceConstants.USER_NAME, null);
+                                        String remoteUrl = sharedPref.getString(PreferenceConstants.REMOTE_URL, null);
+                                        RestClient.setRemoteURL(remoteUrl);
+                                        RestClient.updateCredentials(username, password, serialNumber);
+                                        RestClient.setLeverageRemote(true);
+                                        new FetchConfigurationDetailsTask(activity, true).execute();
+                                    }
+                                });
+                    }
+                    webDialog.setNeutralButton("Retry Local Setup",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                    new FetchConfigurationDetailsTask(activity, true).execute();
+                                }
+                            });
+                    webDialog.setNegativeButton("Update Location Details",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                    new FetchLocationDetailsTask(activity, false).execute();
+                                }
+                            });
+                    webDialog.create().show();
+                }
+            }
             Toast.makeText(activity, "Failed to retrieve configuration.", Toast.LENGTH_LONG).show();
         }
     }
