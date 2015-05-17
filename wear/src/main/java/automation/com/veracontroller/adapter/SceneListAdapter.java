@@ -29,7 +29,7 @@ public class SceneListAdapter extends WearableListView.Adapter {
     }
 
     public List<Scene> getScenes() {
-        return this.sceneItems; 
+        return this.sceneItems;
     }
 
     @Override

@@ -103,7 +103,7 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                 public void onClick(WearableListView.ViewHolder viewHolder) {
                     Scene scene = (Scene) viewHolder.itemView.getTag(R.integer.objectHolder);
 
-                    dialog.setMessage("Executing scene: "+scene.getSceneName());
+                    dialog.setMessage("Executing Scene: "+scene.getSceneName());
                     dialog.show();
                     DataMap dataMap = new DataMap();
                     dataMap.putString(DataMapConstants.SCENE, gson.toJson(scene));
