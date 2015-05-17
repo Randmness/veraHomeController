@@ -7,6 +7,7 @@ public enum DataPathEnum {
     WEARABLE_DEVICE_ACTIVITY_LAUNCH("/wearable_device_activity_launch"),
     WEARABLE_SPLASH_DATA_REQUEST("/wearable_splash_data_request"),
     WEARABLE_SPLASH_DATA_RESPONSE("/wearable_splash_data_response"),
+    WEARABLE_SPLASH_ERROR_NOT_SETUP_RESPONSE("/wearable_splash_error_not_setup_response"),
     WEARABLE_SPLASH_DATA_ERROR("/wearable_splash_data_error"),
     WEARABLE_CONFIG_DATA_REQUEST("/wearable_config_data_request"),
     WEARABLE_CONFIG_DATA_RESPONSE("/wearable_config_data_response"),

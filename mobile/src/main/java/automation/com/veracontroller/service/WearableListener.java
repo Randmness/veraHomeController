@@ -144,6 +144,13 @@ public class WearableListener extends WearableListenerService{
                 try {
                     initializeClient();
                     fetchConfigurationDetails(DataPathEnum.WEARABLE_SPLASH_DATA_RESPONSE);
+                } catch (NotSetupException e) {
+                    Log.e("Exception", e.getMessage());
+                    DataMap dataMap = new DataMap();
+                    dataMap.putString(DataMapConstants.ERROR, "Failed");
+                    dataMap.putString("UUID", UUID.randomUUID().toString());
+                    new DataLayerThread(DataPathEnum.WEARABLE_SPLASH_ERROR_NOT_SETUP_RESPONSE.toString(),
+                            dataMap, googleClient).start();
                 } catch (Exception e) {
                     Log.e("Exception", e.getMessage());
                     DataMap dataMap = new DataMap();
@@ -189,7 +196,7 @@ public class WearableListener extends WearableListenerService{
         String localUrl = sharedPref.getString(PreferenceConstants.LOCAL_URL, null);
 
         if (localUrl == null) {
-            throw new Exception("Not currently setup.");
+            throw new NotSetupException("Not currently setup.");
         } else {
             //setup, but not active
             if (RestClient.getLocalUrl() == null) {

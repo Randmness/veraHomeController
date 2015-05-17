@@ -53,6 +53,9 @@ public class WearableListener extends WearableListenerService {
                     case WEARABLE_SPLASH_DATA_ERROR:
                         broadcastErrorResponse(DataPathEnum.WEARABLE_SPLASH_DATA_ERROR);
                         break;
+                    case WEARABLE_SPLASH_ERROR_NOT_SETUP_RESPONSE:
+                        broadcastErrorResponse(DataPathEnum.WEARABLE_SPLASH_ERROR_NOT_SETUP_RESPONSE);
+                        break;
                     case WEARABLE_CONFIG_DATA_ERROR:
                         broadcastErrorResponse(DataPathEnum.WEARABLE_CONFIG_DATA_ERROR);
                         break;
@@ -98,11 +101,18 @@ public class WearableListener extends WearableListenerService {
 
     private void broadcastErrorResponse(DataPathEnum dataPathEnum) {
         Intent messageIntent = new Intent();
-        if (dataPathEnum == DataPathEnum.WEARABLE_SPLASH_DATA_ERROR) {
-            messageIntent.setAction(Intent.ACTION_SEND);
-        } else if (dataPathEnum == DataPathEnum.WEARABLE_CONFIG_DATA_ERROR) {
-            messageIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        switch (dataPathEnum) {
+            case WEARABLE_SPLASH_DATA_ERROR:
+                messageIntent.setAction(Intent.ACTION_SEND);
+                break;
+            case WEARABLE_SPLASH_ERROR_NOT_SETUP_RESPONSE:
+                messageIntent.setAction(Intent.ACTION_SEND);
+                break;
+            case WEARABLE_CONFIG_DATA_ERROR:
+                messageIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+                break;
         }
+
         messageIntent.putExtra(IntentConstants.DATA_PATH, dataPathEnum.toString());
         LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
     }

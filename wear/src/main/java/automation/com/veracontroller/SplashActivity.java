@@ -128,6 +128,20 @@ public class SplashActivity extends Activity implements
         public void onReceive(Context context, Intent intent) {
             String message = intent.getStringExtra(IntentConstants.DATA_PATH);
             switch (DataPathEnum.fromPath(message)) {
+                case WEARABLE_SPLASH_ERROR_NOT_SETUP_RESPONSE:
+                    activityDialog.dismiss();
+                    AlertDialog.Builder errorDialog = new AlertDialog.Builder(SplashActivity.this);
+                    errorDialog.setMessage("Please open the mobile app to configure your Vera setup before " +
+                            "attempting to use this app.");
+                    errorDialog.setPositiveButton("Close",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    finish();
+                                }
+                            });
+
+                    errorDialog.create().show();
+                    break;
                 case WEARABLE_SPLASH_DATA_RESPONSE:
                     ArrayList<BinaryLight> lights = intent.getParcelableArrayListExtra(IntentConstants.LIGHT_LIST);
                     ArrayList<Scene> scenes = intent.getParcelableArrayListExtra(IntentConstants.SCENE_LIST);
