@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vera Home Controller</string>
+    <string name="app_name">Bright Home UI5</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -13,4 +13,39 @@
     <string name="viewHolder">View Holder</string>
     <string name="objectHolder">Object Holder</string>
     <string name="title_activity_login">LoginActivity</string>
+
+    <string name="initalLogin">
+        <b>Welcome!</b>\n\n
+        \tTo begin setup,<b><i> connect to the WIFI with your Vera system</i></b>, and select one of the following:\n\n
+        \t<b>Remote</b>:\t\t\t\tWill be prompted for password. Allows remote access.\n\n
+        \t<b>Local Only</b>:\tNo password necessary. Local (WIFI) support only.\n
+    </string>
+
+    <string name="firstTimeRemote">To enable <b><i>Remote Access</i>:</b> \n\n
+        \t\tConnect to the WIFI with the Vera system.\n\n
+        \t\tSelect the <b>Update Remote Credentials</b> option to enter credentials. You will be able to
+        switch back and forth once entered. \n
+    </string>
+
+    <string name="updateRemote">To update your <b><i>Remote Access Credentials</i>:</b>\n\n
+        \t\tConnect to the WIFI with the Vera system.\n\n
+        \t\tSelect the <b>Update Remote Credentials</b> option to update your credentials.
+    </string>
+
+    <string name="updateLocation">To update your <b><i>Location Details</i>:</b>\n\n
+        \t\tConnect to the WIFI with the Vera system.\n\n
+        \t\tSelect the <b>Update Location Details</b> option to update information surrounding local and remote connection URLs.
+    </string>
+
+    <string name="recoveryRemote"><b>Troubleshooting Options:</b>\n\n
+        \t\t<b>Update Location Details</b>:\tUpdate with latest connection URLs. Must be connected to WIFI.\n\n
+        \t\t<b>Retry Remote Setup</b>:\tRetry using current configuration.\n\n
+        \t\t<b>Switch to Local Setup</b>:\tRe-attempt leveraging local connection URLs. Must be connected to WIFI.
+    </string>
+
+    <string name="recoveryLocal"><b>Troubleshooting Options:</b>\n\n
+        \t\t<b>Update Location Details</b>:\tUpdate with latest connection URLs. Must be connected to WIFI.\n\n
+        \t\t<b>Retry Local Setup</b>:\tRetry using current configuration. Must be connected to WIFI.\n\n
+        \t\t<b>Switch to Remote Setup</b>:\tIf available, re-attempt leveraging remote connection URL.
+    </string>
 </resources>

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
@@ -205,7 +206,7 @@ public class WearableListener extends WearableListenerService{
         String localUrl = sharedPref.getString(PreferenceConstants.LOCAL_URL, null);
 
         if (localUrl == null) {
-            sendNotification("Vera Home Control", "Please set up before accessible wearable app.");
+            sendNotification("Bright Home UI5", "Please set up before accessible wearable app.");
             throw new NotSetupException("Not currently setup.");
         } else {
             //setup, but not active
@@ -249,6 +250,7 @@ public class WearableListener extends WearableListenerService{
                 .setContentTitle(title)
                 .setContentText(message)
                 .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.splash_screen))
                 .setAutoCancel(true)
                 .setContentIntent(startPendingIntent)
                 .build();

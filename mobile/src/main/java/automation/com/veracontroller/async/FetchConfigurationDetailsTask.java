@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import automation.com.veracontroller.DeviceActivity;
+import automation.com.veracontroller.R;
 import automation.com.veracontroller.SplashScreen;
 import automation.com.veracontroller.constants.IntentConstants;
 import automation.com.veracontroller.constants.PreferenceConstants;
@@ -99,7 +100,7 @@ public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean
 
                 if (RestClient.getLeverageRemote()) {
                     AlertDialog.Builder webDialog = new AlertDialog.Builder(activity);
-                    webDialog.setMessage("Failed to login.");
+                    webDialog.setMessage(R.string.recoveryRemote);
                     webDialog.setCancelable(false);
                     webDialog.setPositiveButton("Switch to Local Setup",
                             new DialogInterface.OnClickListener() {
@@ -130,7 +131,7 @@ public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean
                 } else {
                     final String password = sharedPref.getString(PreferenceConstants.PASSWORD, null);
                     AlertDialog.Builder webDialog = new AlertDialog.Builder(activity);
-                    webDialog.setMessage("Failed to login.");
+                    webDialog.setMessage(R.string.recoveryLocal);
                     webDialog.setCancelable(false);
                     if (password != null) {
                         webDialog.setPositiveButton("Switch to Remote Setup",

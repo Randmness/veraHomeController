@@ -198,7 +198,7 @@ public class DeviceActivity extends FragmentActivity implements
                 break;
             case R.id.updateLocationDetails:
                 AlertDialog.Builder webDialog = new AlertDialog.Builder(DeviceActivity.this);
-                webDialog.setMessage("Must be connected to wifi.");
+                webDialog.setMessage(R.string.updateLocation);
                 webDialog.setCancelable(true);
                 webDialog.setPositiveButton("Update Location Details",
                         new DialogInterface.OnClickListener() {
@@ -218,14 +218,14 @@ public class DeviceActivity extends FragmentActivity implements
                 break;
             case R.id.sendFeedback:
                 Intent email = new Intent(Intent.ACTION_SEND);
-                email.putExtra(Intent.EXTRA_EMAIL, new String[]{"test@gmail.com"});
-                email.putExtra(Intent.EXTRA_SUBJECT, "Vera Home Controller: Feedback");
+                email.putExtra(Intent.EXTRA_EMAIL, new String[]{"RandmDeveloper@gmail.com"});
+                email.putExtra(Intent.EXTRA_SUBJECT, "Bright Home UI5: Feedback");
                 email.setType("message/rfc822");
                 startActivity(Intent.createChooser(email, "Send Email"));
                 break;
             case R.id.updateRemoteLogin:
                 AlertDialog.Builder loginDialog = new AlertDialog.Builder(DeviceActivity.this);
-                loginDialog.setMessage("Must be connected to wifi.");
+                loginDialog.setMessage(R.string.updateRemote);
                 loginDialog.setCancelable(false);
                 loginDialog.setPositiveButton("Update Credentials",
                         new DialogInterface.OnClickListener() {
@@ -255,7 +255,7 @@ public class DeviceActivity extends FragmentActivity implements
 
                     if (password == null) {
                         AlertDialog.Builder remoteDialog = new AlertDialog.Builder(DeviceActivity.this);
-                        remoteDialog.setMessage("Must be connected to wifi.");
+                        remoteDialog.setMessage(R.string.firstTimeRemote);
                         remoteDialog.setCancelable(false);
                         remoteDialog.setPositiveButton("Update Remote Credentials",
                                 new DialogInterface.OnClickListener() {

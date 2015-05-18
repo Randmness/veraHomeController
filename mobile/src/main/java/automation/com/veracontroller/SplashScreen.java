@@ -37,7 +37,7 @@ public class SplashScreen extends Activity {
                 @Override
                 public void run() {
                     AlertDialog.Builder webDialog = new AlertDialog.Builder(SplashScreen.this);
-                    webDialog.setMessage("More information?");
+                    webDialog.setMessage(R.string.initalLogin);
                     webDialog.setCancelable(false);
                     webDialog.setPositiveButton("Local Only",
                             new DialogInterface.OnClickListener() {

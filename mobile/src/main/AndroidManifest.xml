@@ -22,11 +22,11 @@
         </activity>
         <activity
             android:name=".DeviceActivity"
-            android:label="@string/title_activity_devices" >
+            android:label="Bright Home UI5" >
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login" >
+            android:label="Bright Home UI5" >
         </activity>
         <service
             android:name=".service.PollingService"
