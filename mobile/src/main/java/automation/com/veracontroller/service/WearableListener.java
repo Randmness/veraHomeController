@@ -1,12 +1,17 @@
 package automation.com.veracontroller.service;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -28,8 +33,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
+import automation.com.veracontroller.DeviceActivity;
+import automation.com.veracontroller.R;
+import automation.com.veracontroller.SplashScreen;
 import automation.com.veracontroller.async.FetchLocationDetailsTask;
 import automation.com.veracontroller.constants.DataMapConstants;
+import automation.com.veracontroller.constants.IntentConstants;
 import automation.com.veracontroller.constants.PreferenceConstants;
 import automation.com.veracontroller.enums.DataPathEnum;
 import automation.com.veracontroller.pojo.BinaryLight;
@@ -196,6 +205,7 @@ public class WearableListener extends WearableListenerService{
         String localUrl = sharedPref.getString(PreferenceConstants.LOCAL_URL, null);
 
         if (localUrl == null) {
+            sendNotification("Vera Home Control", "Please set up before accessible wearable app.");
             throw new NotSetupException("Not currently setup.");
         } else {
             //setup, but not active
@@ -228,5 +238,22 @@ public class WearableListener extends WearableListenerService{
         dataMap.putString("UUID", UUID.randomUUID().toString());
         Log.i("Wearable listener", "Attempting to send data to : " + dataPathEnum.toString());
         new DataLayerThread(dataPathEnum.toString(), dataMap, googleClient).start();
+    }
+
+    private void sendNotification(String title, String message) {
+        Intent startIntent = new Intent(getApplicationContext(), SplashScreen.class);
+        PendingIntent startPendingIntent =
+                PendingIntent.getActivity(this, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notify = new NotificationCompat.Builder(this)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setAutoCancel(true)
+                .setContentIntent(startPendingIntent)
+                .build();
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(001, notify);
     }
 }
