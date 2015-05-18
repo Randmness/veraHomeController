@@ -206,7 +206,7 @@ public class WearableListener extends WearableListenerService{
         String localUrl = sharedPref.getString(PreferenceConstants.LOCAL_URL, null);
 
         if (localUrl == null) {
-            sendNotification("Bright Home UI5", "Please set up before accessible wearable app.");
+            sendNotification("Smart Abode", "Please set up before accessible wearable app.");
             throw new NotSetupException("Not currently setup.");
         } else {
             //setup, but not active

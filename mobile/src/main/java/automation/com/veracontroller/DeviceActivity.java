@@ -219,7 +219,7 @@ public class DeviceActivity extends FragmentActivity implements
             case R.id.sendFeedback:
                 Intent email = new Intent(Intent.ACTION_SEND);
                 email.putExtra(Intent.EXTRA_EMAIL, new String[]{"RandmDeveloper@gmail.com"});
-                email.putExtra(Intent.EXTRA_SUBJECT, "Bright Home UI5: Feedback");
+                email.putExtra(Intent.EXTRA_SUBJECT, "Smart Abode: Feedback");
                 email.setType("message/rfc822");
                 startActivity(Intent.createChooser(email, "Send Email"));
                 break;

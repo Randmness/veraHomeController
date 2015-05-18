@@ -137,7 +137,7 @@ public class WearableListener extends WearableListenerService {
                 PendingIntent.getActivity(this, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notify = new NotificationCompat.Builder(this)
-                .setContentTitle("Bright Home UI5")
+                .setContentTitle("Smart Abode")
                 .setContentText("Control Vera via your wearable.")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.splash_screen))
