@@ -1,7 +1,10 @@
 package automation.com.veracontroller.adapter;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Handler;
 import android.support.wearable.view.CircledImageView;
 import android.support.wearable.view.GridPagerAdapter;
 import android.support.wearable.view.WearableListView;
@@ -37,6 +40,7 @@ public class ViewPagerAdapter extends GridPagerAdapter {
 
     private List<BinaryLight> lights;
     private List<Scene> scenes;
+    private static final int RESPONSE_TIME_OUT = 10000;
 
     private ProgressDialog dialog;
 
@@ -88,6 +92,25 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                     dataMap.putString(DataMapConstants.LIGHT, gson.toJson(light));
                     dataMap.putString("UUID", UUID.randomUUID().toString());
                     new DataLayerThread(DataPathEnum.WEARABLE_DEVICE_LIGHT_TOGGLE.toString(), dataMap, googleApiClient).start();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dialog.isShowing()) {
+                                dialog.dismiss();
+                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                                alertDialog.setTitle("Error");
+                                alertDialog.setMessage("Communication with system has failed. Double-check "+
+                                    "your phone's connectivity and try again.");
+                                alertDialog.setPositiveButton("Close",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                alertDialog.create().show();
+                            }
+                        }
+                    }, RESPONSE_TIME_OUT);
                 }
 
                 @Override
@@ -113,6 +136,26 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                     dataMap.putString(DataMapConstants.SCENE, gson.toJson(scene));
                     dataMap.putString("UUID", UUID.randomUUID().toString());
                     new DataLayerThread(DataPathEnum.WEARABLE_DEVICE_SCENE_EXECUTION.toString(), dataMap, googleApiClient).start();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dialog.isShowing()) {
+                                dialog.dismiss();
+                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                                alertDialog.setTitle("Error");
+                                alertDialog.setMessage("Communication with system has failed. Double-check "+
+                                        "your phone's connectivity and try again.");
+                                alertDialog.setPositiveButton("Close",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                alertDialog.create().show();
+                            }
+                        }
+                    }, RESPONSE_TIME_OUT);
                 }
 
                 @Override

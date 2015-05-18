@@ -103,7 +103,8 @@ public class DeviceActivity extends Activity implements
                         }
                         AlertDialog.Builder alertDialog = new AlertDialog.Builder(DeviceActivity.this);
                         alertDialog.setTitle("Error");
-                        alertDialog.setMessage("Communication with system has failed.");
+                        alertDialog.setMessage("Communication with system has failed. Double-check "+
+                                "your phone's connectivity and try again.");
                         alertDialog.setPositiveButton("Close",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
@@ -175,7 +176,9 @@ public class DeviceActivity extends Activity implements
     public void onConnectionFailed(ConnectionResult connectionResult) { }
 
     private void updateUI(List<BinaryLight> newLights, List<Scene> newScenes) {
-        deviceDialog.dismiss();
+        if (deviceDialog.isShowing()) {
+            deviceDialog.dismiss();
+        }
         pagerAdapter.updateLights(newLights);
         pagerAdapter.getBinaryListAdapter().updateLights(newLights);
 
