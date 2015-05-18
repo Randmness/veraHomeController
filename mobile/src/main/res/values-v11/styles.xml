@@ -5,4 +5,11 @@
         <item name="android:windowBackground">@null</item>
     </style>
 
+    <style name="AppTheme" parent="android:Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/ActionBarTheme</item>
+    </style>
+
+    <style name="ActionBarTheme" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@drawable/action_bar_border</item>
+    </style>
 </resources>

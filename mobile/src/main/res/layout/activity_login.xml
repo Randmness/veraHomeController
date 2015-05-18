@@ -22,6 +22,7 @@
         android:ems="10"
         android:id="@+id/password"
         android:layout_below="@id/users"
+        android:hint="Enter password here..."
         android:layout_marginTop="25dp"
         android:layout_marginLeft="50dp"
         android:layout_centerHorizontal="true"/>

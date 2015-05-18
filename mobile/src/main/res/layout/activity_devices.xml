@@ -14,7 +14,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:textAppearance="@style/PagerTabStripText"
             android:paddingBottom="4dp"
+            android:background="@drawable/pager_tab_border"
             android:paddingTop="4dp" />
 
     </android.support.v4.view.ViewPager>

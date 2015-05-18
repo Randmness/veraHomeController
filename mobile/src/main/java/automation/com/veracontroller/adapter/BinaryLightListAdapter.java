@@ -50,7 +50,7 @@ public class BinaryLightListAdapter extends ArrayAdapter<BinaryLight> {
         }
 
         viewHolder.lightText.setText(light.getName() + "\n");
-        viewHolder.roomText.setText("Room: " + light.getRoomName());
+        viewHolder.roomText.setText("   "+light.getRoomName());
         viewHolder.status.setChecked(light.isEnabled());
         viewHolder.status.setTag(R.string.objectHolder, light);
 
