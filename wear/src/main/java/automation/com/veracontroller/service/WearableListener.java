@@ -3,6 +3,8 @@ package automation.com.veracontroller.service;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -138,6 +140,7 @@ public class WearableListener extends WearableListenerService {
                 .setContentTitle("Vera Home Control")
                 .setContentText("Control your Vera via your wearable.")
                 .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.splash_screen))
                 .setAutoCancel(true)
                 .setContentIntent(startPendingIntent)
                 .build();
