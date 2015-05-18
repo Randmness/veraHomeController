@@ -105,6 +105,9 @@ public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.dismiss();
+                                    SharedPreferences.Editor editor = sharedPref.edit();
+                                    editor.putBoolean(PreferenceConstants.LEVERAGE_REMOTE, false);
+                                    editor.commit();
                                     RestClient.setLeverageRemote(false);
                                     new FetchConfigurationDetailsTask(activity, true).execute();
                                 }
@@ -134,6 +137,9 @@ public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.dismiss();
+                                        SharedPreferences.Editor editor = sharedPref.edit();
+                                        editor.putBoolean(PreferenceConstants.LEVERAGE_REMOTE, true);
+                                        editor.commit();
                                         String serialNumber = sharedPref.getString(PreferenceConstants.SERIAL_NUMBER, null);
                                         String username = sharedPref.getString(PreferenceConstants.USER_NAME, null);
                                         String remoteUrl = sharedPref.getString(PreferenceConstants.REMOTE_URL, null);
