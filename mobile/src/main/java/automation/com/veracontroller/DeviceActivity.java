@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
+import android.widget.Toolbar;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -257,7 +258,7 @@ public class DeviceActivity extends FragmentActivity implements
                         AlertDialog.Builder remoteDialog = new AlertDialog.Builder(DeviceActivity.this);
                         remoteDialog.setMessage(R.string.firstTimeRemote);
                         remoteDialog.setCancelable(false);
-                        remoteDialog.setPositiveButton("Update Remote Credentials",
+                        remoteDialog.setPositiveButton("Update Credentials",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         new FetchLocationDetailsTask(DeviceActivity.this, true).execute();

@@ -1,15 +1,35 @@
 <resources>
+    <style name="ApplicationTheme" parent="android:Theme.Material.Light">
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/accent</item>
 
-    <style name="FullscreenTheme" parent="android:Theme.Holo">
-        <item name="android:windowActionBarOverlay">false</item>
-        <item name="android:windowBackground">@null</item>
+        <item name="android:textViewStyle">@style/TextViewTheme</item>
+        <item name="android:textColorPrimary">#fff</item>
+        <item name="android:navigationBarColor">#454545</item>
+        <item name="android:popupTheme">@style/MenuTheme</item>
+        <item name="android:editTextStyle">@style/EditTextTheme</item>
+        <item name="android:buttonStyle">@style/ButtonTheme</item>
     </style>
 
-    <style name="AppTheme" parent="android:Theme.Holo.Light">
-        <item name="android:actionBarStyle">@style/ActionBarTheme</item>
+    <style name="EditTextTheme" parent="android:Widget.Material.EditText">
+        <item name="android:textColor">@android:color/black</item>
     </style>
 
-    <style name="ActionBarTheme" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@drawable/action_bar_border</item>
+    <style name="ButtonTheme" parent="android:Widget.Material.Button">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="TextViewTheme" parent="android:Widget.Material.Light.TextView">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="MenuTheme" parent="android:Widget.Material.PopupMenu">
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:background">#f0f0f0</item>
+    </style>
+
+    <style name="SplashTheme" parent="android:Theme.Material.Light.NoActionBar.Fullscreen">
+        <item name="android:navigationBarColor">#454545</item>
     </style>
 </resources>

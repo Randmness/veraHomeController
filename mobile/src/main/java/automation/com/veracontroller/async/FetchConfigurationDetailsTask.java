@@ -102,7 +102,7 @@ public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean
                     AlertDialog.Builder webDialog = new AlertDialog.Builder(activity);
                     webDialog.setMessage(R.string.recoveryRemote);
                     webDialog.setCancelable(false);
-                    webDialog.setPositiveButton("Switch to Local Setup",
+                    webDialog.setPositiveButton("Attempt\nLocal",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.dismiss();
@@ -113,14 +113,14 @@ public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean
                                     new FetchConfigurationDetailsTask(activity, true).execute();
                                 }
                             });
-                    webDialog.setNeutralButton("Retry Remote Setup",
+                    webDialog.setNeutralButton("Retry\nRemote",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.dismiss();
                                     new FetchConfigurationDetailsTask(activity, true).execute();
                                 }
                             });
-                    webDialog.setNegativeButton("Update Location Details",
+                    webDialog.setNegativeButton("Update\nLocation",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.dismiss();
@@ -134,7 +134,7 @@ public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean
                     webDialog.setMessage(R.string.recoveryLocal);
                     webDialog.setCancelable(false);
                     if (password != null) {
-                        webDialog.setPositiveButton("Switch to Remote Setup",
+                        webDialog.setPositiveButton("Attempt\nRemote",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.dismiss();
@@ -151,14 +151,14 @@ public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean
                                     }
                                 });
                     }
-                    webDialog.setNeutralButton("Retry Local Setup",
+                    webDialog.setNeutralButton("Retry\nLocal",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.dismiss();
                                     new FetchConfigurationDetailsTask(activity, true).execute();
                                 }
                             });
-                    webDialog.setNegativeButton("Update Location Details",
+                    webDialog.setNegativeButton("Update\nLocation",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.dismiss();

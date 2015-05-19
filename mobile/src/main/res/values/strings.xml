@@ -18,7 +18,7 @@
         <b>Welcome!</b>\n\n
         \tTo begin setup,<b><i> connect to the WIFI with your Vera system</i></b>, and select one of the following:\n\n
         \t<b>Remote</b>:\t\t\t\tWill be prompted for password. Allows remote access.\n\n
-        \t<b>Local Only</b>:\tNo password necessary. Local (WIFI) support only.\n
+        \t<b>Local Only</b>:\t\tNo password necessary. Local (WIFI) support only.\n
     </string>
 
     <string name="firstTimeRemote">To enable <b><i>Remote Access</i>:</b> \n\n
@@ -29,7 +29,7 @@
 
     <string name="updateRemote">To update your <b><i>Remote Access Credentials</i>:</b>\n\n
         \t\tConnect to the WIFI with the Vera system.\n\n
-        \t\tSelect the <b>Update Remote Credentials</b> option to update your credentials.
+        \t\tSelect the <b>Update Credentials</b> option to update your credentials.
     </string>
 
     <string name="updateLocation">To update your <b><i>Location Details</i>:</b>\n\n
@@ -38,14 +38,14 @@
     </string>
 
     <string name="recoveryRemote"><b>Troubleshooting Options:</b>\n\n
-        \t\t<b>Update Location Details</b>:\tUpdate with latest connection URLs. Must be connected to WIFI.\n\n
-        \t\t<b>Retry Remote Setup</b>:\tRetry using current configuration.\n\n
-        \t\t<b>Switch to Local Setup</b>:\tRe-attempt leveraging local connection URLs. Must be connected to WIFI.
+        \t\t<b>Retry Remote</b>:\tRetry using current configuration.\n\n
+        \t\t<b>Update Location</b>:\tUpdate with latest connection URLs. Must be connected to WIFI.\n\n
+        \t\t<b>Attempt Local</b>:\tRe-attempt leveraging local connection URLs. Must be connected to WIFI.
     </string>
 
     <string name="recoveryLocal"><b>Troubleshooting Options:</b>\n\n
-        \t\t<b>Update Location Details</b>:\tUpdate with latest connection URLs. Must be connected to WIFI.\n\n
-        \t\t<b>Retry Local Setup</b>:\tRetry using current configuration. Must be connected to WIFI.\n\n
-        \t\t<b>Switch to Remote Setup</b>:\tIf available, re-attempt leveraging remote connection URL.
+        \t\t<b>Retry Local</b>:\tRetry using current configuration. Must be connected to WIFI.\n\n
+        \t\t<b>Update Location</b>:\tUpdate with latest connection URLs. Must be connected to WIFI.\n\n
+        \t\t<b>Attempt Remote</b>:\tIf available, re-attempt leveraging remote connection URL.
     </string>
 </resources>

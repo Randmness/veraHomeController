@@ -140,7 +140,6 @@ public class WearableListener extends WearableListenerService {
                 .setContentTitle("Smart Abode")
                 .setContentText("Control Vera via your wearable.")
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.splash_screen))
                 .setAutoCancel(true)
                 .setContentIntent(startPendingIntent)
                 .build();

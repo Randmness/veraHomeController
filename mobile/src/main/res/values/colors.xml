@@ -1,5 +1,7 @@
 <resources>
-
-    <color name="black_overlay">#66000000</color>
-    <color name="action_bar">#800000</color>
+    <color name="primary">#02686b</color>
+    <color name="primary_dark">#003b40</color>
+    <color name="accent">#800000</color>
+    <color name="text_primary">#D9FFFFFF</color>
+    <color name="text_secondary">#D9000000</color>
 </resources>

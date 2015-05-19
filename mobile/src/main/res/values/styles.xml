@@ -1,24 +1,25 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-    </style>
+    <!--<style name="AppTheme" parent="android:Theme.Material">
+        <item name="android:colorPrimaryDark">#590000</item>
+        <item name="android:colorAccent">#800000</item>
+        <item name="android:navigationBarColor">#800000</item>
+    </style>-->
 
-    <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowBackground">@null</item>
+    <style name="ApplicationTheme" parent="android:Theme.Material.Light">
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:navigationBarColor">@color/primary_dark</item>
     </style>
 
     <style name="PagerTabStripText">
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#fff</item>
-    </style>
-
-    <style name="CustomDialogTheme" parent="@android:style/Theme.Dialog">
-        <item name="@android:background">#000</item>
-        <item name="@android:textColor">#FAF5F7</item>
     </style>
 
 </resources>
