@@ -4,4 +4,5 @@
     <color name="accent">#800000</color>
     <color name="text_primary">#D9FFFFFF</color>
     <color name="text_secondary">#D9000000</color>
+    <color name="divider">#838583</color>
 </resources>

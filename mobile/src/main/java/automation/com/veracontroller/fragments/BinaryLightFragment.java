@@ -13,6 +13,7 @@ import automation.com.veracontroller.pojo.BinaryLight;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import automation.com.veracontroller.R;
 import automation.com.veracontroller.adapter.BinaryLightListAdapter;

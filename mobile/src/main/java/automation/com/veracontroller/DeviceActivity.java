@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
+import android.widget.ToggleButton;
 import android.widget.Toolbar;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -84,7 +85,7 @@ public class DeviceActivity extends FragmentActivity implements
      * @param view
      */
     public void onToggleClicked(View view) {
-        Switch aSwitch = ((Switch) view);
+        ToggleButton aSwitch = ((ToggleButton) view);
         BinaryLight clickedLight = (BinaryLight) view.getTag(R.string.objectHolder);
         new ToggleBinaryLightTask(view.getContext(), clickedLight, aSwitch.isChecked()).execute();
     }
