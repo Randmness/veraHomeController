@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
@@ -82,22 +83,8 @@ public class WearableListener extends WearableListenerService{
                         try {
                             initializeClient();
                             toggleLightSwitch(dataMap);
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        fetchConfigurationDetails(DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
-                                    } catch (Exception e) {
-                                        Log.e("Exception", e.getMessage());
-                                        DataMap dataMapResponse = new DataMap();
-                                        dataMapResponse.putString(DataMapConstants.ERROR, "Failed");
-                                        dataMapResponse.putString("UUID", UUID.randomUUID().toString());
-                                        new DataLayerThread(DataPathEnum.WEARABLE_CONFIG_DATA_ERROR.toString(),
-                                                dataMapResponse, googleClient).start();
-                                    }
-                                }
-                            }, LIGHT_CONCURRENT_CALL_DELAY);
+                            SystemClock.sleep(LIGHT_CONCURRENT_CALL_DELAY);
+                            fetchConfigurationDetails(DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
                         } catch (Exception e) {
                             Log.e("Exception", e.getMessage());
                             DataMap dataMapResponse = new DataMap();
@@ -112,22 +99,8 @@ public class WearableListener extends WearableListenerService{
                         try {
                             initializeClient();
                             executeScene(dataMap);
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        fetchConfigurationDetails(DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
-                                    } catch (Exception e) {
-                                        Log.e("Exception", e.getMessage());
-                                        DataMap dataMapResponse = new DataMap();
-                                        dataMapResponse.putString(DataMapConstants.ERROR, "Failed");
-                                        dataMapResponse.putString("UUID", UUID.randomUUID().toString());
-                                        new DataLayerThread(DataPathEnum.WEARABLE_CONFIG_DATA_ERROR.toString(),
-                                                dataMapResponse, googleClient).start();
-                                    }
-                                }
-                            }, SCENE_CONCURRENT_CALL_DELAY);
+                            SystemClock.sleep(SCENE_CONCURRENT_CALL_DELAY);
+                            fetchConfigurationDetails(DataPathEnum.WEARABLE_CONFIG_DATA_RESPONSE);
                         } catch (Exception e) {
                             Log.e("Exception", e.getMessage());
                             DataMap dataMapResponse = new DataMap();
