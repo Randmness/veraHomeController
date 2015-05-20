@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Handler;
+import android.support.wearable.activity.ConfirmationActivity;
 import android.support.wearable.view.CircledImageView;
 import android.support.wearable.view.GridPagerAdapter;
 import android.support.wearable.view.WearableListView;
@@ -85,7 +87,7 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                 public void onClick(WearableListView.ViewHolder viewHolder) {
                     int position = (Integer) viewHolder.itemView.getTag(R.id.wearableLightList);
 
-                    BinaryLight light = lights.get(position);//(BinaryLight) viewHolder.itemView.getTag(R.integer.objectHolder);
+                    BinaryLight light = lights.get(position);
                     dialog.setMessage("Turning "+light.onOrOff(!light.isEnabled())+ " "+ light.getName());
                     dialog.show();
                     DataMap dataMap = new DataMap();
@@ -97,17 +99,12 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                         public void run() {
                             if (dialog.isShowing()) {
                                 dialog.dismiss();
-                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-                                alertDialog.setTitle("Error");
-                                alertDialog.setMessage("Communication with system has failed. Double-check "+
-                                    "your phone's connectivity and try again.");
-                                alertDialog.setPositiveButton("Close",
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int id) {
-                                                dialog.dismiss();
-                                            }
-                                        });
-                                alertDialog.create().show();
+                                Intent failed = new Intent(context, ConfirmationActivity.class);
+                                failed.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
+                                        ConfirmationActivity.FAILURE_ANIMATION);
+                                failed.putExtra(ConfirmationActivity.EXTRA_MESSAGE, "An error has occurred" +
+                                        " while communicating with the Vera system.");
+                                context.startActivity(failed);
                             }
                         }
                     }, RESPONSE_TIME_OUT);
@@ -117,6 +114,20 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                 public void onTopEmptyRegionClick() {
                     dialog.setMessage("Fetching current details.");
                     dialog.show();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dialog.isShowing()) {
+                                dialog.dismiss();
+                                Intent failed = new Intent(context, ConfirmationActivity.class);
+                                failed.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
+                                        ConfirmationActivity.FAILURE_ANIMATION);
+                                failed.putExtra(ConfirmationActivity.EXTRA_MESSAGE, "Unable to fetch "+
+                                    "configuration details.");
+                                context.startActivity(failed);
+                            }
+                        }
+                    }, RESPONSE_TIME_OUT);
                     new RequestDataThread(DataPathEnum.WEARABLE_CONFIG_DATA_REQUEST,
                             "Requesting update.", googleApiClient).start();
                 }
@@ -142,17 +153,12 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                         public void run() {
                             if (dialog.isShowing()) {
                                 dialog.dismiss();
-                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-                                alertDialog.setTitle("Error");
-                                alertDialog.setMessage("Communication with system has failed. Double-check "+
-                                        "your phone's connectivity and try again.");
-                                alertDialog.setPositiveButton("Close",
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int id) {
-                                                dialog.dismiss();
-                                            }
-                                        });
-                                alertDialog.create().show();
+                                Intent failed = new Intent(context, ConfirmationActivity.class);
+                                failed.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
+                                        ConfirmationActivity.FAILURE_ANIMATION);
+                                failed.putExtra(ConfirmationActivity.EXTRA_MESSAGE, "An error has occurred" +
+                                        " while communicating with the Vera system.");
+                                context.startActivity(failed);
                             }
                         }
                     }, RESPONSE_TIME_OUT);
@@ -162,6 +168,20 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                 public void onTopEmptyRegionClick() {
                     dialog.setMessage("Fetching current details.");
                     dialog.show();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dialog.isShowing()) {
+                                dialog.dismiss();
+                                Intent failed = new Intent(context, ConfirmationActivity.class);
+                                failed.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
+                                        ConfirmationActivity.FAILURE_ANIMATION);
+                                failed.putExtra(ConfirmationActivity.EXTRA_MESSAGE, "An error has occurred" +
+                                        " while communicating with the Vera system.");
+                                context.startActivity(failed);
+                            }
+                        }
+                    }, RESPONSE_TIME_OUT);
                     new RequestDataThread(DataPathEnum.WEARABLE_CONFIG_DATA_REQUEST,
                             "Requesting update.", googleApiClient).start();
                 }

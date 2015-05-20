@@ -40,7 +40,12 @@ abstract public class RoomDataUtil {
                 int roomID = device.getInt("room");
                 String name = device.getString("name");
 
-                BinaryLight light = new BinaryLight(deviceID, name, rooms.get(roomID));
+                String roomName = rooms.get(roomID);
+                if (roomID == 0) {
+                    roomName = "No Room";
+                }
+
+                BinaryLight light = new BinaryLight(deviceID, name, roomName);
 
                 JSONArray states = device.getJSONArray("states");
                 for (int stateIndex = 0; stateIndex < states.length(); stateIndex++) {
@@ -62,6 +67,15 @@ abstract public class RoomDataUtil {
     }
 
     public static List<Scene> getScenes(JSONObject results) throws JSONException {
+        HashMap<Integer, String> rooms = new HashMap<>();
+        JSONArray roomList = results.getJSONArray("rooms");
+        for (int index = 0; index < roomList.length(); index++) {
+            JSONObject room = roomList.getJSONObject(index);
+            int roomID = room.getInt("id");
+            String roomName = room.getString("name");
+            rooms.put(roomID, roomName);
+        }
+
         List<Scene> scenes = new ArrayList<>();
         JSONArray sceneList = results.getJSONArray("scenes");
         for (int index = 0; index < sceneList.length(); index++) {
@@ -69,10 +83,16 @@ abstract public class RoomDataUtil {
             if (!scene.has("notification_only")) {
                 int sceneNum = scene.getInt("id");
                 String sceneName = scene.getString("name");
-                scenes.add(new Scene(sceneNum, sceneName));
+                int roomID = scene.getInt("room");
+                String roomName = rooms.get(roomID);
+                if (roomID == 0) {
+                    roomName = "No Room";
+                }
+                scenes.add(new Scene(sceneNum, sceneName, roomName));
             }
         }
 
+        Collections.sort(scenes, Scene.Comparators.NAME);
         return scenes;
     }
 }

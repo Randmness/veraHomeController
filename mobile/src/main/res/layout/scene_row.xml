@@ -1,15 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:padding="8dp" >
+    android:orientation="vertical"
+    android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/scene_name"
-        android:layout_width="wrap_content"
+        android:id="@+id/divider_scene"
+        android:layout_width="fill_parent"
+        android:visibility="gone"
+        android:textStyle="bold|italic"
         android:textSize="18dp"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="-6dp"
+        android:layout_marginBottom="-6dp"
         android:paddingLeft="5dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="@drawable/divider_border"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true" />
 
-</RelativeLayout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="-5dp">
+
+        <TextView
+            android:id="@+id/scene_name"
+            android:text="Light"
+            android:paddingLeft="10dp"
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:layout_alignParentTop="true" />
+
+    </RelativeLayout>
+
+</LinearLayout>

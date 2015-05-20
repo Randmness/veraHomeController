@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.wearable.activity.ConfirmationActivity;
 import android.support.wearable.view.DismissOverlayView;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
@@ -37,10 +38,6 @@ public class DeviceActivity extends Activity implements
     private GoogleApiClient googleApiClient;
     private ViewPagerAdapter pagerAdapter;
     private ProgressDialog deviceDialog;
-
-    private DismissOverlayView mDismissOverlay;
-
-    private static final int ADAPTER_UPDATE = 0;
 
     private DeviceActivity activity;
 
@@ -100,18 +97,13 @@ public class DeviceActivity extends Activity implements
                     case WEARABLE_CONFIG_DATA_ERROR:
                         if(deviceDialog.isShowing()) {
                             deviceDialog.dismiss();
+                            Intent failed = new Intent(activity, ConfirmationActivity.class);
+                            failed.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
+                                    ConfirmationActivity.FAILURE_ANIMATION);
+                            failed.putExtra(ConfirmationActivity.EXTRA_MESSAGE, "An error has occurred" +
+                                    " while communicating with the Vera system.");
+                            startActivity(failed);
                         }
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(DeviceActivity.this);
-                        alertDialog.setTitle("Error");
-                        alertDialog.setMessage("Communication with system has failed. Double-check "+
-                                "your phone's connectivity and try again.");
-                        alertDialog.setPositiveButton("Close",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        alertDialog.create().show();
                         break;
                 }
             }

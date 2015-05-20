@@ -6,8 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.widget.ImageView;
 
 import automation.com.veracontroller.async.FetchConfigurationDetailsTask;
 import automation.com.veracontroller.async.FetchLocationDetailsTask;
@@ -17,11 +23,14 @@ import automation.com.veracontroller.util.RestClient;
 public class SplashScreen extends Activity {
 
     private static final int SPLASH_DELAY = 3000;
+    private ImageView splash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+
+        splash = (ImageView) findViewById(R.id.imageView);
     }
 
     @Override

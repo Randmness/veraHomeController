@@ -11,6 +11,12 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.wearable.activity.ConfirmationActivity;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.widget.ImageView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -29,7 +35,9 @@ public class SplashActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    private static final int SPLASH_DELAY = 2000;
+    private static final int SPLASH_DELAY = 3000;
+    private static final int RESPONSE_TIMEOUT = 10000;
+    private ImageView splash;
 
     private GoogleApiClient googleClient;
     private ProgressDialog activityDialog;
@@ -42,6 +50,8 @@ public class SplashActivity extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        splash = (ImageView) findViewById(R.id.imageView);
 
         googleClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -82,6 +92,13 @@ public class SplashActivity extends Activity implements
     @Override
     public void onConnected(Bundle connectionHint) {
         if (firstEntry) {
+            AnimationSet set = new AnimationSet(true);
+            Animation fadeIn = new AlphaAnimation(0.1f, 1.0f);
+            fadeIn.setDuration(2500);
+            fadeIn.setInterpolator(new AccelerateInterpolator());
+            set.addAnimation(fadeIn);
+            splash.startAnimation(set);
+
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -92,6 +109,20 @@ public class SplashActivity extends Activity implements
                         activityDialog.setTitle("Starting Up");
                     }
                     activityDialog.show();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (activityDialog.isShowing()) {
+                                activityDialog.dismiss();
+                                Intent failed = new Intent(SplashActivity.this, ConfirmationActivity.class);
+                                failed.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
+                                        ConfirmationActivity.FAILURE_ANIMATION);
+                                failed.putExtra(ConfirmationActivity.EXTRA_MESSAGE, "An error has occurred" +
+                                        " while communicating with the Vera system.");
+                                startActivity(failed);
+                            }
+                        }
+                    }, RESPONSE_TIMEOUT);
                     new RequestDataThread(DataPathEnum.WEARABLE_SPLASH_DATA_REQUEST, "Requesting data.", googleClient).start();
                     firstEntry = false;
                 }
@@ -129,7 +160,9 @@ public class SplashActivity extends Activity implements
             String message = intent.getStringExtra(IntentConstants.DATA_PATH);
             switch (DataPathEnum.fromPath(message)) {
                 case WEARABLE_SPLASH_ERROR_NOT_SETUP_RESPONSE:
-                    activityDialog.dismiss();
+                    if (activityDialog.isShowing()) {
+                        activityDialog.dismiss();
+                    }
                     AlertDialog.Builder errorDialog = new AlertDialog.Builder(SplashActivity.this);
                     errorDialog.setMessage("Please open the mobile app to configure your Vera setup before " +
                             "attempting to use this app.");

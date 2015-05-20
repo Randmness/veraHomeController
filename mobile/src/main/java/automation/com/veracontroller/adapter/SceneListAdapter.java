@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import automation.com.veracontroller.R;
+import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
 
 public class SceneListAdapter extends ArrayAdapter<Scene> {
@@ -40,10 +41,26 @@ public class SceneListAdapter extends ArrayAdapter<Scene> {
 
             viewHolder = new SceneHolder();
             viewHolder.sceneText = (TextView) convertView.findViewById(R.id.scene_name);
+            viewHolder.divider = (TextView) convertView.findViewById(R.id.divider_scene);
 
             convertView.setTag(R.string.viewHolder, viewHolder);
         } else {
             viewHolder = (SceneHolder) convertView.getTag(R.string.viewHolder);
+        }
+
+        if (position == 0) {
+            viewHolder.divider.setVisibility(View.VISIBLE);
+            viewHolder.divider.setText(scene.getRoomName());
+        } else {
+            Scene previousScene = this.scenes.get(position-1);
+
+            if(previousScene.getRoomName().equalsIgnoreCase(scene.getRoomName())) {
+                viewHolder.divider.setVisibility(View.GONE);
+                viewHolder.divider.setText(scene.getRoomName());
+            } else {
+                viewHolder.divider.setVisibility(View.VISIBLE);
+                viewHolder.divider.setText(scene.getRoomName());
+            }
         }
 
         viewHolder.sceneText.setText(scene.getSceneName() + "\n");
@@ -54,5 +71,6 @@ public class SceneListAdapter extends ArrayAdapter<Scene> {
 
     static class SceneHolder {
         TextView sceneText;
+        TextView divider;
     }
 }

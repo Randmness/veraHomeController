@@ -89,7 +89,7 @@ public class BinaryLight implements Parcelable, Comparable<BinaryLight> {
 
     @Override
     public String toString() {
-        return this.roomName+":"+this.getName();
+        return this.roomName+":"+this.getName()+":"+this.getDeviceNum();
     }
 
     @Override

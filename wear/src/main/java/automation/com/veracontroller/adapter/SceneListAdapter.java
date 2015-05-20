@@ -44,6 +44,9 @@ public class SceneListAdapter extends WearableListView.Adapter {
         SceneItemView itemView = (SceneItemView) viewHolder.itemView;
         TextView sceneName = (TextView) itemView.findViewById(R.id.sceneName);
         sceneName.setText(item.getSceneName());
+
+        TextView roomName = (TextView) itemView.findViewById(R.id.roomName);
+        roomName.setText(item.getRoomName());
         itemView.setTag(R.integer.objectHolder, item);
     }
 
