@@ -1,25 +1,29 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <LinearLayout android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <TextView
         android:id="@+id/sceneName"
         android:alpha="0.5"
         android:fontFamily="sans-serif-condensed-light"
         android:gravity="center_horizontal"
-        android:layout_height="52dp"
         android:layout_width="fill_parent"
         android:textColor="@color/white"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/roomName"
         android:alpha="0.5"
         android:textStyle="italic"
+        android:layout_marginTop="-3dp"
         android:fontFamily="sans-serif-condensed-light"
         android:gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:layout_height="52dp"
+        android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:textColor="@color/white"
         android:textSize="12sp"/>
+    </LinearLayout>
 </merge>

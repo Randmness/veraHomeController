@@ -11,8 +11,8 @@ import java.util.List;
 
 import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
-import automation.com.veracontroller.util.support.DeviceTypeEnum;
-import automation.com.veracontroller.util.support.ServiceTypeEnum;
+import automation.com.veracontroller.enums.DeviceTypeEnum;
+import automation.com.veracontroller.enums.ServiceTypeEnum;
 
 /**
  * Created by root on 2/22/15.
@@ -34,8 +34,12 @@ abstract public class RoomDataUtil {
         JSONArray devices = results.getJSONArray("devices");
         for (int index = 0; index < devices.length(); index++) {
             JSONObject device = devices.getJSONObject(index);
-            String deviceType = device.getString("device_type");
-            if (deviceType != null && deviceType.equals(DeviceTypeEnum.BINARY_LIGHT.toString())) {
+
+            DeviceTypeEnum deviceType = DeviceTypeEnum.UNKNOWN;
+            if (device.has("device_type")) {
+                deviceType = DeviceTypeEnum.findDevice(device.getString("device_type"));
+            }
+            if (deviceType == DeviceTypeEnum.BINARY_LIGHT || deviceType == DeviceTypeEnum.DIMMABLE_LIGHT) {
                 int deviceID = device.getInt("id");
                 int roomID = device.getInt("room");
                 String name = device.getString("name");
