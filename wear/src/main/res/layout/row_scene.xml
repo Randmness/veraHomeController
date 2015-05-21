@@ -1,29 +1,30 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout android:orientation="vertical"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <TextView
-        android:id="@+id/sceneName"
-        android:alpha="0.5"
-        android:fontFamily="sans-serif-condensed-light"
-        android:gravity="center_horizontal"
-        android:layout_width="fill_parent"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/roomName"
-        android:alpha="0.5"
-        android:textStyle="italic"
-        android:layout_marginTop="-3dp"
-        android:fontFamily="sans-serif-condensed-light"
-        android:gravity="center_horizontal"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:textColor="@color/white"
-        android:textSize="12sp"/>
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/sceneName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0.5"
+            android:fontFamily="sans-serif-condensed-light"
+            android:gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/roomName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-3dp"
+            android:alpha="0.5"
+            android:fontFamily="sans-serif-condensed-light"
+            android:gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="italic" />
     </LinearLayout>
 </merge>
