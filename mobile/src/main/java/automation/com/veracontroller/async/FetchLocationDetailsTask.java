@@ -50,6 +50,14 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
                 session.setSerialNumber(unit.getString("serialNumber"));
                 session.setLocalUrl("http://" + unit.getString("ipAddress") + ":3480/");
                 session.setRemoteUrl("https://" + unit.getString("active_server") + "/");
+                StringBuilder remoteUrl = new StringBuilder(session.getRemoteUrl());
+                remoteUrl.append(session.getUserName());
+                remoteUrl.append("/");
+                remoteUrl.append(session.getPassword());
+                remoteUrl.append("/");
+                remoteUrl.append(session.getSerialNumber());
+                remoteUrl.append("/");
+                session.setRemoteUrl(remoteUrl.toString());
             }
             SharedPreferences sharedPref =
                     activity.getSharedPreferences(PreferenceConstants.PREF_KEY, Context.MODE_PRIVATE);
