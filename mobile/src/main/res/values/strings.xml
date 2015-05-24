@@ -16,9 +16,11 @@
 
     <string name="initalLogin">
         <b>Welcome!</b>\n\n
-        \tTo begin setup,<b><i> connect to the WIFI with your Vera system</i></b>, and select one of the following:\n\n
-        \t<b>Remote</b>:\t\t\t\tWill be prompted for password. Allows remote access.\n\n
-        \t<b>Local Only</b>:\t\tNo password necessary. Local (WIFI) support only.\n
+        \tTo begin setup,<b><i> connect to the WIFI with your Vera system</i></b>, and select one
+        the appropriate options:\n\n
+        \t<b>Vera UI7</b>:\t\tIf you are running the latest software, or a recently purchased Vera unit,
+        this is most likely your software version (Build 1.7xxx.)\n\n
+        \t<b>Vera UI5</b>:\t\tIntended for Vera systems running older software (Build 1.5xxx.)\n
     </string>
 
     <string name="firstTimeRemote">To enable <b><i>Remote Access</i>:</b> \n\n
@@ -30,6 +32,13 @@
     <string name="updateRemote">To update your <b><i>Remote Access Credentials</i>:</b>\n\n
         \t\tConnect to the WIFI with the Vera system.\n\n
         \t\tSelect the <b>Update Credentials</b> option to update your credentials.
+    </string>
+
+    <string name="polling"><b>Background Polling</b>\n\n
+        \t\tPolling allows you to see the current state of your Vera system without the need of manual
+        refresh. While the app is running, it will intermittently request the latest information
+        (about every 5 seconds.)\n\n
+        \t\tSelect the <b>Enable Polling</b> option to turn polling on.
     </string>
 
     <string name="updateLocation">To update your <b><i>Location Details</i>:</b>\n\n

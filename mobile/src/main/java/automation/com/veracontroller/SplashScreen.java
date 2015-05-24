@@ -44,7 +44,7 @@ public class SplashScreen extends Activity {
 
         if (veraType == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.recoveryRemote);
+            builder.setMessage(R.string.initalLogin);
             builder.setCancelable(false)
                     .setPositiveButton("Vera UI7", new DialogInterface.OnClickListener() {
                         @Override
@@ -81,6 +81,8 @@ public class SplashScreen extends Activity {
                 session = gson.fromJson(sharedPref.getString(
                         PreferenceConstants.SESSION_INFO,null), SessionUI7.class);
             }
+
+            //if not on wifi, switch enable remote
             RestClientUI7.setSession(session);
 
             new Handler().postDelayed(new Runnable() {

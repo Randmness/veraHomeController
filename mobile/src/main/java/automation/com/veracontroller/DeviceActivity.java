@@ -192,8 +192,25 @@ public class DeviceActivity extends FragmentActivity implements
                     destroyAllJobs();
                     pollingEnabled = false;
                 } else {
-                    pollingEnabled = true;
-                    createPollingService();
+                    AlertDialog.Builder webDialog = new AlertDialog.Builder(DeviceActivity.this);
+                    webDialog.setMessage(R.string.polling);
+                    webDialog.setCancelable(true);
+                    webDialog.setPositiveButton("Enable Polling",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    pollingEnabled = true;
+                                    createPollingService();
+                                }
+                            });
+                    webDialog.setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                    AlertDialog alertWeb = webDialog.create();
+                    alertWeb.show();
                 }
                 editor.putBoolean(PreferenceConstants.POLLING_ENABLED, pollingEnabled);
                 editor.commit();

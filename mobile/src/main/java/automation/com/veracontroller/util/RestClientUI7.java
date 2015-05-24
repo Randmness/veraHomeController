@@ -129,7 +129,6 @@ abstract public class RestClientUI7 {
 
     private static String getSessionToken() throws Exception{
         SessionUI7 sessionUI7 = (SessionUI7) SESSION;
-        Log.i("Expired", sessionUI7.isExpired()+"");
         if (sessionUI7.isExpired()) {
             retrieveNewSession();
         }
