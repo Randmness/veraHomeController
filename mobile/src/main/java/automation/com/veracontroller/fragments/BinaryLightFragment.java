@@ -8,16 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import automation.com.veracontroller.constants.IntentConstants;
-import automation.com.veracontroller.pojo.BinaryLight;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import automation.com.veracontroller.R;
 import automation.com.veracontroller.adapter.BinaryLightListAdapter;
 import automation.com.veracontroller.async.FetchBinaryLightTask;
+import automation.com.veracontroller.constants.IntentConstants;
+import automation.com.veracontroller.pojo.BinaryLight;
 
 public class BinaryLightFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private SwipeRefreshLayout swipeLayout;

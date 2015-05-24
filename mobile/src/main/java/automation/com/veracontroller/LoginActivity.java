@@ -1,15 +1,9 @@
 package automation.com.veracontroller;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,14 +11,20 @@ import java.util.List;
 
 import automation.com.veracontroller.async.AuthenticateUserTask;
 import automation.com.veracontroller.constants.IntentConstants;
+import automation.com.veracontroller.enums.VeraType;
+import automation.com.veracontroller.pojo.session.Session;
+import automation.com.veracontroller.pojo.session.SessionUI7;
+import automation.com.veracontroller.util.RestClientUI7;
 
 
 public class LoginActivity extends Activity {
     private List<String> userList = new ArrayList<>();
 
-    private Spinner userSpinner;
+    private TextView username;
     private TextView password;
-    private String serialNumber;
+
+    private Session session;
+    private VeraType veraType;
     private boolean initialLogin;
 
     @Override
@@ -32,15 +32,24 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        userList = getIntent().getStringArrayListExtra(IntentConstants.USER_LIST);
-        serialNumber = getIntent().getStringExtra(IntentConstants.SERIAL_NUMBER);
+        session = RestClientUI7.getSession();
         initialLogin = getIntent().getBooleanExtra(IntentConstants.INITIAL_LOGIN, false);
+        veraType = VeraType.fromType(getIntent().getStringExtra(IntentConstants.VERA_TYPE));
 
-        userSpinner = (Spinner) findViewById(R.id.users);
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getBaseContext(),
-                android.R.layout.simple_spinner_item, userList);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        userSpinner.setAdapter(dataAdapter);
+        username = (TextView) findViewById(R.id.username);
+
+        if (!initialLogin) {
+            if (session.getUserName() != null) {
+                username.setText(session.getUserName());
+            }
+        } else {
+            if (veraType == VeraType.VERA_UI7) {
+                session = new SessionUI7();
+            } else {
+                session = new Session();
+            }
+            session.setSystemType(veraType);
+        }
 
         password = (TextView) findViewById(R.id.password);
 
@@ -48,30 +57,9 @@ public class LoginActivity extends Activity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        new AuthenticateUserTask(LoginActivity.this,
-                                userSpinner.getSelectedItem().toString(), password.getText().toString(), serialNumber, initialLogin).execute();
-                    }
-                });
-
+            new AuthenticateUserTask(LoginActivity.this, username.getText().toString().trim(),
+                    password.getText().toString(), session, initialLogin).execute();
             }
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

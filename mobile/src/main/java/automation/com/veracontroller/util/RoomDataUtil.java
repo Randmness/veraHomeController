@@ -9,10 +9,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import automation.com.veracontroller.pojo.BinaryLight;
-import automation.com.veracontroller.pojo.Scene;
 import automation.com.veracontroller.enums.DeviceTypeEnum;
 import automation.com.veracontroller.enums.ServiceTypeEnum;
+import automation.com.veracontroller.pojo.BinaryLight;
+import automation.com.veracontroller.pojo.Scene;
 
 /**
  * Created by root on 2/22/15.

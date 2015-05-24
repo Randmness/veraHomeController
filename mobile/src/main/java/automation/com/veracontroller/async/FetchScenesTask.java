@@ -6,7 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.Toast;
 
 import automation.com.veracontroller.adapter.SceneListAdapter;
-import automation.com.veracontroller.util.RestClient;
+import automation.com.veracontroller.util.RestClientUI7;
 import automation.com.veracontroller.util.RoomDataUtil;
 
 public class FetchScenesTask extends AsyncTask<Void, Void, Boolean> {
@@ -23,7 +23,7 @@ public class FetchScenesTask extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Void... arg0) {
         try {
-            adapter.setScenes(RoomDataUtil.getScenes(RestClient.fetchConfigurationDetails()));
+            adapter.setScenes(RoomDataUtil.getScenes(RestClientUI7.fetchConfigurationDetails()));
         } catch (Exception e) {
             return false;
         }

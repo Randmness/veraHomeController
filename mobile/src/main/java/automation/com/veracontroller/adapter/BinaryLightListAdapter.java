@@ -1,22 +1,15 @@
 package automation.com.veracontroller.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import org.w3c.dom.Text;
-
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import automation.com.veracontroller.R;
 import automation.com.veracontroller.pojo.BinaryLight;

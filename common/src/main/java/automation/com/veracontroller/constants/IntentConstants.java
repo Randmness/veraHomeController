@@ -8,4 +8,5 @@ public abstract class IntentConstants {
     public static final String INITIAL_LOGIN = "Intent: Initial Login";
     public static final String MESSENGER = "Intent: Messenger";
     public static final String DATA_PATH = "Intent: Data Path";
+    public static final String VERA_TYPE = "Intent: Vera Type";
 }

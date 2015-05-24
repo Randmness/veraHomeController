@@ -1,12 +1,8 @@
 package automation.com.veracontroller.async;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -18,16 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import automation.com.veracontroller.DeviceActivity;
-import automation.com.veracontroller.R;
-import automation.com.veracontroller.SplashScreen;
 import automation.com.veracontroller.constants.IntentConstants;
-import automation.com.veracontroller.constants.PreferenceConstants;
 import automation.com.veracontroller.fragments.BinaryLightFragment;
 import automation.com.veracontroller.fragments.SceneFragment;
 import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
 import automation.com.veracontroller.service.PollingService;
-import automation.com.veracontroller.util.RestClient;
+import automation.com.veracontroller.util.RestClientUI7;
 import automation.com.veracontroller.util.RoomDataUtil;
 
 public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean> {
@@ -61,7 +54,7 @@ public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean
     @Override
     protected Boolean doInBackground(Void... arg0) {
         try {
-            JSONObject response = RestClient.fetchConfigurationDetails();
+            JSONObject response = RestClientUI7.fetchConfigurationDetails();
             lightList = (ArrayList) RoomDataUtil.getLights(response);
             sceneList = (ArrayList) RoomDataUtil.getScenes(response);
         } catch (Exception e) {
@@ -95,79 +88,7 @@ public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean
                 service.callJobFinished();
             }
         } else {
-            if (activity instanceof SplashScreen) {
-                final SharedPreferences sharedPref = activity.getSharedPreferences(PreferenceConstants.PREF_KEY, Context.MODE_PRIVATE);
 
-                if (RestClient.getLeverageRemote()) {
-                    AlertDialog.Builder webDialog = new AlertDialog.Builder(activity);
-                    webDialog.setMessage(R.string.recoveryRemote);
-                    webDialog.setCancelable(false);
-                    webDialog.setPositiveButton("Attempt\nLocal",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
-                                    SharedPreferences.Editor editor = sharedPref.edit();
-                                    editor.putBoolean(PreferenceConstants.LEVERAGE_REMOTE, false);
-                                    editor.commit();
-                                    RestClient.setLeverageRemote(false);
-                                    new FetchConfigurationDetailsTask(activity, true).execute();
-                                }
-                            });
-                    webDialog.setNeutralButton("Retry\nRemote",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
-                                    new FetchConfigurationDetailsTask(activity, true).execute();
-                                }
-                            });
-                    webDialog.setNegativeButton("Update\nLocation",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
-                                    new FetchLocationDetailsTask(activity, false).execute();
-                                }
-                            });
-                    webDialog.create().show();
-                } else {
-                    final String password = sharedPref.getString(PreferenceConstants.PASSWORD, null);
-                    AlertDialog.Builder webDialog = new AlertDialog.Builder(activity);
-                    webDialog.setMessage(R.string.recoveryLocal);
-                    webDialog.setCancelable(false);
-                    if (password != null) {
-                        webDialog.setPositiveButton("Attempt\nRemote",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.dismiss();
-                                        SharedPreferences.Editor editor = sharedPref.edit();
-                                        editor.putBoolean(PreferenceConstants.LEVERAGE_REMOTE, true);
-                                        editor.commit();
-                                        String serialNumber = sharedPref.getString(PreferenceConstants.SERIAL_NUMBER, null);
-                                        String username = sharedPref.getString(PreferenceConstants.USER_NAME, null);
-                                        String remoteUrl = sharedPref.getString(PreferenceConstants.REMOTE_URL, null);
-                                        RestClient.setRemoteURL(remoteUrl);
-                                        RestClient.updateCredentials(username, password, serialNumber);
-                                        RestClient.setLeverageRemote(true);
-                                        new FetchConfigurationDetailsTask(activity, true).execute();
-                                    }
-                                });
-                    }
-                    webDialog.setNeutralButton("Retry\nLocal",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
-                                    new FetchConfigurationDetailsTask(activity, true).execute();
-                                }
-                            });
-                    webDialog.setNegativeButton("Update\nLocation",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
-                                    new FetchLocationDetailsTask(activity, false).execute();
-                                }
-                            });
-                    webDialog.create().show();
-                }
-            }
             Toast.makeText(activity, "Failed to retrieve configuration.", Toast.LENGTH_LONG).show();
         }
     }

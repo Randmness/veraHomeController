@@ -10,7 +10,6 @@ import android.widget.TextView;
 import java.util.List;
 
 import automation.com.veracontroller.R;
-import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
 
 public class SceneListAdapter extends ArrayAdapter<Scene> {

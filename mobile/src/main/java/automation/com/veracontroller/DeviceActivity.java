@@ -8,26 +8,24 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Switch;
 import android.widget.ToggleButton;
-import android.widget.Toolbar;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.Wearable;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,12 +41,10 @@ import automation.com.veracontroller.enums.DataPathEnum;
 import automation.com.veracontroller.fragments.support.DevicePagerAdapter;
 import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
+import automation.com.veracontroller.pojo.session.Session;
 import automation.com.veracontroller.service.DataLayerThread;
 import automation.com.veracontroller.service.PollingService;
-import automation.com.veracontroller.util.RestClient;
+import automation.com.veracontroller.util.RestClientUI7;
 
 public class DeviceActivity extends FragmentActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -156,6 +152,10 @@ public class DeviceActivity extends FragmentActivity implements
 
     @Override
     protected void onDestroy() {
+        SharedPreferences.Editor editor = getSharedPreferences(
+                PreferenceConstants.PREF_KEY, Context.MODE_PRIVATE).edit();
+        editor.putString(PreferenceConstants.SESSION_INFO, gson.toJson(RestClientUI7.getSession()));
+        editor.commit();
         destroyAllJobs();
         super.onDestroy();
     }
@@ -163,7 +163,7 @@ public class DeviceActivity extends FragmentActivity implements
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (RestClient.getLeverageRemote()) {
+        if (RestClientUI7.getSession().getLeverageRemote()) {
             menu.findItem(R.id.enableRemote).setChecked(true);
             menu.findItem(R.id.updateRemoteLogin).setVisible(true);
         } else {
@@ -205,7 +205,7 @@ public class DeviceActivity extends FragmentActivity implements
                 webDialog.setPositiveButton("Update Location Details",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                new FetchLocationDetailsTask(DeviceActivity.this, false).execute();
+                                new FetchLocationDetailsTask(DeviceActivity.this, RestClientUI7.getSession()).execute();
                             }
                         });
                 webDialog.setNegativeButton("Cancel",
@@ -232,7 +232,7 @@ public class DeviceActivity extends FragmentActivity implements
                 loginDialog.setPositiveButton("Update Credentials",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                new FetchLocationDetailsTask(DeviceActivity.this, true).execute();
+                                startActivity(new Intent(DeviceActivity.this, LoginActivity.class));
                             }
                         });
                 loginDialog.setNegativeButton("Cancel",
@@ -247,46 +247,18 @@ public class DeviceActivity extends FragmentActivity implements
                 break;
             case R.id.enableRemote:
                 SharedPreferences sharedPref = getSharedPreferences(PreferenceConstants.PREF_KEY, Context.MODE_PRIVATE);
+                Session session = RestClientUI7.getSession();
+                editor = sharedPref.edit();
                 if (item.isChecked()) {
-                    editor = sharedPref.edit();
-                    editor.putBoolean(PreferenceConstants.LEVERAGE_REMOTE, false);
+                    session.setLeverageRemote(false);
+                    editor.putString(PreferenceConstants.SESSION_INFO, gson.toJson(session));
                     editor.commit();
-                    RestClient.setLeverageRemote(false);
                 } else {
-                    String password = sharedPref.getString(PreferenceConstants.PASSWORD, null);
-
-                    if (password == null) {
-                        AlertDialog.Builder remoteDialog = new AlertDialog.Builder(DeviceActivity.this);
-                        remoteDialog.setMessage(R.string.firstTimeRemote);
-                        remoteDialog.setCancelable(false);
-                        remoteDialog.setPositiveButton("Update Credentials",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        new FetchLocationDetailsTask(DeviceActivity.this, true).execute();
-                                    }
-                                });
-                        remoteDialog.setNegativeButton("Cancel",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.dismiss();
-                                    }
-                                });
-
-                        AlertDialog remoteWeb = remoteDialog.create();
-                        remoteWeb.show();
-                    } else {
-                        String username = sharedPref.getString(PreferenceConstants.USER_NAME, null);
-                        String serial = sharedPref.getString(PreferenceConstants.SERIAL_NUMBER, null);
-                        String remoteUrl = sharedPref.getString(PreferenceConstants.REMOTE_URL, null);
-                        RestClient.setLeverageRemote(true);
-                        RestClient.setRemoteURL(remoteUrl);
-                        RestClient.updateCredentials(username, password, serial);
-
-                        editor = sharedPref.edit();
-                        editor.putBoolean(PreferenceConstants.LEVERAGE_REMOTE, true);
-                        editor.commit();
-                    }
+                    session.setLeverageRemote(true);
+                    editor.putString(PreferenceConstants.SESSION_INFO, gson.toJson(session));
+                    editor.commit();
                 }
+                RestClientUI7.setSession(session);
                 invalidateOptionsMenu();
                 break;
         }

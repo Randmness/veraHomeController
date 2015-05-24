@@ -1,22 +1,16 @@
 package automation.com.veracontroller.service;
 
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
@@ -33,19 +27,18 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
 
-import automation.com.veracontroller.DeviceActivity;
 import automation.com.veracontroller.R;
 import automation.com.veracontroller.SplashScreen;
-import automation.com.veracontroller.async.FetchLocationDetailsTask;
 import automation.com.veracontroller.constants.DataMapConstants;
-import automation.com.veracontroller.constants.IntentConstants;
 import automation.com.veracontroller.constants.PreferenceConstants;
 import automation.com.veracontroller.enums.DataPathEnum;
+import automation.com.veracontroller.enums.VeraType;
 import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
-import automation.com.veracontroller.util.RestClient;
+import automation.com.veracontroller.pojo.session.Session;
+import automation.com.veracontroller.pojo.session.SessionUI7;
+import automation.com.veracontroller.util.RestClientUI7;
 import automation.com.veracontroller.util.RoomDataUtil;
 
 /**
@@ -121,7 +114,7 @@ public class WearableListener extends WearableListenerService{
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        Log.i("SERVICE", "Message received: "+messageEvent.getPath());
+        Log.i("SERVICE", "Message received: " + messageEvent.getPath());
         switch (DataPathEnum.fromPath(messageEvent.getPath())) {
             case WEARABLE_SPLASH_DATA_REQUEST:
                 try {
@@ -165,42 +158,48 @@ public class WearableListener extends WearableListenerService{
         initializeClient();
         Scene scene =  gson.fromJson(dataMap.getString(DataMapConstants.SCENE), Scene.class);
         Log.i("Scene Execution", "Attempting to execute scene:" + scene.getSceneName());
-        RestClient.executeSceneCommand(scene.getSceneNum());
+        RestClientUI7.executeSceneCommand(scene.getSceneNum());
+        saveSession();
     }
 
     private void toggleLightSwitch(DataMap dataMap) throws Exception {
         BinaryLight light = gson.fromJson(dataMap.getString(DataMapConstants.LIGHT), BinaryLight.class);
         Log.i("Toggle Attempt: ", light.getName()+", Future State: "+light.onOrOff(!light.isEnabled()));
-        RestClient.executeSwitchCommand(!light.isEnabled(), light.getDeviceNum());
+        RestClientUI7.executeSwitchCommand(!light.isEnabled(), light.getDeviceNum());
+        saveSession();
+    }
+
+    private void saveSession() {
+        SharedPreferences.Editor editor = getSharedPreferences(
+                PreferenceConstants.PREF_KEY, Context.MODE_PRIVATE).edit();
+        editor.putString(PreferenceConstants.SESSION_INFO, gson.toJson(RestClientUI7.getSession()));
+        editor.commit();
     }
 
     private void initializeClient() throws Exception {
         SharedPreferences sharedPref = getSharedPreferences(PreferenceConstants.PREF_KEY, Context.MODE_PRIVATE);
-        String localUrl = sharedPref.getString(PreferenceConstants.LOCAL_URL, null);
+        VeraType veraType = VeraType.fromType(sharedPref.getString(PreferenceConstants.VERA_TYPE, null));
 
-        if (localUrl == null) {
-            sendNotification("Smart Abode", "Please set up before accessing wearable app.");
+        if (veraType == null) {
+            sendNotification("Smart Abode", "Please set mobile app before accessing wearable app.");
             throw new NotSetupException("Not currently setup.");
         } else {
-            //setup, but not active
-            if (RestClient.getLocalUrl() == null) {
-                boolean leverageRemote = sharedPref.getBoolean(PreferenceConstants.LEVERAGE_REMOTE, false);
-                RestClient.setLocalURL(localUrl);
-                if (leverageRemote) {
-                    String username = sharedPref.getString(PreferenceConstants.USER_NAME, null);
-                    String password = sharedPref.getString(PreferenceConstants.PASSWORD, null);
-                    String serial = sharedPref.getString(PreferenceConstants.SERIAL_NUMBER, null);
-                    String remote = sharedPref.getString(PreferenceConstants.REMOTE_URL, null);
-                    RestClient.setLeverageRemote(true);
-                    RestClient.setRemoteURL(remote);
-                    RestClient.updateCredentials(username, password, serial);
+            Session session = RestClientUI7.getSession();
+            if (session == null) {
+                if (veraType == VeraType.VERA_UI5) {
+                    session = gson.fromJson(sharedPref.getString(
+                            PreferenceConstants.SESSION_INFO, null), Session.class);
+                } else {
+                    session = gson.fromJson(sharedPref.getString(
+                            PreferenceConstants.SESSION_INFO, null), SessionUI7.class);
                 }
+                RestClientUI7.setSession(session);
             }
         }
     }
 
     private void fetchConfigurationDetails(DataPathEnum dataPathEnum) throws Exception {
-        JSONObject result = RestClient.fetchConfigurationDetails();
+        JSONObject result = RestClientUI7.fetchConfigurationDetails();
         List<BinaryLight> lights = RoomDataUtil.getLights(result);
         List<Scene> scenes = RoomDataUtil.getScenes(result);
 

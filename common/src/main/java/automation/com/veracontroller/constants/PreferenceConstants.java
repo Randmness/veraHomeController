@@ -10,4 +10,6 @@ public abstract class PreferenceConstants {
     public static final String USER_NAME = "username";
     public static final String PASSWORD = "password";
     public static final String POLLING_ENABLED = "pollingEnabled";
+    public static final String VERA_TYPE = "veraType";
+    public static final String SESSION_INFO = "sessionINfo";
 }

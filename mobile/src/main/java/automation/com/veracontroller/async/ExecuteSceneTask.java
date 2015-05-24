@@ -7,7 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import automation.com.veracontroller.pojo.Scene;
-import automation.com.veracontroller.util.RestClient;
+import automation.com.veracontroller.util.RestClientUI7;
 
 public class ExecuteSceneTask extends AsyncTask<Void, Void, Boolean> {
     private Scene scene;
@@ -28,7 +28,7 @@ public class ExecuteSceneTask extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Void... arg0) {
         try {
-            RestClient.executeSceneCommand(scene.getSceneNum());
+            RestClientUI7.executeSceneCommand(scene.getSceneNum());
         } catch (Exception e) {
             Log.e("Failure", "Failed to execute scene.");
             return false;

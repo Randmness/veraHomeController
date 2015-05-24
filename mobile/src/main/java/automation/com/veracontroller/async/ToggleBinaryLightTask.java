@@ -7,7 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import automation.com.veracontroller.pojo.BinaryLight;
-import automation.com.veracontroller.util.RestClient;
+import automation.com.veracontroller.util.RestClientUI7;
 
 public class ToggleBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
     private BinaryLight light;
@@ -30,7 +30,7 @@ public class ToggleBinaryLightTask extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Void... arg0) {
         try {
-            RestClient.executeSwitchCommand(futureState, light.getDeviceNum());
+            RestClientUI7.executeSwitchCommand(futureState, light.getDeviceNum());
         } catch (Exception e) {
             Log.e("Failure", "Failed to execute command.");
             return false;

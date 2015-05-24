@@ -9,9 +9,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import automation.com.veracontroller.constants.IntentConstants;
-import automation.com.veracontroller.pojo.Scene;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +16,8 @@ import automation.com.veracontroller.R;
 import automation.com.veracontroller.adapter.SceneListAdapter;
 import automation.com.veracontroller.async.ExecuteSceneTask;
 import automation.com.veracontroller.async.FetchScenesTask;
+import automation.com.veracontroller.constants.IntentConstants;
+import automation.com.veracontroller.pojo.Scene;
 
 public class SceneFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private SwipeRefreshLayout swipeLayout;
