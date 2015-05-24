@@ -25,7 +25,7 @@ public class SessionUI7 extends Session {
     public void setSessionToken(String sessionToken) {
         this.setSystemType(VeraType.VERA_UI7);
         this.sessionToken = sessionToken;
-        this.expirationDate = new Date();
+        this.expirationDate = new Date(System.currentTimeMillis()+ (12*HOUR));
     }
 
     public String getSessionToken() {
@@ -33,6 +33,7 @@ public class SessionUI7 extends Session {
     }
 
     public boolean isExpired() {
-        return expirationDate.before(new Date(System.currentTimeMillis() - 1000));
+        Log.i("Expiration", expirationDate + ", "+ new Date(System.currentTimeMillis()));
+        return expirationDate.before(new Date(System.currentTimeMillis()));
     }
 }

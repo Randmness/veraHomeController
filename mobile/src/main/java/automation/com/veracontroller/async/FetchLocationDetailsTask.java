@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
+import automation.com.veracontroller.constants.ConnectionConstants;
 import automation.com.veracontroller.constants.PreferenceConstants;
 import automation.com.veracontroller.enums.VeraType;
 import automation.com.veracontroller.pojo.session.Session;
@@ -45,6 +46,11 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
                 sessionUI7.setRemoteUrl(newInfo.getRemoteUrl());
                 sessionUI7.setServerRelay(newInfo.getServerRelay());
                 sessionUI7.setSessionToken(newInfo.getSessionToken());
+
+                String remoteUrl = ConnectionConstants.UI7_REMOTE_URL_PATTERN.
+                        replace("[$SERVER_RELAY]", sessionUI7.getServerRelay());
+                remoteUrl = remoteUrl.replace("[$PK_DEVICE]", sessionUI7.getSerialNumber());
+                sessionUI7.setRemoteUrl(remoteUrl);
             } else {
                 JSONObject unit = RestClientUI7.fetchLocationDetails();
                 session.setSerialNumber(unit.getString("serialNumber"));
