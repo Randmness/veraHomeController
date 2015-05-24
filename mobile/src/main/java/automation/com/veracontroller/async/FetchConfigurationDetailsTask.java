@@ -1,7 +1,9 @@
 package automation.com.veracontroller.async;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -14,11 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import automation.com.veracontroller.DeviceActivity;
+import automation.com.veracontroller.R;
+import automation.com.veracontroller.SplashScreen;
 import automation.com.veracontroller.constants.IntentConstants;
 import automation.com.veracontroller.fragments.BinaryLightFragment;
 import automation.com.veracontroller.fragments.SceneFragment;
 import automation.com.veracontroller.pojo.BinaryLight;
 import automation.com.veracontroller.pojo.Scene;
+import automation.com.veracontroller.pojo.session.Session;
 import automation.com.veracontroller.service.PollingService;
 import automation.com.veracontroller.util.RestClientUI7;
 import automation.com.veracontroller.util.RoomDataUtil;
@@ -88,6 +93,50 @@ public class FetchConfigurationDetailsTask extends AsyncTask<Void, Void, Boolean
                 service.callJobFinished();
             }
         } else {
+
+            if (activity instanceof SplashScreen) {
+                final Session session = RestClientUI7.getSession();
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setCancelable(false);
+                if (session.getLeverageRemote()) {
+                    builder.setMessage(R.string.recoveryRemote);
+                    builder.setPositiveButton("Attempt\nLocal", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            session.setLeverageRemote(false);
+                            new FetchConfigurationDetailsTask(activity, true).execute();
+                        }
+                    });
+                    builder.setNeutralButton("Retry\nRemote", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            new FetchConfigurationDetailsTask(activity, true).execute();
+                        }
+                    });
+                } else {
+                    builder.setMessage(R.string.recoveryLocal);
+                    builder.setPositiveButton("Attempt\nRemote", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            session.setLeverageRemote(true);
+                            new FetchConfigurationDetailsTask(activity, true).execute();
+                        }
+                    });
+                    builder.setNeutralButton("Retry\nLocal", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            new FetchConfigurationDetailsTask(activity, true).execute();
+                        }
+                    });
+                }
+
+                builder.setNegativeButton("Update\nLocation", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        new FetchLocationDetailsTask(activity, RestClientUI7.getSession()).execute();
+                    }
+                });
+                builder.create().show();
+            }
 
             Toast.makeText(activity, "Failed to retrieve configuration.", Toast.LENGTH_LONG).show();
         }
