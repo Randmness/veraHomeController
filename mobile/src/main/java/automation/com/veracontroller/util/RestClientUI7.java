@@ -40,12 +40,13 @@ abstract public class RestClientUI7 {
         String authSigToken = authTokens.getString("IdentitySignature");
         String serverAccount = authTokens.getString("Server_Account");
 
+
         String sessionToken = retrieveSessionToken("vera-us-oem-authd11.mios.com", authToken, authSigToken);
 
         byte[] data = Base64.decode(authToken, Base64.DEFAULT);
         JSONObject jsonObject = new JSONObject(new String(data, "UTF-8"));
         String pkAccount = jsonObject.getString("PK_Account");
-        JSONObject locator = retrieveLocatorViaRemote(serverAccount, pkAccount, sessionToken);
+        JSONObject locator = retrieveLocatorViaRemote("vera-us-oem-account11.mios.com", pkAccount, sessionToken);
 
         String pkDevice = locator.getJSONArray("Devices").getJSONObject(0).getString("PK_Device");
         JSONObject relay = getRelayServer("vera-us-oem-device11.mios.com", pkDevice, sessionToken);
@@ -173,7 +174,7 @@ abstract public class RestClientUI7 {
         return executeJSONCommand(urlPreference(), ConnectionConstants.DATA_REQUEST_QUERY, map, headers);
     }
 
-    public static boolean executeSwitchCommand(boolean on, int deviceID) throws Exception{
+    public static void executeSwitchCommand(boolean on, int deviceID) throws Exception{
         boolean success = true;
         Header[] headers = retrieveSessionHeader();
         int target = 0;
@@ -187,16 +188,10 @@ abstract public class RestClientUI7 {
         }
         map.put("newTargetValue", target);
 
-        try {
-            executeCommand(urlPreference(), ConnectionConstants.DATA_REQUEST_QUERY, map, headers);
-        } catch (Exception e) {
-            success = false;
-        }
-
-        return success;
+        executeCommand(urlPreference(), ConnectionConstants.DATA_REQUEST_QUERY, map, headers);
     }
 
-    public static boolean executeSceneCommand(int sceneID) throws Exception {
+    public static void executeSceneCommand(int sceneID) throws Exception {
         boolean success = true;
         Header[] headers = retrieveSessionHeader();
         Map<String, Object> map = new HashMap<String, Object>();
@@ -205,13 +200,7 @@ abstract public class RestClientUI7 {
         map.put("serviceId", ServiceTypeEnum.SCENE.toString());
         map.put("action", "RunScene");
 
-        try {
-            executeCommand(urlPreference(), ConnectionConstants.DATA_REQUEST_QUERY, map, headers);
-        } catch (Exception e) {
-            success = false;
-        }
-
-        return success;
+        executeCommand(urlPreference(), ConnectionConstants.DATA_REQUEST_QUERY, map, headers);
     }
 
     public static JSONObject executeJSONCommand(String url, String query, Map<String, Object> params,

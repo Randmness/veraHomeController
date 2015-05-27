@@ -8,8 +8,8 @@ android {
         applicationId "automation.com.veracontroller"
         minSdkVersion 21
         targetSdkVersion 21
-        versionCode 7
-        versionName "1.6.0"
+        versionCode 8
+        versionName "1.6.1"
     }
     buildTypes {
         release {

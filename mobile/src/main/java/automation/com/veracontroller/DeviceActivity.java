@@ -69,6 +69,7 @@ public class DeviceActivity extends FragmentActivity implements
                     if (service == null) {
                         service = (PollingService) msg.obj;
                         service.setActivity(DeviceActivity.this);
+
                         DeviceActivity.this.scheduleJob();
                     }
             }

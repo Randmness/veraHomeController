@@ -181,7 +181,7 @@ public class WearableListener extends WearableListenerService{
         VeraType veraType = VeraType.fromType(sharedPref.getString(PreferenceConstants.VERA_TYPE, null));
 
         if (veraType == null) {
-            sendNotification("Smart Abode", "Please set mobile app before accessing wearable app.");
+            sendNotification("Smart Abode", "Please setup mobile app before accessing wearable app.");
             throw new NotSetupException("Not currently setup.");
         } else {
             Session session = RestClientUI7.getSession();

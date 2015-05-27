@@ -114,12 +114,6 @@ public class SplashActivity extends Activity implements
                         public void run() {
                             if (activityDialog.isShowing()) {
                                 activityDialog.dismiss();
-                                Intent failed = new Intent(SplashActivity.this, ConfirmationActivity.class);
-                                failed.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
-                                        ConfirmationActivity.FAILURE_ANIMATION);
-                                failed.putExtra(ConfirmationActivity.EXTRA_MESSAGE, "An error has occurred" +
-                                        " while communicating with the Vera system.");
-                                startActivity(failed);
                             }
                         }
                     }, RESPONSE_TIMEOUT);

@@ -99,12 +99,6 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                         public void run() {
                             if (dialog.isShowing()) {
                                 dialog.dismiss();
-                                Intent failed = new Intent(context, ConfirmationActivity.class);
-                                failed.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
-                                        ConfirmationActivity.FAILURE_ANIMATION);
-                                failed.putExtra(ConfirmationActivity.EXTRA_MESSAGE, "An error has occurred" +
-                                        " while communicating with the Vera system.");
-                                context.startActivity(failed);
                             }
                         }
                     }, RESPONSE_TIME_OUT);
@@ -119,12 +113,6 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                         public void run() {
                             if (dialog.isShowing()) {
                                 dialog.dismiss();
-                                Intent failed = new Intent(context, ConfirmationActivity.class);
-                                failed.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
-                                        ConfirmationActivity.FAILURE_ANIMATION);
-                                failed.putExtra(ConfirmationActivity.EXTRA_MESSAGE, "Unable to fetch "+
-                                    "configuration details.");
-                                context.startActivity(failed);
                             }
                         }
                     }, RESPONSE_TIME_OUT);
@@ -153,12 +141,6 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                         public void run() {
                             if (dialog.isShowing()) {
                                 dialog.dismiss();
-                                Intent failed = new Intent(context, ConfirmationActivity.class);
-                                failed.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
-                                        ConfirmationActivity.FAILURE_ANIMATION);
-                                failed.putExtra(ConfirmationActivity.EXTRA_MESSAGE, "An error has occurred" +
-                                        " while communicating with the Vera system.");
-                                context.startActivity(failed);
                             }
                         }
                     }, RESPONSE_TIME_OUT);
@@ -173,12 +155,6 @@ public class ViewPagerAdapter extends GridPagerAdapter {
                         public void run() {
                             if (dialog.isShowing()) {
                                 dialog.dismiss();
-                                Intent failed = new Intent(context, ConfirmationActivity.class);
-                                failed.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
-                                        ConfirmationActivity.FAILURE_ANIMATION);
-                                failed.putExtra(ConfirmationActivity.EXTRA_MESSAGE, "An error has occurred" +
-                                        " while communicating with the Vera system.");
-                                context.startActivity(failed);
                             }
                         }
                     }, RESPONSE_TIME_OUT);

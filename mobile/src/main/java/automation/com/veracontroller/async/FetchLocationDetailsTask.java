@@ -1,8 +1,10 @@
 package automation.com.veracontroller.async;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -12,6 +14,8 @@ import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
+import automation.com.veracontroller.R;
+import automation.com.veracontroller.SplashScreen;
 import automation.com.veracontroller.constants.ConnectionConstants;
 import automation.com.veracontroller.constants.PreferenceConstants;
 import automation.com.veracontroller.enums.VeraType;
@@ -83,8 +87,54 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean result) {
         if (result) {
+            if (activity instanceof SplashScreen) {
+                new FetchConfigurationDetailsTask(activity, true).execute();
+            }
             Toast.makeText(activity, "Successfully updated the location details.", Toast.LENGTH_LONG).show();
         } else {
+            if (activity instanceof SplashScreen) {
+                final Session session = RestClientUI7.getSession();
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setCancelable(false);
+                if (session.getLeverageRemote()) {
+                    builder.setMessage(R.string.recoveryRemote);
+                    builder.setPositiveButton("Attempt\nLocal", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            session.setLeverageRemote(false);
+                            new FetchConfigurationDetailsTask(activity, true).execute();
+                        }
+                    });
+                    builder.setNeutralButton("Retry\nRemote", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            new FetchConfigurationDetailsTask(activity, true).execute();
+                        }
+                    });
+                } else {
+                    builder.setMessage(R.string.recoveryLocal);
+                    builder.setPositiveButton("Attempt\nRemote", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            session.setLeverageRemote(true);
+                            new FetchConfigurationDetailsTask(activity, true).execute();
+                        }
+                    });
+                    builder.setNeutralButton("Retry\nLocal", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            new FetchConfigurationDetailsTask(activity, true).execute();
+                        }
+                    });
+                }
+
+                builder.setNegativeButton("Update\nLocation", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        new FetchLocationDetailsTask(activity, RestClientUI7.getSession()).execute();
+                    }
+                });
+                builder.create().show();
+            }
             Toast.makeText(activity, "Failed to retrieve details.", Toast.LENGTH_LONG).show();
         }
     }

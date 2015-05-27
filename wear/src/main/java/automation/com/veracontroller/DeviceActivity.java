@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import automation.com.veracontroller.adapter.ViewPagerAdapter;
+import automation.com.veracontroller.async.RequestDataThread;
 import automation.com.veracontroller.constants.IntentConstants;
 import automation.com.veracontroller.enums.DataPathEnum;
 import automation.com.veracontroller.pojo.BinaryLight;
@@ -90,20 +91,29 @@ public class DeviceActivity extends Activity implements
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                activity.updateUI(newLights, newScenes);
+                                activity.updateUIDialog(newLights, newScenes);
+                            }
+                        });
+                        break;
+                    case WEARABLE_CONFIG_DATA_UPDATE:
+                        final List<BinaryLight> lightUpdate = intent.getParcelableArrayListExtra(IntentConstants.LIGHT_LIST);
+                        final List<Scene> sceneUpdate = intent.getParcelableArrayListExtra(IntentConstants.SCENE_LIST);
+
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                activity.updateUI(lightUpdate, sceneUpdate);
                             }
                         });
                         break;
                     case WEARABLE_CONFIG_DATA_ERROR:
                         if(deviceDialog.isShowing()) {
                             deviceDialog.dismiss();
-                            Intent failed = new Intent(activity, ConfirmationActivity.class);
-                            failed.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
-                                    ConfirmationActivity.FAILURE_ANIMATION);
-                            failed.putExtra(ConfirmationActivity.EXTRA_MESSAGE, "An error has occurred" +
-                                    " while communicating with the Vera system.");
-                            startActivity(failed);
                         }
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(DeviceActivity.this);
+                        alertDialog.setMessage("Unexpected error while communicating with Vera.");
+                        alertDialog.setPositiveButton("Close", null);
+                        alertDialog.create().show();
                         break;
                 }
             }
@@ -167,10 +177,15 @@ public class DeviceActivity extends Activity implements
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) { }
 
-    private void updateUI(List<BinaryLight> newLights, List<Scene> newScenes) {
+    private void updateUIDialog(List<BinaryLight> newLights, List<Scene> newScenes) {
         if (deviceDialog.isShowing()) {
             deviceDialog.dismiss();
         }
+        this.updateUI(newLights, newScenes);
+
+    }
+
+    private void updateUI(List<BinaryLight> newLights, List<Scene> newScenes) {
         pagerAdapter.updateLights(newLights);
         pagerAdapter.getBinaryListAdapter().updateLights(newLights);
 

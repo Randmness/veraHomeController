@@ -52,6 +52,10 @@ public class WearableListener extends WearableListenerService {
                         dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
                         broadcastSplashReceiver(dataMap, DataPathEnum.WEARABLE_SPLASH_DATA_RESPONSE);
                         break;
+                    case WEARABLE_CONFIG_DATA_UPDATE:
+                        dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
+                        broadcastConfigReceiver(dataMap, DataPathEnum.WEARABLE_CONFIG_DATA_UPDATE);
+                        break;
                     case WEARABLE_SPLASH_DATA_ERROR:
                         broadcastErrorResponse(DataPathEnum.WEARABLE_SPLASH_DATA_ERROR);
                         break;
