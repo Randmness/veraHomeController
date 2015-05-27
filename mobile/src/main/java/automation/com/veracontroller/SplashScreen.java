@@ -81,7 +81,6 @@ public class SplashScreen extends Activity {
                 session = gson.fromJson(sharedPref.getString(
                         PreferenceConstants.SESSION_INFO,null), SessionUI7.class);
             }
-
             //if not on wifi, switch enable remote
             RestClientUI7.setSession(session);
 

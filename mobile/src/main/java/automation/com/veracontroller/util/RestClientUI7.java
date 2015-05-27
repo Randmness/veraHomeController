@@ -7,6 +7,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -20,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,8 @@ import automation.com.veracontroller.enums.ServiceTypeEnum;
 import automation.com.veracontroller.enums.VeraType;
 import automation.com.veracontroller.pojo.session.Session;
 import automation.com.veracontroller.pojo.session.SessionUI7;
+import automation.com.veracontroller.service.NotSetupException;
+import automation.com.veracontroller.service.UnAuthorizedException;
 
 
 abstract public class RestClientUI7 {
@@ -205,7 +209,32 @@ abstract public class RestClientUI7 {
 
     public static JSONObject executeJSONCommand(String url, String query, Map<String, Object> params,
                                                 Header[] headers) throws Exception {
-        return new JSONObject(executeCommand(url, query, params, headers));
+        JSONObject response = null;
+        try {
+            response = new JSONObject(executeCommand(url, query, params, headers));
+        } catch (UnAuthorizedException e) {
+            if (SESSION != null && SESSION.getSystemType() == VeraType.VERA_UI7) {
+                Log.i("Session Update", "Attempting to update session.");
+                SessionUI7 sessionUI7 = (SessionUI7) SESSION;
+                SessionUI7 newInfo = RestClientUI7.initialSetup(SESSION.getUserName(), SESSION.getPassword());
+                sessionUI7.setLocalUrl(newInfo.getLocalUrl());
+                sessionUI7.setRemoteUrl(newInfo.getRemoteUrl());
+                sessionUI7.setServerRelay(newInfo.getServerRelay());
+                sessionUI7.setSessionToken(newInfo.getSessionToken());
+
+                String remoteUrl = ConnectionConstants.UI7_REMOTE_URL_PATTERN.
+                        replace("[$SERVER_RELAY]", sessionUI7.getServerRelay());
+                remoteUrl = remoteUrl.replace("[$PK_DEVICE]", sessionUI7.getSerialNumber());
+                sessionUI7.setRemoteUrl(remoteUrl);
+
+                if (headers != null) {
+                    headers = retrieveSessionHeader();
+                }
+                response = new JSONObject(executeCommand(urlPreference(), query, params, headers));
+            }
+        }
+
+        return response;
     }
 
     public static String executeCommand(String url, String query, Map<String, Object> params,
@@ -240,20 +269,27 @@ abstract public class RestClientUI7 {
                     builder.append(line);
                 }
             } else {
-                Log.e("Failure", "Failed to execute command.");
-                throw new Exception("Call failed to execute.");
+                Log.e("Failure", response.getStatusLine().getReasonPhrase() +
+                        ", code: "+ response.getStatusLine().getStatusCode());
+
+                if (response.getStatusLine().getStatusCode() == 401) {
+                    throw new UnAuthorizedException("Session is not authorized.");
+                } else {
+                    throw new NotSetupException("Call Failed: "+response.getStatusLine().getReasonPhrase());
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
         } finally {
             try {
-                content.close();
+                if (content != null) {
+                    content.close();
+                }
             } catch (IOException e) {
             }
 
             try {
-                reader.close();
+                if (reader != null) {
+                    reader.close();
+                }
             } catch (IOException e) {
             }
         }
