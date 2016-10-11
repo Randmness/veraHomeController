@@ -4,7 +4,7 @@ package automation.com.veracontroller.constants;
  * Created by mrand on 5/16/15.
  */
 public class ConnectionConstants {
-    public static final String AUTH_TOKEN_URL = "https://vera-us-oem-autha11.mios.com/autha/auth/username/";
+    public static final String AUTH_TOKEN_URL = "https://vera-us-oem-autha.mios.com/autha/auth/username/";
     public static final String SESSION_SERVER = "https://[$SESSION_URL]/info/session/";
     public static final String SERVER_ACCOUNT = "https://[$SERVER_ACCOUNT]/account/account/account/[$PK_ACCOUNT]/";
     public static final String SERVER_RELAY = "https://[$SERVER_DEVICE]/device/device/device/";

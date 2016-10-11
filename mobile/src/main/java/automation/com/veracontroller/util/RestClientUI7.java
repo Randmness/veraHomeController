@@ -45,12 +45,12 @@ abstract public class RestClientUI7 {
         String serverAccount = authTokens.getString("Server_Account");
 
 
-        String sessionToken = retrieveSessionToken("vera-us-oem-authd11.mios.com", authToken, authSigToken);
+        String sessionToken = retrieveSessionToken(serverAccount, authToken, authSigToken);
 
         byte[] data = Base64.decode(authToken, Base64.DEFAULT);
         JSONObject jsonObject = new JSONObject(new String(data, "UTF-8"));
         String pkAccount = jsonObject.getString("PK_Account");
-        JSONObject locator = retrieveLocatorViaRemote("vera-us-oem-account11.mios.com", pkAccount, sessionToken);
+        JSONObject locator = retrieveLocatorViaRemote(serverAccount, pkAccount, sessionToken);
 
         String pkDevice = locator.getJSONArray("Devices").getJSONObject(0).getString("PK_Device");
         JSONObject relay = getRelayServer("vera-us-oem-device11.mios.com", pkDevice, sessionToken);

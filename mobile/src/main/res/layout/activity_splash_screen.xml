@@ -5,10 +5,11 @@
 
 
     <ImageView
-        android:layout_width="600dp"
-        android:layout_height="wrap_content"
+        android:layout_width="736dp"
+        android:layout_height="723dp"
         android:id="@+id/imageView"
         android:layout_gravity="center_horizontal|center_vertical"
-        android:src="@drawable/splash_screen"/>
+        android:src="@drawable/splash_screen"
+        android:scaleType="fitCenter" />
 
 </FrameLayout>

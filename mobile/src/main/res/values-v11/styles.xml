@@ -3,11 +3,11 @@
         <item name="android:colorPrimary">@color/primary</item>
         <item name="android:colorPrimaryDark">@color/primary_dark</item>
         <item name="android:colorAccent">@color/accent</item>
-
         <item name="android:textViewStyle">@style/TextViewTheme</item>
         <item name="android:textColorPrimary">#fff</item>
         <item name="android:navigationBarColor">#454545</item>
         <item name="android:popupTheme">@style/MenuTheme</item>
+        <item name="android:alertDialogTheme">@style/Theme.AppCompat.Light.Dialog</item>
         <item name="android:editTextStyle">@style/EditTextTheme</item>
         <item name="android:buttonStyle">@style/ButtonTheme</item>
     </style>
