@@ -50,11 +50,6 @@ public class FetchLocationDetailsTask extends AsyncTask<Void, Void, Boolean> {
                 sessionUI7.setRemoteUrl(newInfo.getRemoteUrl());
                 sessionUI7.setServerRelay(newInfo.getServerRelay());
                 sessionUI7.setSessionToken(newInfo.getSessionToken());
-
-                String remoteUrl = ConnectionConstants.UI7_REMOTE_URL_PATTERN.
-                        replace("[$SERVER_RELAY]", sessionUI7.getServerRelay());
-                remoteUrl = remoteUrl.replace("[$PK_DEVICE]", sessionUI7.getSerialNumber());
-                sessionUI7.setRemoteUrl(remoteUrl);
             } else {
                 JSONObject unit = RestClientUI7.fetchLocationDetails();
                 session.setSerialNumber(unit.getString("serialNumber"));

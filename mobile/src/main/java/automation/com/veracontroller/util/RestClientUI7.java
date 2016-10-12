@@ -37,6 +37,7 @@ import automation.com.veracontroller.service.UnAuthorizedException;
 
 abstract public class RestClientUI7 {
     private static Session SESSION;
+    private static boolean firstAttempt = true;
 
     public static SessionUI7 initialSetup(String username, String password) throws Exception {
         JSONObject authTokens = retrieveAuthTokens(username, password);
@@ -53,7 +54,18 @@ abstract public class RestClientUI7 {
         JSONObject locator = retrieveLocatorViaRemote(serverAccount, pkAccount, sessionToken);
 
         String pkDevice = locator.getJSONArray("Devices").getJSONObject(0).getString("PK_Device");
-        JSONObject relay = getRelayServer("vera-us-oem-device11.mios.com", pkDevice, sessionToken);
+        String serverDevice = locator.getJSONArray("Devices").getJSONObject(0).getString("Server_Device");
+        String serverDeviceAlt = locator.getJSONArray("Devices").getJSONObject(0).getString("Server_Device_Alt");
+
+        JSONObject relay = null;
+
+        try {
+            relay = getRelayServer(serverDevice, pkDevice, sessionToken);
+        } catch (Exception e) {
+            Log.i("InitialSetup", "Server device server failed. Trying server device alt.");
+            relay = getRelayServer(serverDeviceAlt, pkDevice, sessionToken);
+        }
+
         String localIP = relay.getString("InternalIP");
         String serverRelay = relay.getString("Server_Relay");
 
@@ -175,6 +187,8 @@ abstract public class RestClientUI7 {
         Header[] headers = retrieveSessionHeader();
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", "user_data2");
+
+        String urlPreference = urlPreference();
         return executeJSONCommand(urlPreference(), ConnectionConstants.DATA_REQUEST_QUERY, map, headers);
     }
 
@@ -209,35 +223,10 @@ abstract public class RestClientUI7 {
 
     public static JSONObject executeJSONCommand(String url, String query, Map<String, Object> params,
                                                 Header[] headers) throws Exception {
-        JSONObject response = null;
-        try {
-            response = new JSONObject(executeCommand(url, query, params, headers));
-        } catch (UnAuthorizedException e) {
-            if (SESSION != null && SESSION.getSystemType() == VeraType.VERA_UI7) {
-                Log.i("Session Update", "Attempting to update session.");
-                SessionUI7 sessionUI7 = (SessionUI7) SESSION;
-                SessionUI7 newInfo = RestClientUI7.initialSetup(SESSION.getUserName(), SESSION.getPassword());
-                sessionUI7.setLocalUrl(newInfo.getLocalUrl());
-                sessionUI7.setRemoteUrl(newInfo.getRemoteUrl());
-                sessionUI7.setServerRelay(newInfo.getServerRelay());
-                sessionUI7.setSessionToken(newInfo.getSessionToken());
-
-                String remoteUrl = ConnectionConstants.UI7_REMOTE_URL_PATTERN.
-                        replace("[$SERVER_RELAY]", sessionUI7.getServerRelay());
-                remoteUrl = remoteUrl.replace("[$PK_DEVICE]", sessionUI7.getSerialNumber());
-                sessionUI7.setRemoteUrl(remoteUrl);
-
-                if (headers != null) {
-                    headers = retrieveSessionHeader();
-                }
-                response = new JSONObject(executeCommand(urlPreference(), query, params, headers));
-            }
-        }
-
-        return response;
+            return new JSONObject(executeCommand(url, query, params, headers));
     }
 
-    public static String executeCommand(String url, String query, Map<String, Object> params,
+    private static String executeCommand(String url, String query, Map<String, Object> params,
                                         Header[] headers) throws Exception {
         StringBuilder builder = new StringBuilder();
         BufferedReader reader = null;
